@@ -41,17 +41,6 @@ Trên máy này, `build.ps1` cũng tìm được Node portable trong `%USERPROFI
 - `js/ui-bridge.js`: cầu nối trạng thái từ bộ xử lý học tập sang React. React sở hữu các root riêng để giữ nguyên DOM của các phòng học và trình phát nhạc.
 - `css/`: kiểu dáng cho các phần giao diện hiện có. `assets/app-ui.js` và `assets/app-ui.css`: bản build dùng trực tiếp trong trình duyệt, bao gồm các thư viện cần thiết.
 
-Tailwind quét cả template, partial, JavaScript cũ và React; không còn dùng Tailwind CDN. Màu shadcn được đặt tên riêng để tránh xung đột với màu theo ngôn ngữ. Motion quản lý hiệu ứng điều hướng và chuyển phòng; `prefers-reduced-motion` được tôn trọng. Dữ liệu và cấu hình `polyglot_*` hiện có được giữ lại, không có thao tác tự xóa khi nâng cấp.
+Tailwind quét cả template, partial, JavaScript cũ và React; không còn dùng Tailwind CDN. Màu shadcn được đặt tên riêng để tránh xung đột với màu theo ngôn ngữ. Motion quản lý hiệu ứng điều hướng và chuyển phòng; `prefers-reduced-motion` được tôn trọng. Dữ liệu và cấu hình `polyglot_*` được lưu trên thiết bị bằng localStorage và được giữ lại khi nâng cấp.
 
 Tài liệu: [React tích hợp vào trang có sẵn](https://react.dev/learn/add-react-to-an-existing-project), [Tailwind với Vite](https://tailwindcss.com/docs/installation/using-vite), [shadcn/ui](https://ui.shadcn.com/docs/installation/manual), [Motion](https://motion.dev/docs/react).
-
-## Đăng nhập và đồng bộ dữ liệu
-
-Đăng nhập dùng Supabase Auth; ứng dụng vẫn có thể học ngoại tuyến và lưu dữ liệu cục bộ khi chưa đăng nhập. Để bật tài khoản và đồng bộ giữa thiết bị:
-
-1. Tạo project Supabase, bật Email/Password trong **Authentication → Providers** và cấu hình URL trang trong **Authentication → URL Configuration**.
-2. Chạy nội dung [`supabase/schema.sql`](./supabase/schema.sql) trong Supabase SQL Editor. Bảng bật RLS và mỗi tài khoản chỉ truy cập dữ liệu của chính mình.
-3. Phục vụ trang qua HTTPS (hoặc localhost khi phát triển), nhấn **Đăng nhập → Cấu hình Supabase**, rồi nhập Project URL và publishable/anon key. Không nhập `service_role` key.
-4. Đăng ký hoặc đăng nhập. Dữ liệu học `polyglot_*` được tách cache theo tài khoản và đồng bộ khi thay đổi; lần đăng nhập đầu tiên sẽ đưa dữ liệu cục bộ hiện có lên tài khoản nếu tài khoản chưa có dữ liệu. Có thể nhấn **Đồng bộ ngay** hoặc tải lại trang ở thiết bị khác.
-
-URL và publishable/anon key được lưu trên thiết bị. Phiên đăng nhập được lưu để khôi phục lần sau. Gemini API key (`polyglot_gemini_key`) không được tải lên Supabase. Tài khoản không thay thế cấu hình bảo mật ở Supabase: hãy bật RLS và chỉ sử dụng publishable/anon key ở trình duyệt.

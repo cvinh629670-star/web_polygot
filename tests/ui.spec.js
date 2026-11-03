@@ -243,83 +243,25 @@ test('the built site can open directly from index.html without a development ser
   await expect(page.locator('#view-listening')).toBeVisible();
 });
 
-test('signing in migrates local learning data, syncs per-account data, and keeps API keys private', async ({ page }) => {
+test('removes login and migrates saved account data to local storage', async ({ page }) => {
   const userId = 'c0ffee00-0000-4000-8000-000000000001';
-  const cloudData = new Map();
-  const handleSupabase = async route => {
-    const request = route.request();
-    const url = new URL(request.url());
-    if (url.pathname === '/auth/v1/token') {
-      return route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          access_token: 'test-access-token',
-          refresh_token: 'test-refresh-token',
-          expires_in: 3600,
-          user: { id: userId, email: 'alice@example.com' },
-        }),
-      });
-    }
-    if (url.pathname === '/rest/v1/user_app_data' && request.method() === 'GET') {
-      return route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify([...cloudData.values()]),
-      });
-    }
-    if (url.pathname === '/rest/v1/user_app_data' && request.method() === 'POST') {
-      for (const row of request.postDataJSON()) cloudData.set(row.key, row);
-      return route.fulfill({ status: 204, body: '' });
-    }
-    if (url.pathname === '/auth/v1/logout') return route.fulfill({ status: 204, body: '' });
-    return route.fulfill({ status: 404, body: 'Unexpected Supabase request' });
-  };
-  await page.route('https://polyglot-test.supabase.co/**', handleSupabase);
+  let supabaseRequests = 0;
+  page.on('request', request => {
+    if (new URL(request.url()).hostname.endsWith('.supabase.co')) supabaseRequests += 1;
+  });
+  await page.addInitScript(({ userId, words }) => {
+    localStorage.clear();
+    localStorage.setItem('pg_auth_config', JSON.stringify({ url: 'https://polyglot-test.supabase.co', anonKey: 'legacy-key' }));
+    localStorage.setItem('pg_auth_session', JSON.stringify({ user: { id: userId } }));
+    localStorage.setItem(`pg_user_${userId}_polyglot_words`, JSON.stringify(words));
+  }, { userId, words: savedWords });
 
   await openApp(page);
-  await page.locator('#auth-account-button').click();
-  await page.locator('#auth-project-url').fill('https://polyglot-test.supabase.co');
-  await page.locator('#auth-anon-key').fill('test-publishable-key');
-  await page.locator('#auth-config-form button[type="submit"]').click();
-  await page.locator('#auth-email').fill('alice@example.com');
-  await page.locator('#auth-password').fill('correct-horse-battery');
-  await page.locator('#auth-form button[type="submit"]').click();
 
-  await expect(page.locator('#auth-account-label')).toHaveText('alice@example.com');
-  await expect(page.locator('#react-navigation-root .pg-nav-button')).toHaveCount(7);
   await expectStats(page, { total: 4, unlearned: 1, learning: 2, mastered: 1, due: 2 });
-  expect(cloudData.has('polyglot_words')).toBe(true);
-  expect(cloudData.has('polyglot_gemini_key')).toBe(false);
+  await expect(page.locator('#auth-account-button, #auth-modal')).toHaveCount(0);
+  expect(supabaseRequests).toBe(0);
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('polyglot_words')))).toEqual(savedWords);
-
-  const secondContext = await page.context().browser().newContext({ baseURL: 'http://127.0.0.1:4173' });
-  await secondContext.addInitScript(({ config, session }) => {
-    localStorage.setItem('pg_auth_config', JSON.stringify(config));
-    localStorage.setItem('pg_auth_session', JSON.stringify(session));
-  }, {
-    config: { url: 'https://polyglot-test.supabase.co', anonKey: 'test-publishable-key' },
-    session: {
-      access_token: 'test-access-token',
-      refresh_token: 'test-refresh-token',
-      expires_at: Math.floor(Date.now() / 1000) + 3600,
-      user: { id: userId, email: 'alice@example.com' },
-    },
-  });
-  await secondContext.route('**/*', route => {
-    const url = new URL(route.request().url());
-    if (url.origin === 'https://polyglot-test.supabase.co') return handleSupabase(route);
-    if (['http:', 'https:'].includes(url.protocol) && !['127.0.0.1', 'localhost'].includes(url.hostname)) return route.abort();
-    return route.continue();
-  });
-  const secondDevice = await secondContext.newPage();
-  await openApp(secondDevice);
-  await expectStats(secondDevice, { total: 4, unlearned: 1, learning: 2, mastered: 1, due: 2 });
-  await expect(secondDevice.locator('#auth-account-label')).toHaveText('alice@example.com');
-  await secondContext.close();
-
-  await page.locator('#auth-account-button').click();
-  await page.locator('#auth-signout-button').click();
-  await expect(page.locator('#auth-account-label')).toHaveText('Đăng nhập');
-  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('polyglot_words')))).toEqual(savedWords);
+  expect(await page.evaluate(() => localStorage.getItem('pg_auth_session'))).toBeNull();
+  expect(await page.evaluate(() => localStorage.getItem('pg_auth_config'))).toBeNull();
 });
