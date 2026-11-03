@@ -1,0 +1,146 @@
+  <!-- VIEW: LISTENING STORIES -->
+  <section id="view-listening" class="tab-view hidden space-y-6">
+    <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-6">
+      <div>
+        <h2 class="text-xl sm:text-2xl font-extrabold flex items-center gap-3">
+          <span class="w-11 h-11 rounded-2xl theme-gradient-bg text-white flex items-center justify-center"><i class="fa-solid fa-headphones"></i></span>
+          Phòng Luyện Nghe Qua Truyện
+        </h2>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">Chọn một câu chuyện có sẵn để luyện nghe. Rê chuột vào từ để xem nghĩa, sau đó dùng hàng thêm từ ở cột bên phải.</p>
+      </div>
+
+      <div class="mb-3 flex justify-start">
+        <button type="button" onclick="toggleListeningLibrary()" id="listening-library-toggle" aria-expanded="true" aria-controls="listening-library-column" class="rounded-lg border border-slate-200 bg-white p-2 text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-indigo-300" title="Ẩn thư viện câu chuyện">
+          <i class="fa-solid fa-eye-slash"></i>
+        </button>
+        <button type="button" onclick="openListeningStoryModal()" class="listening-accent ml-2 rounded-lg px-3 py-2 text-sm font-bold text-white shadow-sm transition" aria-haspopup="dialog" aria-controls="listening-story-modal">
+          <i class="fa-solid fa-book-medical mr-1"></i>Thêm câu chuyện
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-5">
+        <div id="listening-library-column" class="lg:col-span-1 space-y-3">
+          <div id="listening-library" class="space-y-3">
+            <div class="flex items-center justify-between gap-2">
+              <h3 class="font-bold">Thư viện câu chuyện</h3>
+              <span id="listening-story-count" class="text-xs text-slate-400 font-semibold"></span>
+            </div>
+            <div id="listening-story-list" class="max-h-[34rem] overflow-y-auto space-y-2 pr-1">
+              <p class="p-4 text-sm text-slate-400">Đang tải câu chuyện...</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="listening-story-workspace" class="lg:col-span-2">
+          <div class="listening-ocean-panel rounded-3xl border-2 p-4 sm:p-6">
+            <div class="relative space-y-5">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                  <span id="listening-current-story-icon" class="listening-accent flex h-11 w-11 items-center justify-center rounded-2xl text-white shadow-lg"><i class="fa-solid fa-book-open"></i></span>
+                  <div>
+                    <h3 id="listening-story-title" class="font-extrabold text-slate-900 dark:text-white">Chọn một câu chuyện</h3>
+                    <p id="listening-story-meta" class="text-xs text-slate-500 dark:text-slate-400">Các từ đã có trong danh sách sẽ được tô nổi bật</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span id="listening-status" role="status" aria-live="polite" class="hidden self-start sm:self-auto rounded-full border border-indigo-200 dark:border-indigo-400/30 bg-white/80 dark:bg-slate-900/60 px-3 py-1.5 text-xs font-semibold text-indigo-700 dark:text-indigo-300"></span>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-2 border-b border-indigo-100 pb-4 dark:border-slate-700">
+                <button type="button" onclick="playListeningPassage()" class="listening-accent px-4 py-2.5 rounded-xl text-white text-sm font-bold shadow-lg transition">
+                  <i class="fa-solid fa-play mr-1"></i> Nghe bài
+                </button>
+                <button type="button" onclick="pauseListeningPassage()" class="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/80 dark:bg-slate-800 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 transition">
+                  <i class="fa-solid fa-pause mr-1"></i> Tạm dừng / Tiếp tục
+                </button>
+                <button type="button" onclick="stopListeningPassage()" class="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/80 dark:bg-slate-800 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 transition">
+                  <i class="fa-solid fa-stop mr-1"></i> Dừng
+                </button>
+              </div>
+
+              <div class="rounded-2xl border border-white/80 dark:border-slate-600/70 bg-white/80 dark:bg-slate-900/70 p-5 sm:p-7 shadow-inner">
+                <div id="listening-passage" class="min-h-40 text-base sm:text-lg leading-9 whitespace-pre-wrap text-slate-700 dark:text-slate-200">Chọn một câu chuyện có sẵn để bắt đầu luyện nghe.</div>
+              </div>
+              <div id="listening-passage-words" class="hidden flex-wrap items-center gap-2" aria-label="Từ vựng được chọn"></div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="lg:col-span-1">
+          <div class="h-full min-h-56 rounded-3xl border border-indigo-200 bg-white p-4 shadow-lg shadow-indigo-100/60 dark:border-indigo-500/30 dark:bg-slate-800 dark:shadow-indigo-950/20">
+            <div class="mb-4 flex items-center gap-2 border-b border-slate-100 pb-3 dark:border-slate-700">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600 dark:bg-indigo-400/15 dark:text-indigo-300"><i class="fa-solid fa-language"></i></span>
+              <div>
+                <h3 class="text-sm font-extrabold text-slate-800 dark:text-white">Tra từ vựng</h3>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400">Nghĩa và phát âm</p>
+              </div>
+            </div>
+            <div id="listening-word-detail" aria-live="polite">
+              <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 text-center dark:border-slate-700 dark:bg-slate-900/60">
+                <i class="fa-solid fa-arrow-left-long mb-2 text-indigo-400"></i>
+                <p class="text-xs leading-5 text-slate-500 dark:text-slate-400">Di chuột vào một từ trong câu chuyện để xem nghĩa.</p>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <div id="listening-story-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/65 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="listening-story-modal-title" onclick="if(event.target===this)closeListeningStoryModal()">
+    <div class="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-3xl border border-slate-200 bg-white p-5 shadow-2xl dark:border-slate-700 dark:bg-slate-800 sm:p-7">
+      <div class="mb-5 flex items-start justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <span class="listening-accent flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-xl text-white shadow-lg"><i class="fa-solid fa-book-open-reader"></i></span>
+          <div>
+            <h2 id="listening-story-modal-title" class="text-lg font-extrabold text-slate-900 dark:text-white">Thêm câu chuyện</h2>
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Thư viện tiếng <span id="listening-story-modal-language" class="font-bold text-theme-main"></span></p>
+          </div>
+        </div>
+        <button type="button" onclick="closeListeningStoryModal()" class="rounded-xl p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-white" aria-label="Đóng">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <form id="listening-story-form" onsubmit="handleAddListeningStory(event)" class="space-y-3">
+        <h3 class="text-sm font-bold text-slate-700 dark:text-slate-200"><i class="fa-solid fa-pen-to-square mr-1 text-theme-main"></i>Tự nhập</h3>
+        <input type="text" id="listening-new-story-title" required maxlength="100" placeholder="Tên câu chuyện" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-theme-main dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
+        <input type="text" id="listening-new-story-level" maxlength="60" placeholder="Trình độ (không bắt buộc, ví dụ: Cơ bản)" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-theme-main dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
+        <textarea id="listening-new-story-text" required maxlength="20000" rows="5" placeholder="Nhập nội dung câu chuyện..." class="w-full resize-y rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-theme-main dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200"></textarea>
+        <div class="rounded-2xl border border-slate-200 p-3 dark:border-slate-700">
+          <div class="mb-2 flex items-center justify-between gap-3">
+            <label class="text-xs font-bold text-slate-600 dark:text-slate-300">Logo câu chuyện</label>
+            <span id="listening-story-logo-preview" class="listening-accent flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl text-xl text-white"><i class="fa-solid fa-book-open"></i></span>
+          </div>
+          <div class="flex flex-wrap gap-2" aria-label="Chọn logo có sẵn">
+            <button type="button" data-story-logo="📖" onclick="selectListeningStoryLogo('📖')" class="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xl hover:border-theme-main dark:border-slate-600" aria-label="Logo sách">📖</button>
+            <button type="button" data-story-logo="🌊" onclick="selectListeningStoryLogo('🌊')" class="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xl hover:border-theme-main dark:border-slate-600" aria-label="Logo sóng biển">🌊</button>
+            <button type="button" data-story-logo="🌱" onclick="selectListeningStoryLogo('🌱')" class="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xl hover:border-theme-main dark:border-slate-600" aria-label="Logo cây non">🌱</button>
+            <button type="button" data-story-logo="🌙" onclick="selectListeningStoryLogo('🌙')" class="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xl hover:border-theme-main dark:border-slate-600" aria-label="Logo mặt trăng">🌙</button>
+            <button type="button" data-story-logo="🧭" onclick="selectListeningStoryLogo('🧭')" class="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xl hover:border-theme-main dark:border-slate-600" aria-label="Logo la bàn">🧭</button>
+            <button type="button" data-story-logo="🏙️" onclick="selectListeningStoryLogo('🏙️')" class="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xl hover:border-theme-main dark:border-slate-600" aria-label="Logo thành phố">🏙️</button>
+            <button type="button" data-story-logo="🐾" onclick="selectListeningStoryLogo('🐾')" class="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xl hover:border-theme-main dark:border-slate-600" aria-label="Logo dấu chân">🐾</button>
+          </div>
+          <label for="listening-story-logo-file" class="mt-3 block text-xs font-semibold text-slate-500 dark:text-slate-400">Hoặc tải logo riêng (PNG, JPG, WEBP, tối đa 256 KB)</label>
+          <input type="file" id="listening-story-logo-file" accept="image/png,image/jpeg,image/webp" onchange="handleListeningStoryLogoFile(event)" class="mt-1 block w-full text-xs text-slate-600 file:mr-2 file:rounded-lg file:border-0 file:bg-theme-subtle file:px-3 file:py-2 file:font-bold file:text-theme-main dark:text-slate-300">
+        </div>
+        <button type="submit" class="listening-accent w-full rounded-xl px-3 py-3 text-sm font-bold text-white shadow-md transition">
+          <i class="fa-solid fa-plus mr-1"></i>Thêm vào thư viện
+        </button>
+      </form>
+      <div class="my-5 flex items-center gap-3 text-xs font-bold uppercase tracking-wider text-slate-400">
+        <span class="h-px flex-1 bg-slate-200 dark:bg-slate-700"></span>Hoặc thêm từ file<span class="h-px flex-1 bg-slate-200 dark:bg-slate-700"></span>
+      </div>
+      <label for="listening-story-file" class="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">File câu chuyện (.txt hoặc .json)</label>
+      <input type="file" id="listening-story-file" accept=".txt,.json,text/plain,application/json" onchange="handleListeningStoryFile(event)" class="block w-full text-xs text-slate-600 file:mr-2 file:rounded-lg file:border-0 file:bg-theme-subtle file:px-3 file:py-2 file:font-bold file:text-theme-main dark:text-slate-300">
+      <p class="mt-2 text-[11px] leading-4 text-slate-500 dark:text-slate-400">TXT dùng toàn bộ nội dung làm truyện. JSON hỗ trợ một truyện hoặc danh sách truyện với các trường <code class="font-mono">title</code>, <code class="font-mono">text</code> và <code class="font-mono">level</code> tùy chọn.</p>
+      <div class="mt-4 flex flex-wrap gap-2">
+        <button type="button" onclick="downloadListeningStoryTemplate('json')" class="rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700">
+          <i class="fa-solid fa-download mr-1"></i>Tải mẫu JSON
+        </button>
+        <button type="button" onclick="downloadListeningStoryTemplate('txt')" class="rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700">
+          <i class="fa-solid fa-download mr-1"></i>Tải mẫu TXT
+        </button>
+      </div>
+    </div>
+  </div>

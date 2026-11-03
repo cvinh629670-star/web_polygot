@@ -1,0 +1,170 @@
+  <section id="view-production" class="tab-view hidden space-y-5">
+    <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
+      <div class="listening-ocean-panel border-b border-slate-200 p-6 dark:border-slate-700 sm:p-8">
+        <div class="relative flex flex-wrap items-start justify-between gap-4">
+          <div class="max-w-3xl">
+            <div class="mb-2 inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-xs font-bold text-theme-main dark:bg-slate-900/50">
+              <i class="fa-solid fa-comments"></i> Active Production
+            </div>
+            <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white sm:text-3xl">Luyện giao tiếp trong tình huống thực tế</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-700 dark:text-slate-200">Luyện giao tiếp qua hội thoại phân nhánh và nhiệm vụ viết. Phản hồi, gợi ý và đánh giá chạy trực tiếp trên thiết bị bằng luật có sẵn, không cần AI hay kết nối API.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid gap-5 p-4 sm:p-6 lg:grid-cols-[minmax(260px,0.85fr)_minmax(0,1.5fr)]">
+        <aside class="space-y-4">
+          <div class="grid grid-cols-2 gap-3">
+            <label class="text-xs font-bold text-slate-500 dark:text-slate-400">Trình độ
+              <select id="production-level" onchange="renderProductionScenarios()" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
+                <option value="all">Tất cả</option><option>A1</option><option>A2</option><option>B1</option><option>B2</option><option>C1</option><option>C2</option>
+              </select>
+            </label>
+            <label class="text-xs font-bold text-slate-500 dark:text-slate-400">Độ khó
+              <select id="production-difficulty" onchange="renderProductionScenarios()" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
+                <option value="easy">Dễ</option><option value="normal" selected>Bình thường</option><option value="challenging">Thử thách</option>
+              </select>
+            </label>
+          </div>
+          <select id="production-category" onchange="renderProductionScenarios()" class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
+            <option value="all">Tất cả danh mục</option>
+            <option>Đời sống hằng ngày</option><option>Du lịch</option><option>Giao tiếp xã hội</option><option>Học tập</option><option>Công việc</option><option>Giải quyết vấn đề</option>
+          </select>
+          <button type="button" onclick="openCustomProductionScenarioModal()" class="listening-accent w-full rounded-xl px-3.5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:shadow-md" aria-haspopup="dialog" aria-controls="production-custom-scenario-modal">
+            <i class="fa-solid fa-plus mr-2"></i>Tạo tình huống riêng
+          </button>
+          <input id="production-search" oninput="renderProductionScenarios()" type="search" placeholder="Tìm tình huống..." class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm outline-none focus-ring-theme dark:border-slate-600 dark:bg-slate-900">
+          <div id="production-scenario-list" class="max-h-[28rem] space-y-2 overflow-y-auto pr-1"></div>
+          <div id="production-progress-summary" class="space-y-2"></div>
+          <div id="production-history" class="space-y-2"></div>
+        </aside>
+
+        <div class="min-w-0 space-y-4">
+          <button type="button" id="production-resume-btn" onclick="openProductionSession()" class="hidden listening-accent rounded-xl px-4 py-2.5 text-sm font-bold text-white shadow-sm"><i class="fa-solid fa-comments mr-2"></i>Tiếp tục buổi luyện</button>
+          <div id="production-scenario-detail" class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900/50">
+            <div class="flex min-h-32 items-center justify-center text-center text-sm text-slate-400">Chọn một tình huống để xem mục tiêu và bắt đầu luyện.</div>
+          </div>
+          <div id="production-report" class="hidden"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="production-session-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-950/55 p-3 backdrop-blur-sm sm:p-6" role="dialog" aria-modal="true" aria-labelledby="production-session-title" onclick="if(event.target===this) closeProductionSession()">
+    <div id="production-session" class="production-session-gradient hidden max-h-[92dvh] w-full max-w-4xl overflow-y-auto rounded-3xl border border-white/60 shadow-2xl dark:border-white/10">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/40 bg-white/45 p-3 backdrop-blur-md dark:border-white/10 dark:bg-slate-950/30">
+        <div><p id="production-session-title" class="text-sm font-bold text-slate-900 dark:text-white"></p><p id="production-progress" class="text-xs text-slate-600 dark:text-slate-300"></p></div>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="closeProductionSession()" class="rounded-lg border border-slate-300/70 bg-white/60 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-white dark:border-slate-600 dark:bg-slate-800/70 dark:text-slate-200 dark:hover:bg-slate-700"><i class="fa-solid fa-down-left-and-up-right-to-center mr-1"></i>Thu nhỏ</button>
+          <button type="button" id="production-end-btn" onclick="finishProductionSession()" class="rounded-lg border border-rose-200 bg-white/70 px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 dark:border-rose-900 dark:bg-slate-900/60 dark:hover:bg-rose-950/30"><i class="fa-solid fa-flag-checkered mr-1"></i>Kết thúc & nhận báo cáo</button>
+        </div>
+      </div>
+      <div class="border-b border-white/30 bg-white/25 px-4 py-3 dark:border-white/10 dark:bg-slate-950/15">
+        <p id="production-stage-title" class="text-[10px] font-extrabold uppercase tracking-wide text-theme-main"></p>
+        <p id="production-stage-prompt-label" class="mt-2 text-[10px] font-extrabold uppercase tracking-wide text-slate-500 dark:text-slate-400"></p>
+        <p id="production-stage-task" class="mt-1 rounded-xl border border-theme-main/20 bg-white/70 px-3 py-2.5 text-sm font-semibold leading-6 text-slate-800 dark:bg-slate-900/50 dark:text-slate-100"></p>
+      </div>
+      <div id="production-transcript" class="h-[min(38vh,22rem)] min-h-36 space-y-3 overflow-y-auto bg-white/20 p-4 backdrop-blur-sm dark:bg-slate-950/20" aria-live="polite"></div>
+      <div id="production-hints" class="hidden border-t border-white/40 bg-white/45 p-3 backdrop-blur-md dark:border-white/10 dark:bg-slate-950/30"></div>
+      <div id="production-stage-feedback" class="hidden border-t border-white/40 bg-white/45 p-3 backdrop-blur-md dark:border-white/10 dark:bg-slate-950/30"></div>
+      <form onsubmit="sendProductionMessage(event)" class="border-t border-white/40 bg-white/55 p-3 backdrop-blur-md dark:border-white/10 dark:bg-slate-950/35">
+        <div class="flex items-end gap-2">
+          <textarea id="production-message" rows="2" maxlength="1200" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();this.form.requestSubmit()}" placeholder="Dựa vào gợi ý tiếng Việt phía trên, hãy tự viết bằng ngôn ngữ đang học..." class="min-h-12 flex-1 resize-y rounded-xl border border-slate-300 bg-white/85 px-3 py-2.5 text-sm outline-none focus-ring-theme dark:border-slate-600 dark:bg-slate-900/85" required></textarea>
+          <button type="button" id="production-handwriting-btn" onclick="openProductionHandwriting()" class="hidden rounded-xl border border-theme-main/30 bg-white/80 px-3 py-3 font-bold text-theme-main hover:bg-white dark:bg-slate-800/80 dark:hover:bg-slate-700" aria-label="Mở bảng viết tay" title="Mở bảng viết tay"><i class="fa-solid fa-pen-nib"></i></button>
+          <button type="submit" id="production-send-btn" class="listening-accent rounded-xl px-4 py-3 font-bold text-white"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+        <div class="mt-2 flex flex-wrap items-center justify-between gap-2">
+          <div class="flex gap-2">
+            <button type="button" onclick="requestProductionHint('vocabulary')" class="text-xs font-semibold text-theme-main hover:underline">Gợi ý từ vựng</button>
+            <button type="button" onclick="requestProductionHint('structure')" class="text-xs font-semibold text-theme-main hover:underline">Gợi ý cấu trúc</button>
+            <button type="button" onclick="showProductionSampleAnswers()" class="text-xs font-semibold text-theme-main hover:underline">Đối chiếu mẫu</button>
+          </div>
+          <span id="production-voice-status" class="text-[11px] text-slate-500 dark:text-slate-400"></span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="production-custom-scenario-modal" class="fixed inset-0 z-[110] hidden items-center justify-center bg-slate-950/55 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="production-custom-scenario-title" onclick="if(event.target===this) closeCustomProductionScenarioModal()">
+    <div class="max-h-[92dvh] w-full max-w-xl overflow-y-auto rounded-3xl border border-white/60 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-800">
+      <div class="flex items-start justify-between gap-4 border-b border-slate-200 bg-theme-subtle p-5 dark:border-slate-700">
+        <div>
+          <p class="text-[10px] font-extrabold uppercase tracking-wider text-theme-main">Phòng luyện chủ động</p>
+          <h2 id="production-custom-scenario-title" class="mt-1 text-xl font-extrabold text-slate-900 dark:text-white">Tạo tình huống riêng</h2>
+          <p id="production-custom-scenario-language" class="mt-1 text-xs text-slate-600 dark:text-slate-300"></p>
+        </div>
+        <button type="button" onclick="closeCustomProductionScenarioModal()" class="rounded-lg p-2 text-slate-500 hover:bg-white/70 hover:text-slate-800 dark:text-slate-300 dark:hover:bg-slate-700" aria-label="Đóng">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <form id="production-custom-form" onsubmit="handleAddCustomProductionScenario(event)" class="space-y-3 p-5">
+        <div class="rounded-xl border border-theme-main/20 bg-theme-subtle/40 p-3">
+          <p class="text-xs font-extrabold text-slate-700 dark:text-slate-200">Tạo từ file mẫu JSON</p>
+          <p class="mt-1 text-[11px] leading-5 text-slate-500 dark:text-slate-400">Tải mẫu, điền tình huống rồi nhập file để tự động điền biểu mẫu. Kiểm tra lại nội dung trước khi lưu.</p>
+          <details class="mt-2 text-[10px] text-slate-500 dark:text-slate-400">
+            <summary class="cursor-pointer font-bold">Định dạng file</summary>
+            <p class="mt-1 leading-5">File JSON là một đối tượng gồm <code>title</code>, <code>category</code>, <code>level</code>, <code>context</code>, <code>objective</code>, <code>tasks</code> và <code>promptsVi</code>. Các trường <code>npcPrompts</code>, <code>keywords</code>, <code>alternatives</code>, <code>grammarCues</code> và <code>sampleAnswers</code> là tùy chọn, mỗi phần tử tương ứng một bước. Từ khóa và cụm từ trong mỗi bước có thể là mảng hoặc chuỗi ngăn cách bằng dấu phẩy.</p>
+          </details>
+          <div class="mt-2 flex flex-wrap gap-2">
+            <button type="button" onclick="downloadCustomProductionTemplate()" class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"><i class="fa-solid fa-download mr-1"></i>Tải file mẫu .json</button>
+            <button type="button" onclick="document.getElementById('production-custom-file').click()" class="rounded-lg bg-theme px-3 py-2 text-xs font-bold text-white"><i class="fa-solid fa-file-import mr-1"></i>Thêm từ file .json</button>
+            <input id="production-custom-file" type="file" accept=".json,application/json" class="hidden" onchange="handleCustomProductionFile(event)">
+          </div>
+        </div>
+        <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Tên tình huống
+          <input id="production-custom-title" required maxlength="100" placeholder="Ví dụ: Đổi sản phẩm bị lỗi" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal text-slate-800 outline-none focus-ring-theme dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100">
+        </label>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Danh mục
+            <select id="production-custom-category" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal text-slate-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100">
+              <option>Đời sống hằng ngày</option><option>Du lịch</option><option>Giao tiếp xã hội</option><option>Học tập</option><option>Công việc</option><option>Giải quyết vấn đề</option>
+            </select>
+          </label>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Trình độ
+            <select id="production-custom-level" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal text-slate-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100">
+              <option>A1</option><option>A2</option><option selected>B1</option><option>B2</option><option>C1</option><option>C2</option>
+            </select>
+          </label>
+        </div>
+        <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Bối cảnh và mục tiêu giao tiếp
+          <textarea id="production-custom-context" required maxlength="1500" rows="4" placeholder="Mô tả tình huống, vấn đề cần giải quyết và điều bạn muốn đạt được..." class="mt-1 w-full resize-y rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal leading-6 text-slate-800 outline-none focus-ring-theme dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"></textarea>
+        </label>
+        <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Mục tiêu chính
+          <input id="production-custom-objective" required maxlength="240" placeholder="Ví dụ: Đổi được sản phẩm hoặc thống nhất hoàn tiền." class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal text-slate-800 outline-none focus-ring-theme dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100">
+        </label>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Vai của bạn
+            <input id="production-custom-user-role" maxlength="80" placeholder="Khách hàng" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal text-slate-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100">
+          </label>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Vai nhân vật đối thoại
+            <input id="production-custom-npc-role" maxlength="80" placeholder="Nhân viên cửa hàng" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal text-slate-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100">
+          </label>
+        </div>
+        <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Mục tiêu hội thoại <span class="font-normal text-slate-400">(mỗi dòng là một bước)</span>
+          <textarea id="production-custom-tasks" required maxlength="700" rows="3" placeholder="Gọi món chính&#10;Hỏi về thành phần món ăn&#10;Gọi đồ uống và xác nhận hóa đơn" class="mt-1 w-full resize-y rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal leading-6 text-slate-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"></textarea>
+        </label>
+        <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Gợi ý câu trả lời bằng tiếng Việt <span class="font-normal text-slate-400">(mỗi dòng tương ứng một bước; người học cần diễn đạt ý này bằng ngôn ngữ đang học)</span>
+          <textarea id="production-custom-prompts-vi" required maxlength="1000" rows="3" placeholder="Xin chào, cho tôi gọi một phần hamburger được không?&#10;Món này có đậu phộng không? Tôi bị dị ứng với đậu phộng.&#10;Cho tôi một ly nước lọc, cảm ơn." class="mt-1 w-full resize-y rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal leading-6 text-slate-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"></textarea>
+        </label>
+        <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Lời mở đầu cho từng bước <span class="font-normal text-slate-400">(mỗi dòng ứng với mục tiêu; ngôn ngữ đang học)</span>
+          <textarea id="production-custom-npc-prompts" maxlength="700" rows="3" placeholder="Hello, how can I help you today?&#10;Could you show me the receipt?&#10;Would you prefer a replacement or a refund?" class="mt-1 w-full resize-y rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal leading-6 text-slate-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"></textarea>
+        </label>
+        <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Từ khóa/mẫu được chấp nhận <span class="font-normal text-slate-400">(mỗi dòng ứng với mục tiêu theo thứ tự; từ đồng nghĩa ngăn bằng dấu phẩy)</span>
+          <textarea id="production-custom-keywords" maxlength="700" rows="3" placeholder="bị lỗi, không hoạt động&#10;hóa đơn, bảo hành, ngày mua&#10;đổi, thay thế, hoàn tiền, giải pháp" class="mt-1 w-full resize-y rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal leading-6 text-slate-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"></textarea>
+        </label>
+        <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Cụm từ thay thế được chấp nhận <span class="font-normal text-slate-400">(tùy chọn; mỗi dòng ứng với mục tiêu)</span>
+          <textarea id="production-custom-alternatives" maxlength="1000" rows="3" placeholder="please, could you help&#10;I bought it, I have my receipt&#10;replacement, could I get my money back" class="mt-1 w-full resize-y rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal leading-6 text-slate-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"></textarea>
+        </label>
+        <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Cấu trúc cần luyện <span class="font-normal text-slate-400">(tùy chọn; cụm từ cần nhận diện theo từng mục tiêu)</span>
+          <textarea id="production-custom-grammar-cues" maxlength="700" rows="3" placeholder="could you, would you&#10;because, so&#10;I agree, please confirm" class="mt-1 w-full resize-y rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal leading-6 text-slate-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"></textarea>
+        </label>
+        <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Câu trả lời mẫu <span class="font-normal text-slate-400">(mỗi dòng ứng với mục tiêu; chỉ hiện sau lần thử đầu tiên)</span>
+          <textarea id="production-custom-samples" maxlength="1000" rows="3" placeholder="Hello, this item stopped working yesterday.&#10;I have the receipt and it is still under warranty.&#10;Could you replace it or issue a refund?" class="mt-1 w-full resize-y rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal leading-6 text-slate-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"></textarea>
+        </label>
+        <div class="flex justify-end gap-2 pt-1">
+          <button type="button" onclick="closeCustomProductionScenarioModal()" class="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700">Hủy</button>
+          <button id="production-custom-submit" class="listening-accent rounded-xl px-4 py-2.5 text-sm font-bold text-white" type="submit"><i class="fa-solid fa-floppy-disk mr-2"></i>Lưu tình huống</button>
+        </div>
+      </form>
+    </div>
+  </div>
