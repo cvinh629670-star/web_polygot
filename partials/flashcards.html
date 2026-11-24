@@ -15,11 +15,15 @@
         <label for="flashcard-mode-select" class="studio-room-panel studio-review-mode">
           <span>Chế độ ôn tập</span>
           <select id="flashcard-mode-select" onchange="changeFlashcardMode()" class="w-full min-w-0 px-3 py-2 rounded-xl border text-xs font-bold focus-ring-theme">
-            <option value="due">⚡ Ôn Chuẩn SRS (Tăng +1 Cấp SRS)</option>
-            <option value="reverse">🔄 Ôn Đảo Ngược (Nghĩa ➔ Từ) (Có SRS)</option>
-            <option value="all">📚 Tất cả từ vựng (Chế độ Ôn Luyện - Không đổi SRS)</option>
-            <option value="unlearned">🌫️ Chỉ từ chưa học (Chế độ Ôn Luyện - Không đổi SRS)</option>
-            <option value="nemesis">💀 Chỉ Kẻ Thù Ác (Chế độ Ôn Luyện - Không đổi SRS)</option>
+            <optgroup label="Có tính điểm SRS">
+              <option value="due">Ôn chuẩn SRS</option>
+              <option value="reverse">Ôn đảo ngược · Nghĩa → Từ</option>
+            </optgroup>
+            <optgroup label="Ôn luyện · Giữ nguyên điểm SRS">
+              <option value="all">Tất cả từ vựng</option>
+              <option value="unlearned">Chỉ từ chưa học</option>
+              <option value="nemesis">Chỉ Kẻ Thù Ác</option>
+            </optgroup>
           </select>
         </label>
 

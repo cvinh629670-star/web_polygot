@@ -1,19 +1,15 @@
 /* Các phòng học dùng chung màu nền và đường viền với trang tổng quan. */
 :root {
   --room-shadow: 0 14px 38px -30px rgba(42, 35, 92, .45);
-  --room-inset: #f4f2fb;
-  --room-field: #fbfaff;
 }
 
 .dark {
   --room-shadow: 0 14px 28px -23px rgba(0, 0, 0, .78);
-  --room-inset: #17152a;
-  --room-field: #211e37;
 }
 
 .studio-room-hero {
-  --room-color: #c6bcff;
-  --room-glow: #564fc3;
+  --room-color: var(--theme-on-dark);
+  --room-glow: var(--theme-color);
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -23,13 +19,13 @@
   justify-content: space-between;
   gap: 1.25rem 2rem;
   padding: clamp(1.15rem, 3.5vw, 2.5rem);
-  border: 1px solid rgba(205, 200, 255, .18);
+  border: 1px solid color-mix(in srgb, var(--theme-on-dark) 22%, transparent);
   border-radius: 1.55rem;
   background:
     radial-gradient(ellipse at 91% 0%, color-mix(in srgb, var(--room-glow) 54%, transparent), transparent 62%),
-    linear-gradient(118deg, #201945 0%, #2d245a 56%, #342a66 100%);
+    linear-gradient(118deg, #171a2a, color-mix(in srgb, var(--theme-color) 44%, #171a2a));
   color: #fbfaff;
-  box-shadow: 0 20px 35px -28px #281b65;
+  box-shadow: 0 20px 35px -28px var(--theme-shade);
 }
 
 .studio-room-hero::before,
@@ -263,7 +259,7 @@
   border: 1px solid var(--vocab-line);
   font-size: .98rem;
 }
-#add-word-panel .studio-collection-icon { background: #5943ba; color: #fff; border-color: transparent; }
+#add-word-panel .studio-collection-icon { background: var(--theme-color); color: #fff; border-color: transparent; }
 #form-lang-tag, .vocab-results-count {
   flex: none;
   border: 1px solid var(--vocab-line);
@@ -345,13 +341,13 @@
   width: 100%;
   min-height: 2.8rem;
   margin-top: .12rem;
-  border-color: #7a65d8;
-  background: linear-gradient(115deg, #614aca, #4c359f);
+  border-color: color-mix(in srgb, var(--theme-color) 62%, var(--studio-surface));
+  background: linear-gradient(115deg, var(--theme-color), var(--theme-shade));
   color: #fff;
-  box-shadow: 0 7px 16px -10px #4c359f;
+  box-shadow: 0 7px 16px -10px var(--theme-shade);
   font-size: .83rem;
 }
-.vocab-primary.vocab-control:hover { background: #5139b2; }
+.vocab-primary.vocab-control:hover { background: var(--theme-shade); }
 .vocab-primary i { color: inherit; }
 
 .vocab-toolbar { position: relative; display: flex; align-items: center; flex-wrap: wrap; gap: .55rem; margin-bottom: .85rem; }
@@ -483,11 +479,11 @@
   place-items: center;
   width: 3.45rem;
   height: 2.7rem;
-  border: 1px solid #9985ed;
+  border: 1px solid color-mix(in srgb, var(--theme-color) 64%, white);
   border-radius: .55rem;
-  background: linear-gradient(140deg, #7964d6, #4f36a7);
+  background: linear-gradient(140deg, var(--theme-color), var(--theme-shade));
   color: #fff;
-  box-shadow: 0 9px 15px -8px #281b65;
+  box-shadow: 0 9px 15px -8px var(--theme-shade);
   transform: rotate(-8deg);
   font-size: 1.12rem;
 }
@@ -577,7 +573,68 @@
   font-size: .85rem;
   font-weight: 750;
 }
-#flashcard-mode-select { min-width: 0; }
+#flashcard-mode-select { min-width: 0; min-height: 2.65rem; }
+@supports (appearance: base-select) and selector(::picker(select)) {
+  #flashcard-mode-select,
+  #flashcard-mode-select::picker(select) { appearance: base-select; }
+  #flashcard-mode-select { align-items: center; }
+  #flashcard-mode-select::picker-icon { color: var(--studio-accent); }
+  #flashcard-mode-select:open::picker-icon { transform: rotate(180deg); }
+  #flashcard-mode-select::picker(select) {
+    box-sizing: border-box;
+    min-inline-size: anchor-size(width);
+    margin-block: .35rem;
+    padding: .35rem;
+    border: 1px solid var(--studio-line);
+    border-radius: .9rem;
+    background: var(--studio-surface);
+    color: var(--studio-ink);
+    box-shadow: 0 12px 30px color-mix(in srgb, var(--theme-shade) 25%, transparent);
+  }
+  #flashcard-mode-select optgroup::before {
+    display: block;
+    padding: .55rem .65rem .3rem;
+    color: var(--studio-muted);
+    font-size: .69rem;
+    font-weight: 750;
+  }
+  #flashcard-mode-select option {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+    min-height: 2.45rem;
+    padding: .35rem .6rem;
+    border: 1px solid transparent;
+    border-radius: .6rem;
+    font-size: .8rem;
+    font-weight: 650;
+  }
+  #flashcard-mode-select option:hover,
+  #flashcard-mode-select option:focus-visible { background: var(--room-inset); }
+  #flashcard-mode-select option:checked {
+    border-color: var(--studio-line);
+    background: var(--studio-soft);
+    color: var(--studio-accent);
+  }
+  #flashcard-mode-select option::before {
+    content: var(--review-mode-icon) / "";
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: .42rem;
+    background: var(--studio-soft);
+    color: var(--studio-accent);
+    font-size: .88rem;
+  }
+  #flashcard-mode-select option::checkmark { order: 1; margin-inline-start: auto; }
+  #flashcard-mode-select option[value="due"] { --review-mode-icon: "\26a1\fe0e"; }
+  #flashcard-mode-select option[value="reverse"] { --review-mode-icon: "\21c4"; }
+  #flashcard-mode-select option[value="all"] { --review-mode-icon: "\25a4"; }
+  #flashcard-mode-select option[value="unlearned"] { --review-mode-icon: "+"; }
+  #flashcard-mode-select option[value="nemesis"] { --review-mode-icon: "!"; }
+}
 #flashcard-container { min-height: clamp(18rem, 40vw, 23rem); }
 #flashcard-inner {
   height: clamp(18rem, 40vw, 23rem);
@@ -653,7 +710,7 @@
 #card-back-phonetic-sub { color: var(--studio-muted, #615c78); }
 
 #flashcard-progress-bar {
-  background: linear-gradient(90deg, var(--studio-accent, #5140ba), #8473ec);
+  background: linear-gradient(90deg, var(--theme-shade), var(--studio-accent));
 }
 #flashcard-controls > button {
   border: 1px solid transparent;

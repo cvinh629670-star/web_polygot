@@ -33,26 +33,32 @@
 
 /* Bảng màu dùng chung cho trang tổng quan, các phòng học và hộp thoại. */
 :root {
-  --studio-page: #f7f6fb;
-  --studio-surface: #fff;
-  --studio-ink: #201d38;
-  --studio-muted: #615c78;
-  --studio-line: #e8e4f0;
-  --studio-accent: #5140ba;
-  --studio-soft: #eeebfa;
-  --studio-shadow: 0 12px 28px -22px rgb(42 28 86 / .32);
   --studio-gutter: clamp(.875rem, 3.1vw, 2.5rem);
 }
-.dark {
-  color-scheme: dark;
-  --studio-page: #111020;
-  --studio-surface: #1b192f;
-  --studio-ink: #f4effe;
-  --studio-muted: #b6afcb;
-  --studio-line: #302c48;
-  --studio-accent: #bfafff;
-  --studio-soft: #2a2444;
+body {
+  --studio-page: color-mix(in srgb, var(--theme-color) 8%, #fafbff);
+  --studio-surface: color-mix(in srgb, var(--theme-color) 2%, white);
+  --studio-ink: #1b2031;
+  --studio-muted: #535d71;
+  --studio-line: color-mix(in srgb, var(--theme-color) 17%, white);
+  --studio-accent: var(--theme-color);
+  --studio-soft: color-mix(in srgb, var(--theme-color) 13%, white);
+  --studio-shadow: 0 12px 28px -22px color-mix(in srgb, var(--theme-shade) 40%, transparent);
+  --room-inset: color-mix(in srgb, var(--theme-color) 7%, white);
+  --room-field: color-mix(in srgb, var(--theme-color) 4%, white);
+}
+.dark { color-scheme: dark; }
+.dark body {
+  --studio-page: color-mix(in srgb, var(--theme-color) 14%, #0d1019);
+  --studio-surface: color-mix(in srgb, var(--theme-color) 13%, #1a1d29);
+  --studio-ink: #f5f4fa;
+  --studio-muted: #bdbecc;
+  --studio-line: color-mix(in srgb, var(--theme-on-dark) 19%, #202332);
+  --studio-accent: var(--theme-on-dark);
+  --studio-soft: color-mix(in srgb, var(--theme-color) 36%, #222638);
   --studio-shadow: 0 12px 28px -22px rgb(0 0 0 / .6);
+  --room-inset: color-mix(in srgb, var(--theme-color) 18%, #121522);
+  --room-field: color-mix(in srgb, var(--theme-color) 19%, #1d202f);
 }
 .pg-ui {
   --ui-background: var(--studio-surface);
@@ -70,10 +76,15 @@
 .shadow-inner { box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / .05); }
 
 html { scroll-padding-top: 9rem; }
-body.theme-en, body.theme-ko, body.theme-zh, body.theme-ja {
+body:is(.theme-en, .theme-ko, .theme-zh, .theme-ja) {
   color: var(--studio-ink);
-  background: var(--studio-page);
-  animation: none;
+  background: radial-gradient(ellipse 85% 29rem at 18% 0%, var(--studio-soft), transparent), var(--studio-page);
+  transition: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  body.pg-ui-ready:is(.theme-en, .theme-ko, .theme-zh, .theme-ja) {
+    transition: --theme-color .46s cubic-bezier(.25, .7, .3, 1);
+  }
 }
 .studio-shell {
   width: 100%;
@@ -85,20 +96,17 @@ body.theme-en, body.theme-ko, body.theme-zh, body.theme-ja {
 
 /* Thanh thương hiệu, đổi ngôn ngữ và điều hướng phòng học. */
 .studio-header {
-  --header-edge: #e4dff0;
-  --header-inset: #f3f0f9;
-  --header-glow: #f2ecff;
-  --header-selected: #ede7fb;
+  --header-edge: var(--studio-line);
+  --header-inset: var(--room-inset);
+  --header-glow: color-mix(in srgb, var(--theme-color) 19%, var(--studio-surface));
+  --header-selected: var(--studio-soft);
   --header-shadow: rgb(45 33 83 / .12);
   border-bottom: 1px solid var(--header-edge);
   background: radial-gradient(ellipse at 13% 0%, var(--header-glow), transparent 51%), var(--studio-surface);
   box-shadow: 0 12px 30px -24px var(--header-shadow);
 }
 .dark .studio-header {
-  --header-edge: #37304e;
-  --header-inset: #171427;
-  --header-glow: #302347;
-  --header-selected: #382c57;
+  --header-glow: color-mix(in srgb, var(--theme-color) 34%, var(--studio-surface));
   --header-shadow: rgb(0 0 0 / .7);
 }
 .studio-header-inner {
@@ -133,12 +141,13 @@ body.theme-en, body.theme-ko, body.theme-zh, body.theme-ja {
   align-items: center;
   justify-content: center;
   gap: .22rem;
-  background: radial-gradient(circle at 23% 0%, #a991f8, transparent 70%), linear-gradient(145deg, #7252d9, #432d9d);
+  background: radial-gradient(circle at 23% 0%, color-mix(in srgb, var(--theme-color) 68%, white), transparent 70%),
+    linear-gradient(145deg, var(--theme-color), var(--theme-shade));
   color: #fff;
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / .23), 0 5px 14px rgb(86 57 182 / .3);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / .23), 0 5px 14px color-mix(in srgb, var(--theme-color) 32%, transparent);
 }
 .studio-brand-mark span { width: .23rem; height: 1rem; border-radius: 1rem; background: currentColor; transform: rotate(-19deg); }
-.studio-brand-mark span:nth-child(2) { color: #d7ccff; height: 1.2rem; }
+.studio-brand-mark span:nth-child(2) { color: var(--theme-on-dark); height: 1.2rem; }
 .studio-brand-mark span:nth-child(3) { color: #c5f3df; height: .84rem; }
 
 #language-tabs {
@@ -165,14 +174,10 @@ body.theme-en, body.theme-ko, body.theme-zh, body.theme-ja {
   font-weight: 700;
   white-space: nowrap;
 }
-#lang-btn-en { --lang-color: #275ad1; --lang-shade: #2346aa; }
-#lang-btn-ko { --lang-color: #a72c77; --lang-shade: #84245f; }
-#lang-btn-zh { --lang-color: #b33345; --lang-shade: #8d293c; }
-#lang-btn-ja { --lang-color: #a74416; --lang-shade: #8c3516; }
 #language-tabs .lang-tab[aria-pressed="true"] {
   color: #fff;
-  background: linear-gradient(135deg, var(--lang-color), var(--lang-shade));
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / .24), 0 3px 7px color-mix(in srgb, var(--lang-shade) 23%, transparent);
+  background: linear-gradient(135deg, var(--theme-color), var(--theme-shade));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .24), 0 3px 7px color-mix(in srgb, var(--theme-shade) 23%, transparent);
 }
 #language-tabs .lang-tab[aria-pressed="false"]:hover { color: var(--studio-ink); background: var(--studio-soft); }
 .studio-lang-code {
@@ -329,13 +334,13 @@ body.theme-en, body.theme-ko, body.theme-zh, body.theme-ja {
 .pg-stat-value { font-size: clamp(1.45rem, 2.4vw, 2rem); line-height: 1.1; font-weight: 800; letter-spacing: -.05em; }
 .pg-stat-label { color: var(--studio-muted); font-size: .75rem; font-weight: 600; margin-top: .28rem; }
 .pg-stat-icon { background: var(--stat-bg); color: var(--stat-color); }
-.pg-stat-blue { --stat-color: #4f46ae; --stat-bg: #eeebfc; }
+.pg-stat-blue { --stat-color: var(--theme-color); --stat-bg: color-mix(in srgb, var(--theme-color) 12%, white); }
 .pg-stat-amber { --stat-color: #824719; --stat-bg: #f9ecd9; }
 .pg-stat-violet { --stat-color: #883d79; --stat-bg: #f8e9f6; }
 .pg-stat-emerald { --stat-color: #176957; --stat-bg: #e1f4ec; }
 .dark .pg-stat-icon { background: color-mix(in srgb, var(--stat-color) 35%, var(--studio-surface)); color: var(--stat-bg); }
 .pg-mastery-icon { background: var(--studio-soft); color: var(--studio-accent); }
-.pg-ui [data-slot="progress-indicator"] { background: linear-gradient(90deg, #7862dc, #a99be7); }
+.pg-ui [data-slot="progress-indicator"] { background: linear-gradient(90deg, var(--theme-shade), var(--studio-accent)); }
 .pg-command-dialog { box-shadow: 0 28px 80px rgb(17 13 36 / .26); }
 
 /* Hộp thoại quản lý dữ liệu dùng cùng nền và viền với các khu học. */

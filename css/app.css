@@ -1,104 +1,40 @@
-    /* Dynamic Theme CSS Variables */
-    body.theme-en {
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --primary-light: #eff6ff;
-      --primary-border: #bfdbfe;
-      --primary-text: #1e40af;
-      --ring: rgba(37, 99, 235, 0.3);
-      --gradient-start: #3b82f6;
-      --gradient-end: #1d4ed8;
-      --listening-wave-1: #dbeafe;
-      --listening-wave-2: #bfdbfe;
-      --listening-wave-3: #a5f3fc;
-      --listening-wave-4: #93c5fd;
-      --listening-accent: #2563eb;
-      --listening-accent-hover: #1d4ed8;
-      --page-gradient-a: #dbeafe;
-      --page-gradient-b: #ecfccb;
-      --page-gradient-c: #a5f3fc;
-    }
-    body.theme-ko {
-      --primary: #ec4899;
-      --primary-hover: #be185d;
-      --primary-light: #fdf2f8;
-      --primary-border: #fbcfe8;
-      --primary-text: #9d174d;
-      --ring: rgba(236, 72, 153, 0.3);
-      --gradient-start: #f472b6;
-      --gradient-end: #be185d;
-      --listening-wave-1: #fce7f3;
-      --listening-wave-2: #fbcfe8;
-      --listening-wave-3: #f5d0fe;
-      --listening-wave-4: #f9a8d4;
-      --listening-accent: #db2777;
-      --listening-accent-hover: #be185d;
-      --page-gradient-a: #fce7f3;
-      --page-gradient-b: #f3e8ff;
-      --page-gradient-c: #fbcfe8;
-    }
-    body.theme-zh {
-      --primary: #ef4444;
-      --primary-hover: #b91c1c;
-      --primary-light: #fef2f2;
-      --primary-border: #fca5a5;
-      --primary-text: #991b1b;
-      --ring: rgba(239, 68, 68, 0.3);
-      --gradient-start: #f87171;
-      --gradient-end: #b91c1c;
-      --listening-wave-1: #fee2e2;
-      --listening-wave-2: #fecaca;
-      --listening-wave-3: #ffe4e6;
-      --listening-wave-4: #fca5a5;
-      --listening-accent: #dc2626;
-      --listening-accent-hover: #b91c1c;
-      --page-gradient-a: #fee2e2;
-      --page-gradient-b: #fef3c7;
-      --page-gradient-c: #fecaca;
-    }
-    body.theme-ja {
-      --primary: #f97316;
-      --primary-hover: #c2410c;
-      --primary-light: #fff7ed;
-      --primary-border: #fed7aa;
-      --primary-text: #9a3412;
-      --ring: rgba(249, 115, 22, 0.3);
-      --gradient-start: #fb923c;
-      --gradient-end: #c2410c;
-      --listening-wave-1: #ffedd5;
-      --listening-wave-2: #fed7aa;
-      --listening-wave-3: #fef3c7;
-      --listening-wave-4: #fdba74;
-      --listening-accent: #ea580c;
-      --listening-accent-hover: #c2410c;
-      --page-gradient-a: #ffedd5;
-      --page-gradient-b: #fff7ed;
-      --page-gradient-c: #ffffff;
+    @property --theme-color {
+      syntax: "<color>";
+      inherits: true;
+      initial-value: #275ad1;
     }
 
-    /* Dark mode adjustments for subtle surfaces */
-    .dark body.theme-en { --primary-light: rgba(37, 99, 235, 0.15); --primary-border: #1e3a8a; --primary-text: #93c5fd; --page-gradient-a: #172554; --page-gradient-b: #365314; --page-gradient-c: #164e63; }
-    .dark body.theme-ko { --primary-light: rgba(236, 72, 153, 0.15); --primary-border: #831843; --primary-text: #fbcfe8; --page-gradient-a: #500724; --page-gradient-b: #3b0764; --page-gradient-c: #831843; }
-    .dark body.theme-zh { --primary-light: rgba(239, 68, 68, 0.15); --primary-border: #7f1d1d; --primary-text: #fca5a5; --page-gradient-a: #450a0a; --page-gradient-b: #713f12; --page-gradient-c: #7f1d1d; }
-    .dark body.theme-ja { --primary-light: rgba(249, 115, 22, 0.15); --primary-border: #7c2d12; --primary-text: #fdba74; --page-gradient-a: #431407; --page-gradient-b: #292524; --page-gradient-c: #7c2d12; }
+    body.theme-en { --theme-color: #275ad1; }
+    body.theme-ko { --theme-color: #a72c77; }
+    body.theme-zh { --theme-color: #b33345; }
+    body.theme-ja { --theme-color: #a74416; }
 
-    .dark body.theme-en { --listening-wave-1: #172554; --listening-wave-2: #1e3a8a; --listening-wave-3: #164e63; --listening-wave-4: #1d4ed8; }
-    .dark body.theme-ko { --listening-wave-1: #500724; --listening-wave-2: #831843; --listening-wave-3: #701a75; --listening-wave-4: #9d174d; }
-    .dark body.theme-zh { --listening-wave-1: #450a0a; --listening-wave-2: #7f1d1d; --listening-wave-3: #881337; --listening-wave-4: #b91c1c; }
-    .dark body.theme-ja { --listening-wave-1: #431407; --listening-wave-2: #7c2d12; --listening-wave-3: #713f12; --listening-wave-4: #c2410c; }
-
-    body.theme-en,
-    body.theme-ko,
-    body.theme-zh,
-    body.theme-ja {
-      background-color: var(--page-gradient-b);
-      background-image:
-        radial-gradient(ellipse at 12% 18%, color-mix(in srgb, var(--page-gradient-a) 78%, transparent), transparent 48%),
-        radial-gradient(ellipse at 88% 30%, color-mix(in srgb, var(--page-gradient-c) 72%, transparent), transparent 46%),
-        linear-gradient(125deg, var(--page-gradient-a), var(--page-gradient-b), var(--page-gradient-c), var(--page-gradient-a));
-      background-attachment: fixed;
-      background-size: 180% 180%;
-      animation: appBackgroundWaves 10s ease-in-out infinite;
+    body {
+      --theme-shade: color-mix(in srgb, var(--theme-color) 72%, #10172e);
+      --theme-on-dark: color-mix(in srgb, var(--theme-color) 34%, white);
+      --primary: var(--theme-color);
+      --primary-hover: var(--theme-shade);
+      --primary-light: color-mix(in srgb, var(--theme-color) 9%, white);
+      --primary-border: color-mix(in srgb, var(--theme-color) 26%, white);
+      --primary-text: var(--theme-shade);
+      --ring: color-mix(in srgb, var(--theme-color) 29%, transparent);
+      --gradient-start: var(--theme-color);
+      --gradient-end: var(--theme-shade);
+      --listening-wave-1: color-mix(in srgb, var(--theme-color) 8%, white);
+      --listening-wave-2: color-mix(in srgb, var(--theme-color) 19%, white);
+      --listening-wave-3: color-mix(in srgb, var(--theme-color) 14%, white);
+      --listening-wave-4: color-mix(in srgb, var(--theme-color) 27%, white);
+      --listening-accent: var(--theme-color);
+      --listening-accent-hover: var(--theme-shade);
+    }
+    .dark body {
+      --primary-light: color-mix(in srgb, var(--theme-on-dark) 12%, transparent);
+      --primary-border: color-mix(in srgb, var(--theme-on-dark) 30%, #161923);
+      --primary-text: var(--theme-on-dark);
+      --listening-wave-1: color-mix(in srgb, var(--theme-color) 19%, #131522);
+      --listening-wave-2: color-mix(in srgb, var(--theme-color) 36%, #131522);
+      --listening-wave-3: color-mix(in srgb, var(--theme-color) 27%, #131522);
+      --listening-wave-4: color-mix(in srgb, var(--theme-color) 47%, #131522);
     }
 
     /* Utility Helper Classes mapped to CSS variables */
@@ -107,7 +43,7 @@
     .bg-theme-subtle { background-color: var(--primary-light); }
     .border-theme { border-color: var(--primary-border); }
     .text-theme { color: var(--primary-text); }
-    .text-theme-main { color: var(--primary); }
+    .text-theme-main { color: var(--studio-accent, var(--primary)); }
     .focus-ring-theme:focus { box-shadow: 0 0 0 3px var(--ring); border-color: var(--primary); outline: none; }
     .theme-gradient-bg { background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); }
     .production-session-gradient {

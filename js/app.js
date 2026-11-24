@@ -3242,8 +3242,47 @@
       window.polyglotUI?.sync(stats);
     }
 
+    const SRS_OVERDUE_STEP = 24 * 60 * 60 * 1000;
+
+    function applyOverdueSRS(now = Date.now()) {
+      let changed = false;
+      for (const word of wordsState) {
+        const due = Number(word.nextReviewTime);
+        if (!(word.srsLevel > 0) || !Number.isFinite(due) || due <= 0) continue;
+
+        const anchor = Math.max(due, Number(word.srsDecayThrough) || 0);
+        const missedDays = Math.floor((now - anchor) / SRS_OVERDUE_STEP);
+        if (missedDays < 1) continue;
+
+        word.srsLevel = Math.max(0, word.srsLevel - missedDays);
+        word.consecutiveCorrect = 0;
+        if (word.srsLevel === 0) {
+          word.nextReviewTime = 0;
+          word.reps = 0;
+          word.interval = 0;
+          word.ef = 2.5;
+          delete word.srsDecayThrough;
+        } else {
+          word.srsDecayThrough = anchor + missedDays * SRS_OVERDUE_STEP;
+        }
+        changed = true;
+      }
+      if (changed) saveState();
+      return changed;
+    }
+
+    function refreshOverdueSRS() {
+      if (!applyOverdueSRS()) return;
+      renderVocabList();
+      updateStats();
+      if (currentTab === 'vip') renderVIPList();
+      if (currentTab === 'nemesis') renderNemesisList();
+      syncZombieGameData();
+    }
+
     // Cập nhật dữ liệu dùng chung và các danh sách theo phòng học.
     function renderAllViews() {
+      applyOverdueSRS();
       syncZombieGameData();
       renderVocabList();
       updateStats();
@@ -3726,6 +3765,7 @@
     // Cập nhật mức độ ghi nhớ, độ dễ và lịch ôn sau khi đánh giá thẻ.
     function recordSRSResult(wordObj, isCorrect) {
       if (!wordObj) return;
+      delete wordObj.srsDecayThrough;
 
       // SuperMemo-2 (SM-2) Initialization safeguard
       if (wordObj.ef === undefined) wordObj.ef = 2.5;
@@ -3982,7 +4022,7 @@
 
     document.addEventListener('keydown', (e) => {
       if (currentTab !== 'flashcards') return;
-      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+      if (e.target instanceof Element && e.target.closest('input, textarea, select, button')) return;
 
       if (e.code === 'Space') {
         e.preventDefault();
@@ -5253,6 +5293,11 @@ Return JSON: {"matchedIndex": number}`;
       initSpecialKeyboards();
       document.getElementById('streak-counter').innerText = learningStreak;
       switchNavTab('vocab');
+
+      setInterval(refreshOverdueSRS, 30000);
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) refreshOverdueSRS();
+      });
 
       setInterval(() => {
         if (currentTab === 'vocab') {

@@ -1,10 +1,6 @@
 /* Grammar Lab dùng chung token sáng/tối của trang, với màu nhận diện theo ngôn ngữ. */
 .lab-entry { display:flex; justify-content:flex-end; }
-#grammar-lab { --lab-hue:#3656a6; --lab-wash:#e8efff; min-width:0; }
-#grammar-lab[data-lang="ko"] { --lab-hue:#963a69; --lab-wash:#fce9f3; }
-#grammar-lab[data-lang="zh"] { --lab-hue:#a83c46; --lab-wash:#fce9e8; }
-#grammar-lab[data-lang="ja"] { --lab-hue:#98461d; --lab-wash:#fff0df; }
-.dark #grammar-lab { --lab-wash:color-mix(in srgb,var(--lab-hue),var(--studio-surface) 80%); }
+#grammar-lab { --lab-hue:var(--theme-color); --lab-wash:var(--studio-soft); min-width:0; }
 .lab-nav,.lab-card,.lab-metrics>div { border:1px solid var(--studio-line); background:var(--studio-surface); border-radius:1rem; }
 .lab-nav { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:.3rem; padding:.35rem; }
 .lab-nav button,.lab-button { min-height:44px; cursor:pointer; font-weight:700; transition:background .15s; }
@@ -33,7 +29,6 @@
 .lab-button:hover { background:var(--studio-soft); }
 .lab-button.lab-primary { background:var(--lab-hue,#5140ba); color:white; border-color:transparent; }
 .lab-button.lab-primary:hover { filter:brightness(1.12); }
-.lab-entry .lab-button { --studio-line:#41329c; }
 .lab-card :focus-visible,.lab-nav :focus-visible,.lab-entry :focus-visible { outline:2px solid var(--studio-accent); outline-offset:2px; }
 .lab-list { display:grid; gap:.55rem; }
 .lab-list li { display:flex; justify-content:space-between; align-items:center; gap:.5rem; padding:.5rem 0; border-bottom:1px solid var(--studio-line); }
