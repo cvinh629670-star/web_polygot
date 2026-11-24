@@ -1,26 +1,27 @@
     <!-- VIEW 2: FLASHCARD SRS REVIEW MODE -->
     <section id="view-flashcards" class="tab-view hidden space-y-6">
-      <div class="max-w-2xl mx-auto space-y-5">
-        
-        <!-- Flashcard Header & Mode Controls -->
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+      <div class="studio-room-hero studio-room-hero--flashcards">
+        <div class="studio-room-copy">
+          <span class="studio-room-icon" aria-hidden="true"><i class="fa-solid fa-layer-group"></i></span>
           <div>
-            <h2 class="text-lg font-bold flex items-center gap-2">
-              <i class="fa-solid fa-clone text-theme-main"></i> Ôn Tập Thẻ Flashcards
-            </h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Lật thẻ để kiểm tra từ vựng và tự đánh giá độ thuộc</p>
-          </div>
-
-          <div class="flex items-center gap-2 w-full sm:w-auto">
-            <select id="flashcard-mode-select" onchange="changeFlashcardMode()" class="w-full sm:w-auto px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-900 text-xs font-bold text-theme-main focus-ring-theme">
-              <option value="due">⚡ Ôn Chuẩn SRS (Tăng +1 Cấp SRS)</option>
-              <option value="reverse">🔄 Ôn Đảo Ngược (Nghĩa ➔ Từ) (Có SRS)</option>
-              <option value="all">📚 Tất cả từ vựng (Chế độ Ôn Luyện - Không đổi SRS)</option>
-              <option value="unlearned">🌫️ Chỉ từ chưa học (Chế độ Ôn Luyện - Không đổi SRS)</option>
-              <option value="nemesis">💀 Chỉ Kẻ Thù Ác (Chế độ Ôn Luyện - Không đổi SRS)</option>
-            </select>
+            <h2>Ôn tập Flashcards</h2>
+            <p>Lật thẻ để xem đáp án, sau đó đánh giá mức độ ghi nhớ.</p>
           </div>
         </div>
+      </div>
+      <div class="studio-flashcards mx-auto space-y-5">
+        
+        <!-- Chọn chế độ ôn trước khi bắt đầu luyện. -->
+        <label for="flashcard-mode-select" class="studio-room-panel studio-review-mode">
+          <span>Chế độ ôn tập</span>
+          <select id="flashcard-mode-select" onchange="changeFlashcardMode()" class="w-full min-w-0 px-3 py-2 rounded-xl border text-xs font-bold focus-ring-theme">
+            <option value="due">⚡ Ôn Chuẩn SRS (Tăng +1 Cấp SRS)</option>
+            <option value="reverse">🔄 Ôn Đảo Ngược (Nghĩa ➔ Từ) (Có SRS)</option>
+            <option value="all">📚 Tất cả từ vựng (Chế độ Ôn Luyện - Không đổi SRS)</option>
+            <option value="unlearned">🌫️ Chỉ từ chưa học (Chế độ Ôn Luyện - Không đổi SRS)</option>
+            <option value="nemesis">💀 Chỉ Kẻ Thù Ác (Chế độ Ôn Luyện - Không đổi SRS)</option>
+          </select>
+        </label>
 
         <!-- Mode Indicator Banner -->
         <div id="flashcard-mode-banner" class="p-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-between border bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 text-emerald-800 dark:text-emerald-200">
@@ -61,7 +62,7 @@
                 <p id="card-front-phonetic" class="text-sm sm:text-base text-slate-500 dark:text-slate-400 font-medium italic">---</p>
               </div>
               
-              <p class="text-xs text-slate-400 dark:text-slate-500 animate-pulse flex items-center gap-1.5">
+              <p class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
                 <i class="fa-solid fa-hand-pointer text-theme-main"></i> Chạm / Space để xem mặt sau
               </p>
             </div>
@@ -112,7 +113,7 @@
 
         <!-- Keyboard Shortcuts Hint Footer -->
         <div class="text-center text-[11px] text-slate-400 dark:text-slate-500 font-semibold pt-1">
-          💡 <span class="text-slate-600 dark:text-slate-300">Phím tắt:</span> 
+          <span class="text-slate-600 dark:text-slate-300">Phím tắt:</span> 
           <kbd class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono">Space</kbd> Lật thẻ &nbsp;|&nbsp; 
           <kbd class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono">←</kbd> Chưa nhớ &nbsp;|&nbsp; 
           <kbd class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono">→</kbd> Đã nhớ &nbsp;|&nbsp; 

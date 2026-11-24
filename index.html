@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PolyGlot SRS - Học Từ Vựng Spaced Repetition</title>
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Biểu tượng dùng tệp cục bộ để hiện cả khi mở index.html ngoại tuyến. -->
+  <link rel="stylesheet" href="./assets/fontawesome.css">
   <!-- Google Fonts -->
-  <meta name="theme-color" content="#0b1030">
+  <meta name="theme-color" content="#17142c">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="./css/app.css">
   <link rel="stylesheet" href="./css/graphics.css">
@@ -19,22 +19,19 @@
 </head>
 <body class="theme-en bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-300">
 
-  <div id="hd-ambient" aria-hidden="true"><i></i><i></i><i></i></div>
-
   <!-- TOP HEADER -->
-  <header class="sticky top-0 z-40 backdrop-blur-md bg-white/80 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+  <header class="studio-header sticky top-0 z-40">
+    <div class="studio-shell studio-header-inner">
       
       <!-- Brand Logo -->
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl theme-gradient-bg flex items-center justify-center text-white shadow-md text-lg">
-          <i class="fa-solid fa-brain"></i>
+      <div class="studio-brand">
+        <div class="studio-brand-mark" aria-hidden="true">
+          <span></span><span></span><span></span>
         </div>
         <div>
-          <h1 class="font-bold text-lg tracking-tight leading-none text-slate-900 dark:text-white">
-            PolyGlot <span class="text-theme-main font-extrabold">SRS</span>
+          <h1>
+            PolyGlot<span> SRS</span>
           </h1>
-          <p class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">Không gian học từ vựng của bạn</p>
         </div>
       </div>
 
@@ -57,10 +54,10 @@
       </div>
 
       <!-- Controls: Audio, Settings & Theme Toggle -->
-      <div class="flex items-center gap-2">
+      <div class="studio-controls flex items-center gap-2">
         <!-- Streak Indicator (New) -->
-        <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 font-bold text-xs border border-orange-200 dark:border-orange-800/50 mr-1" title="Chuỗi ngày học liên tục">
-          <i class="fa-solid fa-fire text-orange-500 animate-pulse"></i> Streak: <span id="streak-counter">0</span>
+        <div class="studio-streak hidden sm:flex items-center gap-1.5 px-3 py-1.5 font-bold text-xs" title="Chuỗi ngày học liên tục">
+          <i class="fa-solid fa-fire" aria-hidden="true"></i><span id="streak-counter">0</span> ngày
         </div>
 
         <button onclick="toggleAutoTTS()" id="auto-tts-btn" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="Tự động phát âm khi lật thẻ">
@@ -110,7 +107,7 @@
   </header>
 
   <!-- NAVIGATION BAR -->
-  <nav id="react-navigation-root" class="pg-ui bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800" aria-label="Các khu vực học tập">
+  <nav id="react-navigation-root" class="pg-ui studio-nav" aria-label="Các khu vực học tập">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-nowrap items-center justify-between gap-1 py-2">
       <button onclick="switchNavTab('vocab')" id="nav-vocab" title="Danh Sách Từ Vựng" aria-label="Danh Sách Từ Vựng" class="nav-btn min-w-0 justify-center px-2 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 xl:px-3">
         <i class="fa-solid fa-book"></i><span class="hidden xl:inline">Danh Sách Từ Vựng</span>
@@ -137,62 +134,60 @@
   </nav>
 
   <!-- MAIN CONTAINER -->
-  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+  <main class="studio-shell studio-main flex-grow">
 
     <div id="react-dashboard-root" class="pg-ui"></div>
 
+  <!-- Chọn tình huống, xem lịch sử và bắt đầu phiên luyện giao tiếp. -->
   <section id="view-production" class="tab-view hidden space-y-5">
-    <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
-      <div class="listening-ocean-panel border-b border-slate-200 p-6 dark:border-slate-700 sm:p-8">
-        <div class="relative flex flex-wrap items-start justify-between gap-4">
-          <div class="max-w-3xl">
-            <div class="mb-2 inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-xs font-bold text-theme-main dark:bg-slate-900/50">
-              <i class="fa-solid fa-comments"></i> Active Production
-            </div>
-            <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white sm:text-3xl">Luyện giao tiếp trong tình huống thực tế</h2>
-            <p class="mt-2 text-sm leading-6 text-slate-700 dark:text-slate-200">Luyện giao tiếp qua hội thoại phân nhánh và nhiệm vụ viết. Phản hồi, gợi ý và đánh giá chạy trực tiếp trên thiết bị bằng luật có sẵn, không cần AI hay kết nối API.</p>
-          </div>
+    <div class="studio-room-hero studio-room-hero--production">
+      <div class="studio-room-copy">
+        <span class="studio-room-icon" aria-hidden="true"><i class="fa-solid fa-comments"></i></span>
+        <div>
+          <h2>Luyện giao tiếp</h2>
+          <p>Nhập vai trong tình huống thực tế, luyện phản hồi qua hội thoại và xem nhận xét sau mỗi lượt.</p>
         </div>
       </div>
+    </div>
 
-      <div class="grid gap-5 p-4 sm:p-6 lg:grid-cols-[minmax(260px,0.85fr)_minmax(0,1.5fr)]">
-        <aside class="space-y-4">
-          <div class="grid grid-cols-2 gap-3">
-            <label class="text-xs font-bold text-slate-500 dark:text-slate-400">Trình độ
-              <select id="production-level" onchange="renderProductionScenarios()" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
-                <option value="all">Tất cả</option><option>A1</option><option>A2</option><option>B1</option><option>B2</option><option>C1</option><option>C2</option>
-              </select>
-            </label>
-            <label class="text-xs font-bold text-slate-500 dark:text-slate-400">Độ khó
-              <select id="production-difficulty" onchange="renderProductionScenarios()" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
-                <option value="easy">Dễ</option><option value="normal" selected>Bình thường</option><option value="challenging">Thử thách</option>
-              </select>
-            </label>
-          </div>
-          <select id="production-category" onchange="renderProductionScenarios()" class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
-            <option value="all">Tất cả danh mục</option>
-            <option>Đời sống hằng ngày</option><option>Du lịch</option><option>Giao tiếp xã hội</option><option>Học tập</option><option>Công việc</option><option>Giải quyết vấn đề</option>
-          </select>
-          <button type="button" onclick="openCustomProductionScenarioModal()" class="listening-accent w-full rounded-xl px-3.5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:shadow-md" aria-haspopup="dialog" aria-controls="production-custom-scenario-modal">
-            <i class="fa-solid fa-plus mr-2"></i>Tạo tình huống riêng
-          </button>
-          <input id="production-search" oninput="renderProductionScenarios()" type="search" placeholder="Tìm tình huống..." class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm outline-none focus-ring-theme dark:border-slate-600 dark:bg-slate-900">
-          <div id="production-scenario-list" class="max-h-[28rem] space-y-2 overflow-y-auto pr-1"></div>
-          <div id="production-progress-summary" class="space-y-2"></div>
-          <div id="production-history" class="space-y-2"></div>
-        </aside>
-
-        <div class="min-w-0 space-y-4">
-          <button type="button" id="production-resume-btn" onclick="openProductionSession()" class="hidden listening-accent rounded-xl px-4 py-2.5 text-sm font-bold text-white shadow-sm"><i class="fa-solid fa-comments mr-2"></i>Tiếp tục buổi luyện</button>
-          <div id="production-scenario-detail" class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900/50">
-            <div class="flex min-h-32 items-center justify-center text-center text-sm text-slate-400">Chọn một tình huống để xem mục tiêu và bắt đầu luyện.</div>
-          </div>
-          <div id="production-report" class="hidden"></div>
+    <div class="studio-production-grid">
+      <aside class="studio-room-panel space-y-4 p-4 sm:p-5" aria-label="Thư viện tình huống">
+        <div class="grid grid-cols-2 gap-3">
+          <label class="text-xs font-bold text-slate-500 dark:text-slate-400">Trình độ
+            <select id="production-level" onchange="renderProductionScenarios()" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
+              <option value="all">Tất cả</option><option>A1</option><option>A2</option><option>B1</option><option>B2</option><option>C1</option><option>C2</option>
+            </select>
+          </label>
+          <label class="text-xs font-bold text-slate-500 dark:text-slate-400">Độ khó
+            <select id="production-difficulty" onchange="renderProductionScenarios()" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
+              <option value="easy">Dễ</option><option value="normal" selected>Bình thường</option><option value="challenging">Thử thách</option>
+            </select>
+          </label>
         </div>
+        <select id="production-category" onchange="renderProductionScenarios()" class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
+          <option value="all">Tất cả danh mục</option>
+          <option>Đời sống hằng ngày</option><option>Du lịch</option><option>Giao tiếp xã hội</option><option>Học tập</option><option>Công việc</option><option>Giải quyết vấn đề</option>
+        </select>
+        <button type="button" onclick="openCustomProductionScenarioModal()" class="listening-accent w-full rounded-xl px-3.5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:shadow-md" aria-haspopup="dialog" aria-controls="production-custom-scenario-modal">
+          <i class="fa-solid fa-plus mr-2"></i>Tạo tình huống riêng
+        </button>
+        <input id="production-search" oninput="renderProductionScenarios()" type="search" placeholder="Tìm tình huống..." class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm outline-none focus-ring-theme dark:border-slate-600 dark:bg-slate-900">
+        <div id="production-scenario-list" class="max-h-[28rem] space-y-2 overflow-y-auto pr-1"></div>
+        <div id="production-progress-summary" class="space-y-2"></div>
+        <div id="production-history" class="space-y-2"></div>
+      </aside>
+
+      <div class="min-w-0 space-y-4">
+        <button type="button" id="production-resume-btn" onclick="openProductionSession()" class="hidden listening-accent rounded-xl px-4 py-2.5 text-sm font-bold text-white shadow-sm"><i class="fa-solid fa-comments mr-2"></i>Tiếp tục buổi luyện</button>
+        <div id="production-scenario-detail" class="studio-room-panel p-5 sm:p-7">
+          <div class="flex min-h-32 items-center justify-center text-center text-sm text-slate-400">Chọn một tình huống để xem mục tiêu và bắt đầu luyện.</div>
+        </div>
+        <div id="production-report" class="hidden"></div>
       </div>
     </div>
   </section>
 
+  <!-- Phiên luyện hiển thị hội thoại, gợi ý và phản hồi theo từng bước. -->
   <div id="production-session-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-950/55 p-3 backdrop-blur-sm sm:p-6" role="dialog" aria-modal="true" aria-labelledby="production-session-title" onclick="if(event.target===this) closeProductionSession()">
     <div id="production-session" class="production-session-gradient hidden max-h-[92dvh] w-full max-w-4xl overflow-y-auto rounded-3xl border border-white/60 shadow-2xl dark:border-white/10">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/40 bg-white/45 p-3 backdrop-blur-md dark:border-white/10 dark:bg-slate-950/30">
@@ -314,94 +309,98 @@
 
   <!-- VIEW: LISTENING STORIES -->
   <section id="view-listening" class="tab-view hidden space-y-6">
-    <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-6">
-      <div>
-        <h2 class="text-xl sm:text-2xl font-extrabold flex items-center gap-3">
-          <span class="w-11 h-11 rounded-2xl theme-gradient-bg text-white flex items-center justify-center"><i class="fa-solid fa-headphones"></i></span>
-          Phòng Luyện Nghe Qua Truyện
-        </h2>
-        <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">Chọn một câu chuyện có sẵn để luyện nghe. Rê chuột vào từ để xem nghĩa, sau đó dùng hàng thêm từ ở cột bên phải.</p>
+    <div class="studio-room-hero studio-room-hero--listening">
+      <div class="studio-room-copy">
+        <span class="studio-room-icon" aria-hidden="true"><i class="fa-solid fa-headphones"></i></span>
+        <div>
+          <h2>Luyện nghe qua truyện</h2>
+          <p>Nghe một câu chuyện, chọn từ để tra nghĩa và lưu vào bộ từ vựng của bạn.</p>
+        </div>
       </div>
 
-      <div class="mb-3 flex justify-start">
-        <button type="button" onclick="toggleListeningLibrary()" id="listening-library-toggle" aria-expanded="true" aria-controls="listening-library-column" class="rounded-lg border border-slate-200 bg-white p-2 text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-indigo-300" title="Ẩn thư viện câu chuyện">
+      <div class="studio-room-actions">
+        <button type="button" onclick="toggleListeningLibrary()" id="listening-library-toggle" aria-expanded="true" aria-controls="listening-library-column" class="studio-room-action studio-room-action--icon" aria-label="Bật hoặc tắt thư viện câu chuyện" title="Ẩn thư viện câu chuyện">
           <i class="fa-solid fa-eye-slash"></i>
         </button>
-        <button type="button" onclick="openListeningStoryModal()" class="listening-accent ml-2 rounded-lg px-3 py-2 text-sm font-bold text-white shadow-sm transition" aria-haspopup="dialog" aria-controls="listening-story-modal">
+        <button type="button" onclick="openListeningStoryModal()" class="studio-room-action" aria-haspopup="dialog" aria-controls="listening-story-modal">
           <i class="fa-solid fa-book-medical mr-1"></i>Thêm câu chuyện
         </button>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-4 gap-5">
-        <div id="listening-library-column" class="lg:col-span-1 space-y-3">
-          <div id="listening-library" class="space-y-3">
-            <div class="flex items-center justify-between gap-2">
-              <h3 class="font-bold">Thư viện câu chuyện</h3>
-              <span id="listening-story-count" class="text-xs text-slate-400 font-semibold"></span>
-            </div>
-            <div id="listening-story-list" class="max-h-[34rem] overflow-y-auto space-y-2 pr-1">
-              <p class="p-4 text-sm text-slate-400">Đang tải câu chuyện...</p>
-            </div>
+    </div>
+
+    <div class="studio-listening-grid grid grid-cols-1 gap-5 lg:grid-cols-4">
+      <!-- Thư viện câu chuyện cho ngôn ngữ đang học. -->
+      <div id="listening-library-column" class="lg:col-span-1 space-y-3">
+        <div id="listening-library" class="studio-room-panel space-y-3 p-4">
+          <div class="flex items-center justify-between gap-2">
+            <h3 class="font-bold">Thư viện câu chuyện</h3>
+            <span id="listening-story-count" class="text-xs text-slate-400 font-semibold"></span>
+          </div>
+          <div id="listening-story-list" class="max-h-[34rem] overflow-y-auto space-y-2 pr-1">
+            <p class="p-4 text-sm text-slate-400">Đang tải câu chuyện...</p>
           </div>
         </div>
-
-        <div id="listening-story-workspace" class="lg:col-span-2">
-          <div class="listening-ocean-panel rounded-3xl border-2 p-4 sm:p-6">
-            <div class="relative space-y-5">
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div class="flex items-center gap-3">
-                  <span id="listening-current-story-icon" class="listening-accent flex h-11 w-11 items-center justify-center rounded-2xl text-white shadow-lg"><i class="fa-solid fa-book-open"></i></span>
-                  <div>
-                    <h3 id="listening-story-title" class="font-extrabold text-slate-900 dark:text-white">Chọn một câu chuyện</h3>
-                    <p id="listening-story-meta" class="text-xs text-slate-500 dark:text-slate-400">Các từ đã có trong danh sách sẽ được tô nổi bật</p>
-                  </div>
-                </div>
-                <div class="flex items-center gap-2">
-                  <span id="listening-status" role="status" aria-live="polite" class="hidden self-start sm:self-auto rounded-full border border-indigo-200 dark:border-indigo-400/30 bg-white/80 dark:bg-slate-900/60 px-3 py-1.5 text-xs font-semibold text-indigo-700 dark:text-indigo-300"></span>
-                </div>
-              </div>
-
-              <div class="flex flex-wrap items-center gap-2 border-b border-indigo-100 pb-4 dark:border-slate-700">
-                <button type="button" onclick="playListeningPassage()" class="listening-accent px-4 py-2.5 rounded-xl text-white text-sm font-bold shadow-lg transition">
-                  <i class="fa-solid fa-play mr-1"></i> Nghe bài
-                </button>
-                <button type="button" onclick="pauseListeningPassage()" class="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/80 dark:bg-slate-800 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 transition">
-                  <i class="fa-solid fa-pause mr-1"></i> Tạm dừng / Tiếp tục
-                </button>
-                <button type="button" onclick="stopListeningPassage()" class="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/80 dark:bg-slate-800 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 transition">
-                  <i class="fa-solid fa-stop mr-1"></i> Dừng
-                </button>
-              </div>
-
-              <div class="rounded-2xl border border-white/80 dark:border-slate-600/70 bg-white/80 dark:bg-slate-900/70 p-5 sm:p-7 shadow-inner">
-                <div id="listening-passage" class="min-h-40 text-base sm:text-lg leading-9 whitespace-pre-wrap text-slate-700 dark:text-slate-200">Chọn một câu chuyện có sẵn để bắt đầu luyện nghe.</div>
-              </div>
-              <div id="listening-passage-words" class="hidden flex-wrap items-center gap-2" aria-label="Từ vựng được chọn"></div>
-            </div>
-          </div>
-        </div>
-
-        <aside class="lg:col-span-1">
-          <div class="h-full min-h-56 rounded-3xl border border-indigo-200 bg-white p-4 shadow-lg shadow-indigo-100/60 dark:border-indigo-500/30 dark:bg-slate-800 dark:shadow-indigo-950/20">
-            <div class="mb-4 flex items-center gap-2 border-b border-slate-100 pb-3 dark:border-slate-700">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600 dark:bg-indigo-400/15 dark:text-indigo-300"><i class="fa-solid fa-language"></i></span>
-              <div>
-                <h3 class="text-sm font-extrabold text-slate-800 dark:text-white">Tra từ vựng</h3>
-                <p class="text-[11px] text-slate-500 dark:text-slate-400">Nghĩa và phát âm</p>
-              </div>
-            </div>
-            <div id="listening-word-detail" aria-live="polite">
-              <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 text-center dark:border-slate-700 dark:bg-slate-900/60">
-                <i class="fa-solid fa-arrow-left-long mb-2 text-indigo-400"></i>
-                <p class="text-xs leading-5 text-slate-500 dark:text-slate-400">Di chuột vào một từ trong câu chuyện để xem nghĩa.</p>
-              </div>
-            </div>
-          </div>
-        </aside>
       </div>
+
+      <!-- Nội dung bài nghe, trình phát và bảng tra từ tương tác. -->
+      <div id="listening-story-workspace" class="lg:col-span-2">
+        <div class="studio-room-panel studio-reader p-4 sm:p-6">
+          <div class="relative space-y-5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <span id="listening-current-story-icon" class="listening-accent flex h-11 w-11 items-center justify-center rounded-2xl text-white shadow-lg"><i class="fa-solid fa-book-open"></i></span>
+                <div>
+                  <h3 id="listening-story-title" class="font-extrabold text-slate-900 dark:text-white">Chọn một câu chuyện</h3>
+                  <p id="listening-story-meta" class="text-xs text-slate-500 dark:text-slate-400">Các từ đã có trong danh sách sẽ được tô nổi bật</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <span id="listening-status" role="status" aria-live="polite" class="hidden self-start sm:self-auto rounded-full border border-indigo-200 dark:border-indigo-400/30 bg-white/80 dark:bg-slate-900/60 px-3 py-1.5 text-xs font-semibold text-indigo-700 dark:text-indigo-300"></span>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2 border-b border-indigo-100 pb-4 dark:border-slate-700">
+              <button type="button" onclick="playListeningPassage()" class="listening-accent px-4 py-2.5 rounded-xl text-white text-sm font-bold shadow-lg transition">
+                <i class="fa-solid fa-play mr-1"></i> Nghe bài
+              </button>
+              <button type="button" onclick="pauseListeningPassage()" class="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/80 dark:bg-slate-800 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 transition">
+                <i class="fa-solid fa-pause mr-1"></i> Tạm dừng / Tiếp tục
+              </button>
+              <button type="button" onclick="stopListeningPassage()" class="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/80 dark:bg-slate-800 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 transition">
+                <i class="fa-solid fa-stop mr-1"></i> Dừng
+              </button>
+            </div>
+
+            <div class="studio-reader-page p-4 sm:p-7">
+              <div id="listening-passage" class="min-h-40 text-base sm:text-lg leading-9 whitespace-pre-wrap text-slate-700 dark:text-slate-200">Chọn một câu chuyện có sẵn để bắt đầu luyện nghe.</div>
+            </div>
+            <div id="listening-passage-words" class="hidden flex-wrap items-center gap-2" aria-label="Từ vựng được chọn"></div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="lg:col-span-1">
+        <div class="studio-room-panel min-h-56 p-4">
+          <div class="mb-4 flex items-center gap-2 border-b border-slate-100 pb-3 dark:border-slate-700">
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600 dark:bg-indigo-400/15 dark:text-indigo-300"><i class="fa-solid fa-language"></i></span>
+            <div>
+              <h3 class="text-sm font-extrabold text-slate-800 dark:text-white">Tra từ vựng</h3>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400">Nghĩa và phát âm</p>
+            </div>
+          </div>
+          <div id="listening-word-detail" aria-live="polite">
+            <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 text-center dark:border-slate-700 dark:bg-slate-900/60">
+              <i class="fa-solid fa-arrow-left-long mb-2 text-indigo-400"></i>
+              <p class="text-xs leading-5 text-slate-500 dark:text-slate-400">Di chuột vào một từ trong câu chuyện để xem nghĩa.</p>
+            </div>
+          </div>
+        </div>
+      </aside>
     </div>
   </section>
 
+  <!-- Tạo hoặc nhập câu chuyện để lưu vào thư viện trên thiết bị. -->
   <div id="listening-story-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/65 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="listening-story-modal-title" onclick="if(event.target===this)closeListeningStoryModal()">
     <div class="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-3xl border border-slate-200 bg-white p-5 shadow-2xl dark:border-slate-700 dark:bg-slate-800 sm:p-7">
       <div class="mb-5 flex items-start justify-between gap-4">
@@ -508,7 +507,7 @@
       <div id="vocab-layout" class="grid">
         
         <!-- Add Vocab Form Dynamic by Language -->
-        <div id="add-word-panel" class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm h-fit space-y-4">
+        <div id="add-word-panel" class="studio-room-panel bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm h-fit space-y-4">
           <div class="flex items-center justify-between gap-2">
             <span class="text-lg font-bold flex items-center gap-2">
               <i class="fa-solid fa-plus-circle text-theme-main"></i> Thêm Từ Vựng Mới
@@ -623,7 +622,8 @@
         </div>
 
         <!-- Vocab List Table / Cards -->
-        <div id="vocab-list-panel" class="min-w-0 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
+        <div id="vocab-list-panel" class="studio-room-panel min-w-0 p-4 sm:p-6 space-y-4">
+          <h2 class="studio-collection-title"><span class="studio-collection-icon" aria-hidden="true"><i class="fa-solid fa-book-open"></i></span> Kho từ vựng</h2>
           
           <!-- Filter & Search Controls -->
           <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
@@ -666,7 +666,7 @@
                 <button class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-xs font-bold transition flex items-center gap-1.5">
                   <i class="fa-solid fa-file-export text-slate-500"></i> Xuất
                 </button>
-                <div class="absolute right-0 mt-1 w-36 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 py-1 hidden group-hover:block z-30">
+                <div class="absolute right-0 mt-1 w-36 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 py-1 hidden group-hover:block group-focus-within:block z-30">
                   <button onclick="exportVocab('csv')" class="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2">
                     <i class="fa-solid fa-file-csv text-emerald-500"></i> Xuất File CSV
                   </button>
@@ -679,7 +679,7 @@
           </div>
 
           <!-- Table Container -->
-          <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+          <div class="studio-vocab-table overflow-x-auto">
             <table id="vocab-table" class="w-full text-left text-sm">
               <thead class="bg-slate-100 dark:bg-slate-900/80 text-xs font-bold uppercase text-slate-500 dark:text-slate-400">
                 <tr>
@@ -714,27 +714,28 @@
 
     <!-- VIEW 2: FLASHCARD SRS REVIEW MODE -->
     <section id="view-flashcards" class="tab-view hidden space-y-6">
-      <div class="max-w-2xl mx-auto space-y-5">
-        
-        <!-- Flashcard Header & Mode Controls -->
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+      <div class="studio-room-hero studio-room-hero--flashcards">
+        <div class="studio-room-copy">
+          <span class="studio-room-icon" aria-hidden="true"><i class="fa-solid fa-layer-group"></i></span>
           <div>
-            <h2 class="text-lg font-bold flex items-center gap-2">
-              <i class="fa-solid fa-clone text-theme-main"></i> Ôn Tập Thẻ Flashcards
-            </h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Lật thẻ để kiểm tra từ vựng và tự đánh giá độ thuộc</p>
-          </div>
-
-          <div class="flex items-center gap-2 w-full sm:w-auto">
-            <select id="flashcard-mode-select" onchange="changeFlashcardMode()" class="w-full sm:w-auto px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-900 text-xs font-bold text-theme-main focus-ring-theme">
-              <option value="due">⚡ Ôn Chuẩn SRS (Tăng +1 Cấp SRS)</option>
-              <option value="reverse">🔄 Ôn Đảo Ngược (Nghĩa ➔ Từ) (Có SRS)</option>
-              <option value="all">📚 Tất cả từ vựng (Chế độ Ôn Luyện - Không đổi SRS)</option>
-              <option value="unlearned">🌫️ Chỉ từ chưa học (Chế độ Ôn Luyện - Không đổi SRS)</option>
-              <option value="nemesis">💀 Chỉ Kẻ Thù Ác (Chế độ Ôn Luyện - Không đổi SRS)</option>
-            </select>
+            <h2>Ôn tập Flashcards</h2>
+            <p>Lật thẻ để xem đáp án, sau đó đánh giá mức độ ghi nhớ.</p>
           </div>
         </div>
+      </div>
+      <div class="studio-flashcards mx-auto space-y-5">
+        
+        <!-- Chọn chế độ ôn trước khi bắt đầu luyện. -->
+        <label for="flashcard-mode-select" class="studio-room-panel studio-review-mode">
+          <span>Chế độ ôn tập</span>
+          <select id="flashcard-mode-select" onchange="changeFlashcardMode()" class="w-full min-w-0 px-3 py-2 rounded-xl border text-xs font-bold focus-ring-theme">
+            <option value="due">⚡ Ôn Chuẩn SRS (Tăng +1 Cấp SRS)</option>
+            <option value="reverse">🔄 Ôn Đảo Ngược (Nghĩa ➔ Từ) (Có SRS)</option>
+            <option value="all">📚 Tất cả từ vựng (Chế độ Ôn Luyện - Không đổi SRS)</option>
+            <option value="unlearned">🌫️ Chỉ từ chưa học (Chế độ Ôn Luyện - Không đổi SRS)</option>
+            <option value="nemesis">💀 Chỉ Kẻ Thù Ác (Chế độ Ôn Luyện - Không đổi SRS)</option>
+          </select>
+        </label>
 
         <!-- Mode Indicator Banner -->
         <div id="flashcard-mode-banner" class="p-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-between border bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 text-emerald-800 dark:text-emerald-200">
@@ -775,7 +776,7 @@
                 <p id="card-front-phonetic" class="text-sm sm:text-base text-slate-500 dark:text-slate-400 font-medium italic">---</p>
               </div>
               
-              <p class="text-xs text-slate-400 dark:text-slate-500 animate-pulse flex items-center gap-1.5">
+              <p class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
                 <i class="fa-solid fa-hand-pointer text-theme-main"></i> Chạm / Space để xem mặt sau
               </p>
             </div>
@@ -826,7 +827,7 @@
 
         <!-- Keyboard Shortcuts Hint Footer -->
         <div class="text-center text-[11px] text-slate-400 dark:text-slate-500 font-semibold pt-1">
-          💡 <span class="text-slate-600 dark:text-slate-300">Phím tắt:</span> 
+          <span class="text-slate-600 dark:text-slate-300">Phím tắt:</span> 
           <kbd class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono">Space</kbd> Lật thẻ &nbsp;|&nbsp; 
           <kbd class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono">←</kbd> Chưa nhớ &nbsp;|&nbsp; 
           <kbd class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono">→</kbd> Đã nhớ &nbsp;|&nbsp; 
@@ -845,20 +846,13 @@
     <!-- VIEW: NEMESIS (KẺ THÙ ÁC) VOCABULARY -->
     <section id="view-nemesis" class="tab-view hidden space-y-6">
       
-      <div class="p-6 rounded-3xl bg-gradient-to-r from-slate-900 via-rose-950 to-purple-950 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 border border-rose-900/50">
-        <div class="space-y-2">
-          <span class="px-3 py-1 rounded-full bg-rose-500/20 text-rose-300 text-xs font-black uppercase tracking-wider border border-rose-500/30">
-            <i class="fa-solid fa-skull mr-1"></i> Danh Sách Nguy Hiểm
-          </span>
-          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight flex items-center gap-2">
-            Danh Sách Kẻ Thù Ác 💀
-          </h2>
-          <p class="text-xs sm:text-sm font-medium opacity-90 max-w-xl text-slate-300">
-            Đây là những từ vựng bạn đã <b class="text-rose-400 font-bold">quên từ 3 lần trở lên trong Flashcards Mode SRS</b>! Thuộc liên tiếp 3 lần trong chế độ ôn SRS để tẩy sạch chúng.
-          </p>
-        </div>
-        <div class="w-20 h-20 rounded-2xl bg-rose-950/60 border border-rose-500/30 backdrop-blur-md flex items-center justify-center text-4xl text-rose-400 shadow-inner flex-shrink-0">
-          💀
+      <div class="studio-room-hero studio-room-hero--nemesis">
+        <div class="studio-room-copy">
+          <span class="studio-room-icon" aria-hidden="true"><i class="fa-solid fa-rotate-left"></i></span>
+          <div>
+            <h2>Từ dễ quên</h2>
+            <p>Xem lại các từ đã quên từ 3 lần trở lên. Nhớ đúng 3 lần liên tiếp trong chế độ SRS để đưa từ ra khỏi danh sách.</p>
+          </div>
         </div>
       </div>
 
@@ -870,9 +864,9 @@
         <div class="w-20 h-20 mx-auto rounded-3xl bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500 flex items-center justify-center text-3xl">
           🛡️
         </div>
-        <h3 class="text-lg font-bold">Không có Kẻ Thù Ác nào!</h3>
+        <h3 class="text-lg font-bold">Chưa có từ dễ quên</h3>
         <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto">
-          Tuyệt vời! Bạn chưa có từ vựng nào bị quên quá 3 lần. Hãy tiếp tục duy trì phong độ tốt nhé!
+          Các từ đã quên từ 3 lần trở lên sẽ xuất hiện ở đây.
         </p>
       </div>
 
@@ -881,18 +875,13 @@
     <!-- VIEW 4: VIP MASTERED VOCABULARY -->
     <section id="view-vip" class="tab-view hidden space-y-6">
       
-      <div class="p-6 rounded-3xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 text-slate-900 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
-        <div class="space-y-2">
-          <span class="px-3 py-1 rounded-full bg-slate-900/10 text-slate-900 text-xs font-black uppercase tracking-wider">Danh Sách Hoàng Gia</span>
-          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight flex items-center gap-2">
-            <i class="fa-solid fa-crown text-amber-800"></i> Từ Vựng Cấp Độ VIP 👑
-          </h2>
-          <p class="text-xs sm:text-sm font-medium opacity-90 max-w-xl">
-            Đây là những từ vựng bạn đã ôn tập lặp lại thành công <b class="font-extrabold">từ 8 lần trở lên</b>! Những từ này đã khắc sâu vào trí nhớ dài hạn.
-          </p>
-        </div>
-        <div class="w-20 h-20 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-4xl text-amber-950 shadow-inner flex-shrink-0">
-          👑
+      <div class="studio-room-hero studio-room-hero--vip">
+        <div class="studio-room-copy">
+          <span class="studio-room-icon" aria-hidden="true"><i class="fa-solid fa-crown"></i></span>
+          <div>
+            <h2>Từ vựng VIP</h2>
+            <p>Danh sách những từ bạn đã ghi nhớ ở cấp SRS 8 trở lên.</p>
+          </div>
         </div>
       </div>
 
@@ -904,9 +893,9 @@
         <div class="w-20 h-20 mx-auto rounded-3xl bg-amber-50 dark:bg-amber-900/20 text-amber-400 flex items-center justify-center text-3xl">
           👑
         </div>
-        <h3 class="text-lg font-bold">Chưa có từ vựng VIP nào!</h3>
+        <h3 class="text-lg font-bold">Chưa có từ vựng VIP</h3>
         <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto">
-          Hãy tiếp tục ôn tập từ vựng qua Flashcards SRS để đạt cấp VIP!
+          Các từ đạt cấp SRS 8 sẽ xuất hiện ở đây.
         </p>
       </div>
 
@@ -915,7 +904,7 @@
   </main>
 
   <!-- EDIT WORD MODAL -->
-  <div id="edit-word-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div id="edit-word-modal" class="studio-modal fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl border border-slate-200 dark:border-slate-700">
       <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-700">
         <h3 class="text-lg font-bold flex items-center gap-2">
@@ -959,8 +948,8 @@
   </div>
 
   <!-- APP SETTINGS MODAL -->
-  <div id="settings-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-slate-200 dark:border-slate-700">
+  <div id="settings-modal" class="studio-modal fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-md w-full max-h-[90dvh] overflow-y-auto p-6 space-y-4 shadow-2xl border border-slate-200 dark:border-slate-700">
       <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-700">
         <h3 class="text-lg font-bold flex items-center gap-2">
           <i class="fa-solid fa-sliders text-theme-main"></i> Cấu Hình Ứng Dụng & AI
@@ -983,6 +972,16 @@
         </div>
       </div>
 
+      <section class="space-y-2 border-t border-ui-border pt-3" aria-labelledby="backup-title">
+        <h4 id="backup-title" class="text-sm font-bold">Sao lưu tiến độ học</h4>
+        <p class="text-xs text-slate-600 dark:text-slate-300">Lưu từ vựng, lịch ôn và nội dung tự tạo của cả bốn ngôn ngữ vào một tệp JSON.</p>
+        <div class="flex flex-wrap gap-2">
+          <button type="button" onclick="downloadLearningBackup()" class="rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-xs font-bold">Tải bản sao lưu</button>
+          <button type="button" onclick="document.getElementById('learning-backup-file').click()" class="rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-xs font-bold">Khôi phục từ tệp</button>
+          <input type="file" id="learning-backup-file" accept=".json,application/json" class="hidden" onchange="restoreLearningBackup(event)">
+        </div>
+        <p id="learning-backup-status" role="status" class="hidden text-xs text-slate-600 dark:text-slate-300"></p>
+      </section>
       <div class="flex items-center justify-end gap-3 pt-3">
         <button onclick="saveSettings()" class="w-full py-2.5 rounded-xl bg-theme text-white text-xs font-bold bg-theme-hover shadow-md">
           Lưu Cấu Hình
@@ -992,7 +991,7 @@
   </div>
 
   <!-- HANDWRITING CANVAS MODAL (BÀN PHÍM VIẾT TAY TRUNG / HÀN / NHẬT) -->
-  <div id="handwriting-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-[120] hidden flex items-center justify-center p-4">
+  <div id="handwriting-modal" class="studio-modal fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-[120] hidden flex items-center justify-center p-4">
     <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-slate-200 dark:border-slate-700">
       <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
         <div class="flex items-center gap-2">
@@ -1033,7 +1032,7 @@
   </div>
 
   <!-- FILE IMPORT MODAL & PRESET PACKS -->
-  <div id="import-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div id="import-modal" class="studio-modal fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-2xl w-full p-6 space-y-5 shadow-2xl border border-slate-200 dark:border-slate-700 max-h-[90vh] flex flex-col">
       
       <!-- Modal Header -->
@@ -1150,7 +1149,7 @@
   </div>
 
   <!-- DELETE CONFIRMATION MODAL -->
-  <div id="delete-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div id="delete-modal" class="studio-modal fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-slate-200 dark:border-slate-700">
       <div class="w-12 h-12 rounded-2xl bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xl">
         <i class="fa-solid fa-trash-can"></i>
@@ -1173,6 +1172,7 @@
   <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
   <!-- APPLICATION JAVASCRIPT LOGIC -->
+  <!-- Chuyển dữ liệu cũ trước khi khởi tạo logic học và gắn React. -->
   <script src="./js/local-data.js"></script>
   <script src="./js/app.js"></script>
   <script src="./js/audio.js"></script>

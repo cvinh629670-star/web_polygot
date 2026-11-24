@@ -6,6 +6,7 @@ import { Dashboard, Navigation } from './App';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import './styles.css';
 
+// Quan sát trạng thái hiển thị của các phòng do JavaScript quản lý.
 function ViewTransitions() {
   const reducedMotion = useReducedMotion();
   useEffect(() => {
@@ -34,6 +35,7 @@ function ViewTransitions() {
   return null;
 }
 
+// React đọc trạng thái ứng dụng qua cầu nối và gắn giao diện vào hai vị trí.
 function App() {
   const bridge = window.polyglotUI;
   const snapshot = useSyncExternalStore(bridge.subscribe, bridge.getSnapshot);

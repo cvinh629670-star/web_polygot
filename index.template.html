@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PolyGlot SRS - Học Từ Vựng Spaced Repetition</title>
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Biểu tượng dùng tệp cục bộ để hiện cả khi mở index.html ngoại tuyến. -->
+  <link rel="stylesheet" href="./assets/fontawesome.css">
   <!-- Google Fonts -->
-  <meta name="theme-color" content="#0b1030">
+  <meta name="theme-color" content="#17142c">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="./css/app.css">
   <link rel="stylesheet" href="./css/graphics.css">
@@ -19,22 +19,19 @@
 </head>
 <body class="theme-en bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-300">
 
-  <div id="hd-ambient" aria-hidden="true"><i></i><i></i><i></i></div>
-
   <!-- TOP HEADER -->
-  <header class="sticky top-0 z-40 backdrop-blur-md bg-white/80 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+  <header class="studio-header sticky top-0 z-40">
+    <div class="studio-shell studio-header-inner">
       
       <!-- Brand Logo -->
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl theme-gradient-bg flex items-center justify-center text-white shadow-md text-lg">
-          <i class="fa-solid fa-brain"></i>
+      <div class="studio-brand">
+        <div class="studio-brand-mark" aria-hidden="true">
+          <span></span><span></span><span></span>
         </div>
         <div>
-          <h1 class="font-bold text-lg tracking-tight leading-none text-slate-900 dark:text-white">
-            PolyGlot <span class="text-theme-main font-extrabold">SRS</span>
+          <h1>
+            PolyGlot<span> SRS</span>
           </h1>
-          <p class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">Không gian học từ vựng của bạn</p>
         </div>
       </div>
 
@@ -57,10 +54,10 @@
       </div>
 
       <!-- Controls: Audio, Settings & Theme Toggle -->
-      <div class="flex items-center gap-2">
+      <div class="studio-controls flex items-center gap-2">
         <!-- Streak Indicator (New) -->
-        <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 font-bold text-xs border border-orange-200 dark:border-orange-800/50 mr-1" title="Chuỗi ngày học liên tục">
-          <i class="fa-solid fa-fire text-orange-500 animate-pulse"></i> Streak: <span id="streak-counter">0</span>
+        <div class="studio-streak hidden sm:flex items-center gap-1.5 px-3 py-1.5 font-bold text-xs" title="Chuỗi ngày học liên tục">
+          <i class="fa-solid fa-fire" aria-hidden="true"></i><span id="streak-counter">0</span> ngày
         </div>
 
         <button onclick="toggleAutoTTS()" id="auto-tts-btn" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="Tự động phát âm khi lật thẻ">
@@ -110,7 +107,7 @@
   </header>
 
   <!-- NAVIGATION BAR -->
-  <nav id="react-navigation-root" class="pg-ui bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800" aria-label="Các khu vực học tập">
+  <nav id="react-navigation-root" class="pg-ui studio-nav" aria-label="Các khu vực học tập">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-nowrap items-center justify-between gap-1 py-2">
       <button onclick="switchNavTab('vocab')" id="nav-vocab" title="Danh Sách Từ Vựng" aria-label="Danh Sách Từ Vựng" class="nav-btn min-w-0 justify-center px-2 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 xl:px-3">
         <i class="fa-solid fa-book"></i><span class="hidden xl:inline">Danh Sách Từ Vựng</span>
@@ -137,7 +134,7 @@
   </nav>
 
   <!-- MAIN CONTAINER -->
-  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+  <main class="studio-shell studio-main flex-grow">
 
     <div id="react-dashboard-root" class="pg-ui"></div>
 
@@ -151,7 +148,7 @@
   </main>
 
   <!-- EDIT WORD MODAL -->
-  <div id="edit-word-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div id="edit-word-modal" class="studio-modal fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl border border-slate-200 dark:border-slate-700">
       <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-700">
         <h3 class="text-lg font-bold flex items-center gap-2">
@@ -195,8 +192,8 @@
   </div>
 
   <!-- APP SETTINGS MODAL -->
-  <div id="settings-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-slate-200 dark:border-slate-700">
+  <div id="settings-modal" class="studio-modal fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-md w-full max-h-[90dvh] overflow-y-auto p-6 space-y-4 shadow-2xl border border-slate-200 dark:border-slate-700">
       <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-700">
         <h3 class="text-lg font-bold flex items-center gap-2">
           <i class="fa-solid fa-sliders text-theme-main"></i> Cấu Hình Ứng Dụng & AI
@@ -219,6 +216,16 @@
         </div>
       </div>
 
+      <section class="space-y-2 border-t border-ui-border pt-3" aria-labelledby="backup-title">
+        <h4 id="backup-title" class="text-sm font-bold">Sao lưu tiến độ học</h4>
+        <p class="text-xs text-slate-600 dark:text-slate-300">Lưu từ vựng, lịch ôn và nội dung tự tạo của cả bốn ngôn ngữ vào một tệp JSON.</p>
+        <div class="flex flex-wrap gap-2">
+          <button type="button" onclick="downloadLearningBackup()" class="rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-xs font-bold">Tải bản sao lưu</button>
+          <button type="button" onclick="document.getElementById('learning-backup-file').click()" class="rounded-lg border border-slate-300 dark:border-slate-600 px-3 py-2 text-xs font-bold">Khôi phục từ tệp</button>
+          <input type="file" id="learning-backup-file" accept=".json,application/json" class="hidden" onchange="restoreLearningBackup(event)">
+        </div>
+        <p id="learning-backup-status" role="status" class="hidden text-xs text-slate-600 dark:text-slate-300"></p>
+      </section>
       <div class="flex items-center justify-end gap-3 pt-3">
         <button onclick="saveSettings()" class="w-full py-2.5 rounded-xl bg-theme text-white text-xs font-bold bg-theme-hover shadow-md">
           Lưu Cấu Hình
@@ -228,7 +235,7 @@
   </div>
 
   <!-- HANDWRITING CANVAS MODAL (BÀN PHÍM VIẾT TAY TRUNG / HÀN / NHẬT) -->
-  <div id="handwriting-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-[120] hidden flex items-center justify-center p-4">
+  <div id="handwriting-modal" class="studio-modal fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-[120] hidden flex items-center justify-center p-4">
     <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-slate-200 dark:border-slate-700">
       <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
         <div class="flex items-center gap-2">
@@ -269,7 +276,7 @@
   </div>
 
   <!-- FILE IMPORT MODAL & PRESET PACKS -->
-  <div id="import-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div id="import-modal" class="studio-modal fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-2xl w-full p-6 space-y-5 shadow-2xl border border-slate-200 dark:border-slate-700 max-h-[90vh] flex flex-col">
       
       <!-- Modal Header -->
@@ -386,7 +393,7 @@
   </div>
 
   <!-- DELETE CONFIRMATION MODAL -->
-  <div id="delete-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div id="delete-modal" class="studio-modal fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-slate-200 dark:border-slate-700">
       <div class="w-12 h-12 rounded-2xl bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xl">
         <i class="fa-solid fa-trash-can"></i>
@@ -409,6 +416,7 @@
   <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
   <!-- APPLICATION JAVASCRIPT LOGIC -->
+  <!-- Chuyển dữ liệu cũ trước khi khởi tạo logic học và gắn React. -->
   <script src="./js/local-data.js"></script>
   <script src="./js/app.js"></script>
   <script src="./js/audio.js"></script>

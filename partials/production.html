@@ -1,55 +1,53 @@
+  <!-- Chọn tình huống, xem lịch sử và bắt đầu phiên luyện giao tiếp. -->
   <section id="view-production" class="tab-view hidden space-y-5">
-    <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
-      <div class="listening-ocean-panel border-b border-slate-200 p-6 dark:border-slate-700 sm:p-8">
-        <div class="relative flex flex-wrap items-start justify-between gap-4">
-          <div class="max-w-3xl">
-            <div class="mb-2 inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-xs font-bold text-theme-main dark:bg-slate-900/50">
-              <i class="fa-solid fa-comments"></i> Active Production
-            </div>
-            <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white sm:text-3xl">Luyện giao tiếp trong tình huống thực tế</h2>
-            <p class="mt-2 text-sm leading-6 text-slate-700 dark:text-slate-200">Luyện giao tiếp qua hội thoại phân nhánh và nhiệm vụ viết. Phản hồi, gợi ý và đánh giá chạy trực tiếp trên thiết bị bằng luật có sẵn, không cần AI hay kết nối API.</p>
-          </div>
+    <div class="studio-room-hero studio-room-hero--production">
+      <div class="studio-room-copy">
+        <span class="studio-room-icon" aria-hidden="true"><i class="fa-solid fa-comments"></i></span>
+        <div>
+          <h2>Luyện giao tiếp</h2>
+          <p>Nhập vai trong tình huống thực tế, luyện phản hồi qua hội thoại và xem nhận xét sau mỗi lượt.</p>
         </div>
       </div>
+    </div>
 
-      <div class="grid gap-5 p-4 sm:p-6 lg:grid-cols-[minmax(260px,0.85fr)_minmax(0,1.5fr)]">
-        <aside class="space-y-4">
-          <div class="grid grid-cols-2 gap-3">
-            <label class="text-xs font-bold text-slate-500 dark:text-slate-400">Trình độ
-              <select id="production-level" onchange="renderProductionScenarios()" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
-                <option value="all">Tất cả</option><option>A1</option><option>A2</option><option>B1</option><option>B2</option><option>C1</option><option>C2</option>
-              </select>
-            </label>
-            <label class="text-xs font-bold text-slate-500 dark:text-slate-400">Độ khó
-              <select id="production-difficulty" onchange="renderProductionScenarios()" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
-                <option value="easy">Dễ</option><option value="normal" selected>Bình thường</option><option value="challenging">Thử thách</option>
-              </select>
-            </label>
-          </div>
-          <select id="production-category" onchange="renderProductionScenarios()" class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
-            <option value="all">Tất cả danh mục</option>
-            <option>Đời sống hằng ngày</option><option>Du lịch</option><option>Giao tiếp xã hội</option><option>Học tập</option><option>Công việc</option><option>Giải quyết vấn đề</option>
-          </select>
-          <button type="button" onclick="openCustomProductionScenarioModal()" class="listening-accent w-full rounded-xl px-3.5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:shadow-md" aria-haspopup="dialog" aria-controls="production-custom-scenario-modal">
-            <i class="fa-solid fa-plus mr-2"></i>Tạo tình huống riêng
-          </button>
-          <input id="production-search" oninput="renderProductionScenarios()" type="search" placeholder="Tìm tình huống..." class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm outline-none focus-ring-theme dark:border-slate-600 dark:bg-slate-900">
-          <div id="production-scenario-list" class="max-h-[28rem] space-y-2 overflow-y-auto pr-1"></div>
-          <div id="production-progress-summary" class="space-y-2"></div>
-          <div id="production-history" class="space-y-2"></div>
-        </aside>
-
-        <div class="min-w-0 space-y-4">
-          <button type="button" id="production-resume-btn" onclick="openProductionSession()" class="hidden listening-accent rounded-xl px-4 py-2.5 text-sm font-bold text-white shadow-sm"><i class="fa-solid fa-comments mr-2"></i>Tiếp tục buổi luyện</button>
-          <div id="production-scenario-detail" class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900/50">
-            <div class="flex min-h-32 items-center justify-center text-center text-sm text-slate-400">Chọn một tình huống để xem mục tiêu và bắt đầu luyện.</div>
-          </div>
-          <div id="production-report" class="hidden"></div>
+    <div class="studio-production-grid">
+      <aside class="studio-room-panel space-y-4 p-4 sm:p-5" aria-label="Thư viện tình huống">
+        <div class="grid grid-cols-2 gap-3">
+          <label class="text-xs font-bold text-slate-500 dark:text-slate-400">Trình độ
+            <select id="production-level" onchange="renderProductionScenarios()" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
+              <option value="all">Tất cả</option><option>A1</option><option>A2</option><option>B1</option><option>B2</option><option>C1</option><option>C2</option>
+            </select>
+          </label>
+          <label class="text-xs font-bold text-slate-500 dark:text-slate-400">Độ khó
+            <select id="production-difficulty" onchange="renderProductionScenarios()" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
+              <option value="easy">Dễ</option><option value="normal" selected>Bình thường</option><option value="challenging">Thử thách</option>
+            </select>
+          </label>
         </div>
+        <select id="production-category" onchange="renderProductionScenarios()" class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
+          <option value="all">Tất cả danh mục</option>
+          <option>Đời sống hằng ngày</option><option>Du lịch</option><option>Giao tiếp xã hội</option><option>Học tập</option><option>Công việc</option><option>Giải quyết vấn đề</option>
+        </select>
+        <button type="button" onclick="openCustomProductionScenarioModal()" class="listening-accent w-full rounded-xl px-3.5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:shadow-md" aria-haspopup="dialog" aria-controls="production-custom-scenario-modal">
+          <i class="fa-solid fa-plus mr-2"></i>Tạo tình huống riêng
+        </button>
+        <input id="production-search" oninput="renderProductionScenarios()" type="search" placeholder="Tìm tình huống..." class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm outline-none focus-ring-theme dark:border-slate-600 dark:bg-slate-900">
+        <div id="production-scenario-list" class="max-h-[28rem] space-y-2 overflow-y-auto pr-1"></div>
+        <div id="production-progress-summary" class="space-y-2"></div>
+        <div id="production-history" class="space-y-2"></div>
+      </aside>
+
+      <div class="min-w-0 space-y-4">
+        <button type="button" id="production-resume-btn" onclick="openProductionSession()" class="hidden listening-accent rounded-xl px-4 py-2.5 text-sm font-bold text-white shadow-sm"><i class="fa-solid fa-comments mr-2"></i>Tiếp tục buổi luyện</button>
+        <div id="production-scenario-detail" class="studio-room-panel p-5 sm:p-7">
+          <div class="flex min-h-32 items-center justify-center text-center text-sm text-slate-400">Chọn một tình huống để xem mục tiêu và bắt đầu luyện.</div>
+        </div>
+        <div id="production-report" class="hidden"></div>
       </div>
     </div>
   </section>
 
+  <!-- Phiên luyện hiển thị hội thoại, gợi ý và phản hồi theo từng bước. -->
   <div id="production-session-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-950/55 p-3 backdrop-blur-sm sm:p-6" role="dialog" aria-modal="true" aria-labelledby="production-session-title" onclick="if(event.target===this) closeProductionSession()">
     <div id="production-session" class="production-session-gradient hidden max-h-[92dvh] w-full max-w-4xl overflow-y-auto rounded-3xl border border-white/60 shadow-2xl dark:border-white/10">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/40 bg-white/45 p-3 backdrop-blur-md dark:border-white/10 dark:bg-slate-950/30">

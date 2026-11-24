@@ -1,20 +1,14 @@
-/* React owns its roots; the existing learning engine remains the source of truth. */
+/* Cầu nối để React đọc dữ liệu và gọi thao tác của ứng dụng. */
 (function () {
   const listeners = new Set();
   let snapshot;
 
-  function sync() {
-    const words = wordsState.filter(word => word.lang === currentLang);
-    const now = Date.now();
+  // Chỉ thông báo cho React khi giá trị hiển thị thay đổi.
+  function sync(stats = getVocabularyStats()) {
     const next = {
       lang: currentLang,
       tab: currentTab,
-      total: words.length,
-      unlearned: words.filter(word => word.srsLevel === 0).length,
-      learning: words.filter(word => word.srsLevel >= 1 && word.srsLevel <= 7).length,
-      mastered: words.filter(word => word.srsLevel >= 8).length,
-      nemesis: words.filter(word => (word.forgotCount || 0) >= 3).length,
-      due: words.filter(word => word.srsLevel === 0 || !word.nextReviewTime || word.nextReviewTime <= now).length,
+      ...stats,
       streak: learningStreak,
       dark: document.documentElement.classList.contains('dark'),
     };
@@ -54,7 +48,7 @@
     },
   };
   sync();
-  // Refresh due counts when a scheduled review becomes available or the tab returns.
+  // Cập nhật số từ đến hạn theo thời gian và khi quay lại tab.
   setInterval(sync, 30000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) sync(); });
 })();

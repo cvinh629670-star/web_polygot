@@ -14,6 +14,7 @@ export default defineConfig(({ command, isPreview, mode }) => ({
     {
       name: 'polyglot-existing-html',
       configResolved() { buildHtml(); },
+      // Ghép lại trang khi template hoặc nội dung của một phòng học thay đổi.
       configureServer(server) {
         server.watcher.add(['index.template.html', 'partials/**/*.html']);
         server.watcher.on('change', (file) => {
@@ -31,6 +32,7 @@ export default defineConfig(({ command, isPreview, mode }) => ({
       },
     },
   ],
+  // Xuất bundle tự chạy để index.html mở được trực tiếp từ ổ đĩa.
   build: {
     outDir: 'assets',
     emptyOutDir: false,

@@ -47,7 +47,7 @@
       <div id="vocab-layout" class="grid">
         
         <!-- Add Vocab Form Dynamic by Language -->
-        <div id="add-word-panel" class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm h-fit space-y-4">
+        <div id="add-word-panel" class="studio-room-panel bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm h-fit space-y-4">
           <div class="flex items-center justify-between gap-2">
             <span class="text-lg font-bold flex items-center gap-2">
               <i class="fa-solid fa-plus-circle text-theme-main"></i> Thêm Từ Vựng Mới
@@ -162,7 +162,8 @@
         </div>
 
         <!-- Vocab List Table / Cards -->
-        <div id="vocab-list-panel" class="min-w-0 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
+        <div id="vocab-list-panel" class="studio-room-panel min-w-0 p-4 sm:p-6 space-y-4">
+          <h2 class="studio-collection-title"><span class="studio-collection-icon" aria-hidden="true"><i class="fa-solid fa-book-open"></i></span> Kho từ vựng</h2>
           
           <!-- Filter & Search Controls -->
           <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
@@ -205,7 +206,7 @@
                 <button class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-xs font-bold transition flex items-center gap-1.5">
                   <i class="fa-solid fa-file-export text-slate-500"></i> Xuất
                 </button>
-                <div class="absolute right-0 mt-1 w-36 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 py-1 hidden group-hover:block z-30">
+                <div class="absolute right-0 mt-1 w-36 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 py-1 hidden group-hover:block group-focus-within:block z-30">
                   <button onclick="exportVocab('csv')" class="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2">
                     <i class="fa-solid fa-file-csv text-emerald-500"></i> Xuất File CSV
                   </button>
@@ -218,7 +219,7 @@
           </div>
 
           <!-- Table Container -->
-          <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+          <div class="studio-vocab-table overflow-x-auto">
             <table id="vocab-table" class="w-full text-left text-sm">
               <thead class="bg-slate-100 dark:bg-slate-900/80 text-xs font-bold uppercase text-slate-500 dark:text-slate-400">
                 <tr>

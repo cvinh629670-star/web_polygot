@@ -1,6 +1,7 @@
 (function () {
   'use strict';
 
+  // Đọc mã người dùng từ phiên cũ để chuyển dữ liệu về khóa cục bộ.
   const sessionKey = 'pg_auth_session';
   const configKey = 'pg_auth_config';
   let userId = null;
@@ -14,6 +15,7 @@
     console.error('Không thể đọc phiên đăng nhập cũ:', error);
   }
 
+  // Giữ bản dữ liệu cục bộ nếu thiết bị đã có dữ liệu cho cùng khóa.
   if (userId) {
     const legacyPrefix = `pg_user_${userId}_polyglot_`;
     const legacyKeys = [];

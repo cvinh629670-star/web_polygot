@@ -120,7 +120,7 @@
       ]
     };
 
-    // Global App State
+    // Dữ liệu phục hồi từ thiết bị và trạng thái của phiên học hiện tại.
     let wordsState = JSON.parse(localStorage.getItem('polyglot_words')) || SEED_WORDS;
     let currentLang = localStorage.getItem('polyglot_lang') || 'en';
     let geminiApiKey = localStorage.getItem('polyglot_gemini_key') || '';
@@ -151,6 +151,7 @@
     let pendingDeleteIds = [];
     const selectedWordIds = new Set();
 
+    // Gửi ảnh chụp bộ từ hiện tại sang iframe khi phòng Zombie đã tải xong.
     function syncZombieGameData() {
       if (currentTab !== 'game') return;
       const frame = document.getElementById('zombie-game-frame');
@@ -601,6 +602,7 @@
       updateLangIndicator(currentLang);
     }
 
+    // Điều hướng phòng học và chỉ tải iframe Zombie khi người dùng cần.
     function switchNavTab(tab) {
       if (tab !== 'game') exitGameFullscreen();
       currentTab = tab;
@@ -616,7 +618,6 @@
         }, { once: true });
         zombieGameFrame.src = zombieGameFrame.dataset.src;
       } else {
-        syncZombieGameData();
         zombieGameFrame?.contentWindow?.postMessage({
           type: 'polyglot-host-visibility',
           visible: tab === 'game'
@@ -655,6 +656,7 @@
       renderAllViews();
     }
 
+    // Phòng giao tiếp kết hợp tình huống mẫu, nội dung tự tạo và lịch sử luyện tập.
     function getProductionScenarios() {
       const languageOverrides = productionScenarioOverrides[currentLang] || {};
       return [
@@ -1142,6 +1144,7 @@
       return [keyword, ...translations];
     }
 
+    // Chấm câu trả lời theo từ khóa, mục tiêu và mẫu ngữ pháp của bước hiện tại.
     function evaluateProductionResponse(response, stage, language) {
       const matchedGrammarPatterns = [
         ...(PRODUCTION_GRAMMAR_PATTERNS[language] || []).filter(item => item.pattern.test(response)).map(item => item.label),
@@ -1739,6 +1742,7 @@
       showToast(isEditing ? 'Đã cập nhật tình huống.' : 'Đã thêm tình huống riêng vào thư viện.', 'success');
     }
 
+    // Phòng luyện nghe quản lý thư viện, tra từ trong bài và phát giọng đọc.
     function renderListeningStories() {
       const list = document.getElementById('listening-story-list');
       const count = document.getElementById('listening-story-count');
@@ -2041,6 +2045,7 @@
       toggle.innerHTML = `<i class="fa-solid ${listeningLibraryCollapsed ? 'fa-eye' : 'fa-eye-slash'}"></i>`;
     }
 
+    // Tìm từ trong bộ từ vựng rồi gắn thao tác tra cứu cho từng đoạn có thể chọn.
     function renderListeningPassage() {
       const passageEl = document.getElementById('listening-passage');
       const wordsEl = document.getElementById('listening-passage-words');
@@ -2084,6 +2089,8 @@
           isWordLike: /^[\p{L}\p{N}]+$/u.test(match[0])
         }));
       let highlightedPassage = '';
+      // Vùng khớp và các đoạn văn cùng theo thứ tự xuất hiện.
+      let rangeIndex = 0;
       for (const segment of segments) {
         if (!segment.isWordLike) {
           highlightedPassage += escapeHTML(segment.text);
@@ -2091,7 +2098,8 @@
         }
 
         const end = segment.index + segment.text.length;
-        const selectedTerm = selectedRanges.find(range => range.start < end && range.end > segment.index);
+        while (selectedRanges[rangeIndex]?.end <= segment.index) rangeIndex++;
+        const selectedTerm = selectedRanges[rangeIndex]?.start < end;
         const tokenClasses = selectedTerm
           ? 'border border-amber-300 bg-amber-200/90 font-extrabold text-amber-950 shadow-sm dark:border-amber-400/50 dark:bg-amber-400/25 dark:text-amber-200'
           : 'text-slate-700 dark:text-slate-200';
@@ -2373,6 +2381,7 @@
       showToast(`Đã cập nhật thông tin cho "${word}".`, 'success');
     }
 
+    // Dùng chung kết quả và yêu cầu đang xử lý để tránh tra cứu cùng một từ nhiều lần.
     async function lookupListeningWord(word, cacheKey, language) {
       const existingWord = wordsState.find(item =>
         item.lang === language &&
@@ -2706,6 +2715,7 @@
       return `<span class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-mono text-xs font-bold flex items-center justify-center gap-1"><i class="fa-solid fa-hourglass-half text-amber-500"></i> ${formatted}</span>`;
     }
 
+    // Áp dụng bộ lọc và dựng bảng theo ngôn ngữ cùng lựa chọn hiện tại.
     function renderVocabList() {
       const tbody = document.getElementById('vocab-table-body');
       const emptyState = document.getElementById('vocab-empty-state');
@@ -2937,6 +2947,97 @@
       document.getElementById('settings-modal').classList.add('hidden');
     }
 
+    const learningBackupFields = {
+      polyglot_words: value => Array.isArray(value) && value.every(word =>
+        word && typeof word.id === 'string' && ['en', 'ko', 'zh', 'ja'].includes(word.lang) &&
+        typeof word.word === 'string' && typeof word.meaning === 'string' &&
+        [word.phonetic, word.example].every(text => text == null || typeof text === 'string')),
+      [LISTENING_STORIES_STORAGE_KEY]: isBackupDictionary,
+      [CUSTOM_PRODUCTION_STORAGE_KEY]: isBackupDictionary,
+      [PRODUCTION_SCENARIO_OVERRIDES_STORAGE_KEY]: isBackupDictionary,
+      [PRODUCTION_HISTORY_STORAGE_KEY]: value => Array.isArray(value) && value.every(item => item && typeof item === 'object' && !Array.isArray(item)),
+      polyglot_streak: value => /^\d+$/.test(value),
+      polyglot_last_date: value => typeof value === 'string',
+      polyglot_lang: value => ['en', 'ko', 'zh', 'ja'].includes(value)
+    };
+    const learningBackupCollections = new Set([
+      'polyglot_words', LISTENING_STORIES_STORAGE_KEY, CUSTOM_PRODUCTION_STORAGE_KEY,
+      PRODUCTION_SCENARIO_OVERRIDES_STORAGE_KEY, PRODUCTION_HISTORY_STORAGE_KEY
+    ]);
+    const learningBackupFormat = 'polyglot-learning-backup';
+
+    function isBackupDictionary(value) {
+      return value !== null && typeof value === 'object' && !Array.isArray(value);
+    }
+
+    function setLearningBackupStatus(message) {
+      const status = document.getElementById('learning-backup-status');
+      status.textContent = message;
+      status.classList.toggle('hidden', !message);
+    }
+
+    function downloadLearningBackup() {
+      try {
+        // Danh sách khóa cố định chỉ chứa dữ liệu học. Khóa API không được đưa vào bản sao.
+        const data = Object.fromEntries(Object.keys(learningBackupFields).map(key => [key, localStorage.getItem(key)]));
+        const snapshot = { format: learningBackupFormat, version: 1, exportedAt: new Date().toISOString(), data };
+        triggerFileDownload(JSON.stringify(snapshot, null, 2), 'polyglot-backup.json', 'application/json');
+        setLearningBackupStatus('Đã tạo tệp sao lưu.');
+      } catch {
+        setLearningBackupStatus('Không thể tạo bản sao lưu. Hãy kiểm tra quyền lưu trữ của trình duyệt.');
+      }
+    }
+
+    async function restoreLearningBackup(event) {
+      const input = event.currentTarget;
+      const file = input.files[0];
+      input.value = '';
+      if (!file) return;
+
+      let changes;
+      try {
+        const backup = JSON.parse(await file.text());
+        if (backup?.format !== learningBackupFormat || backup.version !== 1 || !isBackupDictionary(backup.data)) throw new Error();
+        changes = Object.entries(learningBackupFields).map(([key, validate]) => {
+          const value = backup.data[key];
+          if (value !== null && (typeof value !== 'string' ||
+            !validate(learningBackupCollections.has(key) ? JSON.parse(value) : value))) throw new Error();
+          return [key, value];
+        });
+      } catch {
+        setLearningBackupStatus('Tệp sao lưu không hợp lệ hoặc dùng phiên bản chưa được hỗ trợ.');
+        return;
+      }
+
+      if (!window.confirm('Khôi phục sẽ thay thế từ vựng và tiến độ học hiện tại bằng dữ liệu trong tệp. Bạn muốn tiếp tục?')) {
+        setLearningBackupStatus('Đã hủy khôi phục.');
+        return;
+      }
+
+      const write = (key, value) => value === null ? localStorage.removeItem(key) : localStorage.setItem(key, value);
+      const applied = [];
+      try {
+        // Chuẩn bị dữ liệu cũ trước khi ghi để có thể hoàn tác nếu hết dung lượng.
+        const previous = new Map(changes.map(([key]) => [key, localStorage.getItem(key)]));
+        const removals = changes.filter(([key, value]) => (value?.length ?? 0) <= (previous.get(key)?.length ?? 0));
+        const additions = changes.filter(change => !removals.includes(change));
+        for (const [key, value] of [...removals, ...additions]) {
+          if (value === previous.get(key)) continue;
+          write(key, value);
+          applied.push([key, previous.get(key)]);
+        }
+      } catch {
+        try {
+          for (const [key, value] of applied.reverse()) write(key, value);
+          setLearningBackupStatus('Không thể khôi phục. Dữ liệu trước đó đã được giữ lại.');
+        } catch {
+          setLearningBackupStatus('Bộ nhớ bị lỗi khi hoàn tác. Hãy giữ tệp sao lưu để thử lại.');
+        }
+        return;
+      }
+      window.location.reload();
+    }
+
     function saveSettings() {
       geminiApiKey = document.getElementById('gemini-api-key-input').value.trim();
       localStorage.setItem('polyglot_gemini_key', geminiApiKey);
@@ -3145,13 +3246,25 @@
       `).join('');
     }
 
+    // Đếm các nhóm SRS và số từ đến hạn trong một lượt.
+    function getVocabularyStats(language = currentLang, now = Date.now()) {
+      const stats = { total: 0, unlearned: 0, learning: 0, mastered: 0, nemesis: 0, due: 0 };
+      for (const word of wordsState) {
+        if (word.lang !== language) continue;
+        const { srsLevel, forgotCount, nextReviewTime } = word;
+        stats.total++;
+        if (srsLevel === 0) stats.unlearned++;
+        else if (srsLevel >= 1 && srsLevel <= 7) stats.learning++;
+        else if (srsLevel >= 8) stats.mastered++;
+        if ((forgotCount || 0) >= 3) stats.nemesis++;
+        if (srsLevel === 0 || !nextReviewTime || nextReviewTime <= now) stats.due++;
+      }
+      return stats;
+    }
+
     function updateStats() {
-      const langWords = wordsState.filter(w => w.lang === currentLang);
-      const total = langWords.length;
-      const unlearned = langWords.filter(w => w.srsLevel === 0).length;
-      const learning = langWords.filter(w => w.srsLevel >= 1 && w.srsLevel <= 7).length;
-      const vip = langWords.filter(w => w.srsLevel >= 8).length;
-      const nemesis = langWords.filter(w => (w.forgotCount || 0) >= 3).length;
+      const stats = getVocabularyStats();
+      const { total, unlearned, learning, mastered: vip, nemesis } = stats;
 
       const totalEl = document.getElementById('stat-total-words');
       const unlearnedEl = document.getElementById('stat-unlearned-words');
@@ -3166,9 +3279,10 @@
       if (vipEl) vipEl.innerText = vip;
       if (vipBadge) vipBadge.innerText = vip;
       if (nemesisBadge) nemesisBadge.innerText = nemesis;
-      window.polyglotUI?.sync();
+      window.polyglotUI?.sync(stats);
     }
 
+    // Cập nhật dữ liệu dùng chung và các danh sách theo phòng học.
     function renderAllViews() {
       syncZombieGameData();
       renderVocabList();
@@ -3516,29 +3630,44 @@
       let addedCount = 0;
       let updatedCount = 0;
 
-      parsedImportWords.forEach(item => {
-        const existingIdx = wordsState.findIndex(w => w.lang === currentLang && w.word.toLowerCase() === item.word.toLowerCase());
+      // Lập chỉ mục theo tên. Nếu dữ liệu cũ bị trùng, giữ bản ghi đầu tiên.
+      const wordsByName = new Map();
+      for (const word of wordsState) {
+        if (word.lang !== currentLang) continue;
+        const name = word.word.toLowerCase();
+        if (!wordsByName.has(name)) wordsByName.set(name, word);
+      }
 
-        if (existingIdx !== -1) {
+      const newWords = [];
+      for (const item of parsedImportWords) {
+        const name = item.word.toLowerCase();
+        const existing = wordsByName.get(name);
+        if (existing) {
           if (strategy === 'overwrite') {
-            wordsState[existingIdx].meaning = item.meaning;
-            if (item.phonetic) wordsState[existingIdx].phonetic = item.phonetic;
-            if (item.example) wordsState[existingIdx].example = item.example;
+            existing.meaning = item.meaning;
+            if (item.phonetic) existing.phonetic = item.phonetic;
+            if (item.example) existing.example = item.example;
             updatedCount++;
           }
-        } else {
-          wordsState.unshift({
-            id: (Date.now() + Math.random()).toString(),
-            lang: currentLang,
-            word: item.word,
-            meaning: item.meaning,
-            phonetic: item.phonetic || '',
-            example: item.example || '',
-            srsLevel: 0
-          });
-          addedCount++;
+          continue;
         }
-      });
+
+        const word = {
+          id: (Date.now() + Math.random()).toString(),
+          lang: currentLang,
+          word: item.word,
+          meaning: item.meaning,
+          phonetic: item.phonetic || '',
+          example: item.example || '',
+          srsLevel: 0
+        };
+        wordsByName.set(name, word);
+        newWords.push(word);
+        addedCount++;
+      }
+
+      // Giữ thứ tự hiển thị với từ được thêm sau cùng nằm trên đầu.
+      if (newWords.length) wordsState = newWords.reverse().concat(wordsState);
 
       saveState();
       closeImportModal();
@@ -3637,6 +3766,7 @@
       initFlashcards();
     }
 
+    // Cập nhật mức độ ghi nhớ, độ dễ và lịch ôn sau khi đánh giá thẻ.
     function recordSRSResult(wordObj, isCorrect) {
       if (!wordObj) return;
 
@@ -5157,6 +5287,7 @@ Return JSON: {"matchedIndex": number}`;
     /* ==========================================================================
        11. APP INITIALIZATION
        ========================================================================== */
+    // Cài giao diện, bàn phím và đồng hồ đếm ngược lúc trang tải xong.
     function initializeApp() {
       initTheme();
       initIPAKeyboard();

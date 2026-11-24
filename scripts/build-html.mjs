@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 const root = new URL('../', import.meta.url);
 const features = ['production', 'listening', 'vocabulary', 'flashcards', 'zombie', 'nemesis', 'vip'];
 
+// Ghép các phòng học vào template và chỉ ghi lại HTML khi nội dung thay đổi.
 export function buildHtml() {
   let html = readFileSync(new URL('index.template.html', root), 'utf8');
   for (const feature of features) {

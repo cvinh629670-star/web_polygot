@@ -4,7 +4,7 @@
 
 ## Mở trang đã build
 
-Mở trực tiếp `index.html` trong trình duyệt hoặc dùng Live Server. Các tệp React và Tailwind đã biên dịch nằm trong `assets/`, không cần Node.js khi chỉ sử dụng trang. Giữ nguyên cấu trúc thư mục khi sao chép trang; phông chữ, Font Awesome và các chức năng tra cứu trực tuyến vẫn cần Internet.
+Mở trực tiếp `index.html` trong trình duyệt hoặc dùng Live Server. Các tệp React và Tailwind đã biên dịch, ảnh minh họa và biểu tượng nằm trong `assets/`. Giữ nguyên cấu trúc thư mục khi sao chép trang. Phông chữ từ Google Fonts và các chức năng tra cứu trực tuyến cần Internet.
 
 ## Phát triển
 

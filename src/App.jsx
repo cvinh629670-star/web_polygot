@@ -9,7 +9,6 @@ import {
   CircleHelp,
   Command,
   Crown,
-  Flame,
   Headphones,
   Layers,
   MessageCircle,
@@ -43,6 +42,8 @@ const languages = [
   { id: 'ja', label: 'Tiếng Nhật', flag: '🇯🇵', word: 'こんにちは', meaning: 'Xin chào', phonetic: 'konnichiwa' },
 ];
 
+const numberFormatter = new Intl.NumberFormat('vi-VN');
+
 const sections = [
   { id: 'vocab', label: 'Từ vựng', description: 'Thêm và quản lý ngân hàng từ của bạn', icon: BookOpen },
   { id: 'flashcards', label: 'Thẻ ôn tập', description: 'Ghi nhớ từ bằng lặp lại ngắt quãng', icon: Layers },
@@ -53,14 +54,15 @@ const sections = [
   { id: 'vip', label: 'Từ vựng VIP', description: 'Những từ bạn đã thành thạo', icon: Crown, count: 'mastered' },
 ];
 
-const formatNumber = value => new Intl.NumberFormat('vi-VN').format(Number(value) || 0);
+const formatNumber = value => numberFormatter.format(Number(value) || 0);
 const normalizeSearch = value => value.toLocaleLowerCase('vi').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd');
 
+// Tạo thanh điều hướng và cập nhật trạng thái phòng đang mở.
 export function Navigation({ snapshot, actions }) {
   const reducedMotion = useReducedMotion();
 
   return (
-    <div className="pg-navigation no-scrollbar flex items-center gap-1 overflow-x-auto py-2" aria-label="Các khu vực học tập">
+    <div className="pg-navigation no-scrollbar flex items-center gap-1 overflow-x-auto" aria-label="Các khu vực học tập">
       {sections.map(({ id, label, icon: Icon, count }) => {
         const active = snapshot.tab === id;
         return (
@@ -68,7 +70,7 @@ export function Navigation({ snapshot, actions }) {
             key={id}
             type="button"
             variant="ghost"
-            className={`pg-nav-button relative shrink-0 gap-2 whitespace-nowrap rounded-xl px-3.5 text-xs font-semibold ${active ? 'pg-nav-active' : ''}`}
+            className={`pg-nav-button relative shrink-0 whitespace-nowrap rounded-lg px-3 text-sm font-semibold ${active ? 'pg-nav-active' : ''}`}
             aria-current={active ? 'page' : undefined}
             aria-controls={`view-${id}`}
             onClick={() => actions.navigate(id)}
@@ -76,7 +78,7 @@ export function Navigation({ snapshot, actions }) {
             {active && (
               <motion.span
                 layoutId="pg-active-navigation"
-                className="pg-nav-indicator absolute inset-0 rounded-xl"
+                className="pg-nav-indicator absolute inset-0 rounded-lg"
                 transition={reducedMotion ? { duration: 0 } : { type: 'spring', stiffness: 420, damping: 35 }}
                 aria-hidden="true"
               />
@@ -95,6 +97,7 @@ export function Navigation({ snapshot, actions }) {
   );
 }
 
+// Lọc lệnh và xử lý phím tắt trong hộp truy cập nhanh.
 function QuickAccess({ snapshot, actions, showTrigger = true }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -127,7 +130,7 @@ function QuickAccess({ snapshot, actions, showTrigger = true }) {
   return (
     <Dialog open={open} onOpenChange={changeOpen}>
       <DialogTrigger asChild>
-        <Button type="button" variant="outline" size="sm" className={`pg-quick-access gap-2 rounded-xl bg-white/70 dark:bg-slate-900/70 ${showTrigger ? '' : 'hidden'}`} tabIndex={showTrigger ? undefined : -1} aria-hidden={showTrigger ? undefined : true}>
+        <Button type="button" variant="outline" size="sm" className={`pg-quick-access gap-2 rounded-lg ${showTrigger ? '' : 'hidden'}`} tabIndex={showTrigger ? undefined : -1} aria-hidden={showTrigger ? undefined : true}>
           <Command className="size-3.5" aria-hidden="true" />
           <span>Truy cập nhanh</span>
           <kbd className="ml-1 hidden rounded border border-current/15 px-1.5 py-0.5 text-[10px] opacity-60 sm:inline">Ctrl K</kbd>
@@ -184,29 +187,23 @@ function QuickAccess({ snapshot, actions, showTrigger = true }) {
   );
 }
 
-function HeroIllustration({ language, reducedMotion }) {
+// Dựng minh họa theo ngôn ngữ và tùy chọn giảm chuyển động.
+function HeroIllustration({ language }) {
   return (
-    <div className="pg-hero-art" aria-hidden="true">
-      <div className="pg-hero-orbit pg-hero-orbit-one" />
-      <div className="pg-hero-orbit pg-hero-orbit-two" />
-      <motion.div className="pg-wordcard pg-wordcard-back" initial={false} animate={{ rotate: -12 }} transition={{ duration: reducedMotion ? 0 : 0.5 }}>
-        <span className="pg-wordcard-kicker">POLYGLOT SRS</span>
-        <span className="pg-wordcard-symbol">あ</span>
-      </motion.div>
-      <motion.div className="pg-wordcard pg-wordcard-front" initial={reducedMotion ? false : { opacity: 0, y: 12, rotate: 0 }} animate={{ opacity: 1, y: 0, rotate: 7 }} transition={{ duration: reducedMotion ? 0 : 0.6, delay: reducedMotion ? 0 : 0.1 }}>
-        <div className="flex items-center justify-between gap-6"><span className="pg-wordcard-kicker">MỘT LỜI CHÀO MỚI</span><span>{language.flag}</span></div>
-        <span className="pg-wordcard-word">{language.word}</span>
-        <span className="pg-wordcard-phonetic">{language.phonetic}</span>
-        <span className="pg-wordcard-divider" />
-        <span className="pg-wordcard-meaning">{language.meaning}</span>
-        <div className="mt-4 flex items-center gap-1.5 text-[10px] opacity-60"><Layers className="size-3" /><span>Mỗi lần ôn, nhớ thêm một chút.</span></div>
-      </motion.div>
-      <span className="pg-hero-spark pg-hero-spark-one"><Sparkles className="size-5" /></span>
-      <span className="pg-hero-spark pg-hero-spark-two"><Plus className="size-4" /></span>
-    </div>
+    <figure className="pg-hero-art">
+      <img src="./assets/studio-hero.webp" width="1200" height="800" alt="" fetchPriority="high" />
+      <figcaption className="pg-wordcard">
+        <span aria-hidden="true" className="pg-wordcard-flag">{language.flag}</span>
+        <div>
+          <span className="pg-wordcard-word" lang={language.id}>{language.word}</span>
+          <span className="pg-wordcard-phonetic">{language.phonetic} <span aria-hidden="true">·</span> {language.meaning}</span>
+        </div>
+      </figcaption>
+    </figure>
   );
 }
 
+// Hiển thị tiến độ học từ dữ liệu SRS của ngôn ngữ hiện tại.
 export function Dashboard({ snapshot, actions }) {
   const reducedMotion = useReducedMotion();
   const language = languages.find(item => item.id === snapshot.lang) || languages[0];
@@ -214,46 +211,46 @@ export function Dashboard({ snapshot, actions }) {
   const mastered = Math.max(0, Number(snapshot.mastered) || 0);
   const mastery = total ? Math.min(100, Math.round(mastered / total * 100)) : 0;
   const stats = [
-    { label: 'Tổng từ vựng', value: total, icon: BookOpen, tone: 'blue', detail: 'Ngân hàng từ của bạn' },
-    { label: 'Chưa học', value: snapshot.unlearned, icon: Sprout, tone: 'amber', detail: 'Sẵn sàng để khám phá' },
-    { label: 'Đang ghi nhớ', value: snapshot.learning, icon: Brain, tone: 'violet', detail: 'Ôn đều để nhớ lâu hơn' },
-    { label: 'Đã thành thạo', value: mastered, icon: Crown, tone: 'emerald', detail: 'Từ vựng đạt cấp SRS 8+' },
+    { label: 'Tổng từ vựng', value: total, icon: BookOpen, tone: 'blue' },
+    { label: 'Chưa học', value: snapshot.unlearned, icon: Sprout, tone: 'amber' },
+    { label: 'Đang ghi nhớ', value: snapshot.learning, icon: Brain, tone: 'violet' },
+    { label: 'Đã thành thạo', value: mastered, icon: Crown, tone: 'emerald' },
   ];
 
   if (snapshot.tab !== 'vocab') return <QuickAccess snapshot={snapshot} actions={actions} showTrigger={false} />;
 
   return (
-    <div className="pg-dashboard space-y-5 pb-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400"><span aria-hidden="true">{language.flag}</span>Không gian học {language.label.toLocaleLowerCase('vi')}</p>
+    <div className="pg-dashboard space-y-5 pb-7">
+      <div className="pg-dashboard-header flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="pg-dashboard-language"><span aria-hidden="true">{language.flag}</span>{language.label}</p>
+          <h2 className="pg-dashboard-title">Không gian học</h2>
+        </div>
         <QuickAccess snapshot={snapshot} actions={actions} />
       </div>
 
-      <motion.section className="pg-hero relative isolate overflow-hidden rounded-3xl" initial={reducedMotion ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reducedMotion ? 0 : 0.4 }} aria-labelledby="pg-hero-title">
-        <div className="pg-hero-grid" aria-hidden="true" />
-        <div className="pg-hero-content relative z-10 px-6 py-8 sm:px-9 sm:py-10">
-          <div className="mb-5 flex flex-wrap items-center gap-2">
-            <Badge variant="secondary" className="pg-hero-badge gap-1.5 rounded-full px-3 py-1.5"><Sparkles className="size-3.5" aria-hidden="true" />{formatNumber(snapshot.due)} TỪ SẴN SÀNG ÔN</Badge>
-            {Number(snapshot.streak) > 0 && <span className="flex items-center gap-1 text-xs text-blue-100"><Flame className="size-3.5 text-orange-300" aria-hidden="true" />{formatNumber(snapshot.streak)} ngày liên tục</span>}
+      <motion.section className="pg-hero relative isolate overflow-hidden" initial={reducedMotion ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reducedMotion ? 0 : 0.4 }} aria-labelledby="pg-hero-title">
+        <HeroIllustration language={language} />
+        <div className="pg-hero-content">
+          <Badge variant="secondary" className="pg-hero-badge gap-2 rounded-full"><Sparkles className="size-3.5" aria-hidden="true" />{formatNumber(snapshot.due)} TỪ SẴN SÀNG ÔN</Badge>
+          <h3 id="pg-hero-title">Học từ mới.<br /><span>Nhớ lâu hơn.</span></h3>
+          <p>Xây vốn từ {language.label.toLocaleLowerCase('vi')} và ôn lại đúng lúc với lặp lại ngắt quãng.</p>
+          <div className="pg-hero-actions">
+            {total > 0 && <Button type="button" className="pg-hero-primary gap-2 rounded-lg px-4" onClick={actions.review}>Bắt đầu ôn tập<ArrowRight className="size-4" aria-hidden="true" /></Button>}
+            <Button type="button" variant={total > 0 ? 'outline' : 'default'} className={`${total > 0 ? 'pg-hero-secondary' : 'pg-hero-primary'} gap-2 rounded-lg px-4`} onClick={actions.addWord}><Plus className="size-4" aria-hidden="true" />{total > 0 ? 'Thêm từ mới' : 'Thêm từ đầu tiên'}</Button>
           </div>
-          <h2 id="pg-hero-title" className="max-w-lg text-3xl font-extrabold leading-tight tracking-tight text-white sm:text-4xl">Mỗi từ mới,<br /><span className="pg-hero-highlight">một thế giới mở ra.</span></h2>
-          <p className="mt-4 max-w-md text-sm leading-6 text-blue-100/85">Xây vốn từ {language.label.toLocaleLowerCase('vi')} theo nhịp của bạn. Ôn tập đúng lúc, ghi nhớ bền lâu với lặp lại ngắt quãng.</p>
-          <div className="mt-6 flex flex-wrap items-center gap-3">
-            <Button type="button" className="pg-hero-primary gap-2 rounded-xl px-5" onClick={actions.review} disabled={total === 0}><Layers className="size-4" aria-hidden="true" />Bắt đầu ôn tập<ArrowRight className="size-4" aria-hidden="true" /></Button>
-            <Button type="button" variant="outline" className="pg-hero-secondary gap-2 rounded-xl px-5" onClick={actions.addWord}><Plus className="size-4" aria-hidden="true" />{total === 0 ? 'Thêm từ đầu tiên' : 'Thêm từ mới'}</Button>
-          </div>
-          <p className="mt-5 flex items-center gap-2 text-xs text-blue-100/75"><span className="size-1.5 rounded-full bg-emerald-300" aria-hidden="true" />{Number(snapshot.due) > 0 ? `${formatNumber(snapshot.due)} từ sẵn sàng để ôn tập` : total > 0 ? 'Chưa có từ đến hạn ôn tập' : 'Hành trình bắt đầu từ từ đầu tiên của bạn'}</p>
         </div>
-        <HeroIllustration key={language.id} language={language} reducedMotion={reducedMotion} />
       </motion.section>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 sm:gap-4" aria-label={`Thống kê từ vựng ${language.label.toLocaleLowerCase('vi')}`}>
-        {stats.map(({ label, value, icon: Icon, tone, detail }) => (
+        {stats.map(({ label, value, icon: Icon, tone }) => (
           <Card key={label} className={`pg-stat-card pg-stat-${tone} rounded-2xl`}>
-            <CardContent className="p-4 sm:p-5">
-              <div className="mb-4 flex items-center justify-between gap-2"><span className="text-xs font-semibold text-slate-500 dark:text-slate-400">{label}</span><span className="pg-stat-icon flex size-9 shrink-0 items-center justify-center rounded-xl"><Icon className="size-4" aria-hidden="true" /></span></div>
-              <p className="pg-stat-value text-3xl font-extrabold tracking-tight tabular-nums">{formatNumber(value)}</p>
-              <p className="mt-2 text-[11px] leading-5 text-slate-500 dark:text-slate-400">{detail}</p>
+            <CardContent className="pg-stat-content">
+              <span className="pg-stat-icon flex size-10 shrink-0 items-center justify-center rounded-xl"><Icon className="size-5" aria-hidden="true" /></span>
+              <div>
+                <p className="pg-stat-value tabular-nums">{formatNumber(value)}</p>
+                <p className="pg-stat-label">{label}</p>
+              </div>
             </CardContent>
           </Card>
         ))}
@@ -263,10 +260,10 @@ export function Dashboard({ snapshot, actions }) {
         <CardContent className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:gap-6 sm:p-5">
           <div className="flex shrink-0 items-center gap-3">
             <span className="pg-mastery-icon flex size-10 items-center justify-center rounded-xl"><TrendingUp className="size-5" aria-hidden="true" /></span>
-            <div><p className="text-sm font-bold">Từng bước thành thạo</p><p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{total ? `${formatNumber(mastered)}/${formatNumber(total)} từ đã thành thạo` : 'Thêm từ mới để bắt đầu theo dõi tiến độ'}</p></div>
+            <div><p className="text-sm font-bold">Tiến độ thành thạo</p><p className="mt-1 text-xs text-ui-muted-foreground">{total ? `${formatNumber(mastered)}/${formatNumber(total)} từ đã thành thạo` : 'Thêm từ để bắt đầu theo dõi'}</p></div>
           </div>
           <div className="min-w-0 flex-1">
-            <div className="mb-2 flex items-center justify-between gap-3"><span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">Tiến độ ghi nhớ</span><span className="text-xs font-bold tabular-nums">{mastery}%</span></div>
+            <div className="mb-2 text-right text-xs font-bold tabular-nums">{mastery}%</div>
             <Progress value={mastery} aria-label="Tỷ lệ từ vựng đã thành thạo" className="h-2" />
           </div>
           <Tooltip>
