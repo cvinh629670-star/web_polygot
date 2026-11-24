@@ -29,6 +29,43 @@
   let ac = null, master, dry, rev, revSend, wobble, noiseBuf, crackle;
   let built = false, timer = null, playing = false, wantOn, vol, mood;
   let customAudio = null, customObjectUrl = '', customTrackName = '';
+  let trackDatabase, trackRevision = 0, restoringTrack = false, trackStorageWarning = '';
+
+  function storedTrack(mode, operation) {
+    trackDatabase ??= new Promise((resolve, reject) => {
+      const request = indexedDB.open('polyglot-music', 1);
+      request.onupgradeneeded = () => request.result.createObjectStore('tracks');
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+      request.onblocked = () => reject(new Error('Music database is blocked'));
+    });
+    return trackDatabase.then(db => new Promise((resolve, reject) => {
+      const tx = db.transaction('tracks', mode);
+      const request = operation(tx.objectStore('tracks'));
+      tx.oncomplete = () => resolve(request.result);
+      tx.onabort = () => reject(tx.error);
+    }));
+  }
+
+  function setCustomTrack(file) {
+    if (customObjectUrl) URL.revokeObjectURL(customObjectUrl);
+    customObjectUrl = file ? URL.createObjectURL(file) : '';
+    customTrackName = file?.name || '';
+    if (file) customAudio.src = customObjectUrl;
+    else customAudio.removeAttribute('src');
+    customAudio.load();
+  }
+
+  function saveCustomTrack(file) {
+    const revision = ++trackRevision;
+    restoringTrack = false;
+    trackStorageWarning = '';
+    storedTrack('readwrite', store => file ? store.put(file, 'current') : store.delete('current')).catch(() => {
+      if (revision !== trackRevision) return;
+      trackStorageWarning = file ? 'Tệp này chỉ dùng được trong lần mở trang hiện tại.' : 'Không thể xóa tệp nhạc đã lưu.';
+      syncUI();
+    });
+  }
   let nextTime = 0, step = 0, bar = 0, melodyIdx = 2, duckCount = 0, stopTimer = null;
 
   const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
@@ -252,6 +289,7 @@
   function targetGain() { return vol * 0.95 * (duckCount > 0 ? 0.3 : 1); }
 
   function start() {
+    if (restoringTrack) return;
     if (customObjectUrl && customAudio) {
       clearTimeout(stopTimer);
       if (timer) { clearInterval(timer); timer = null; }
@@ -322,7 +360,7 @@
       play.innerHTML = playing ? '<i class="fa-solid fa-pause"></i>' : '<i class="fa-solid fa-play" style="margin-left:2px"></i>';
       play.setAttribute('aria-label', playing ? 'Tạm dừng nhạc' : 'Phát nhạc');
     }
-    if (stat) stat.textContent = message || (playing ? 'Đang phát' : (wantOn ? 'Chạm bất kỳ đâu để bắt đầu' : 'Đã tạm dừng'));
+    if (stat) stat.textContent = message || trackStorageWarning || (playing ? 'Đang phát' : (wantOn ? 'Chạm bất kỳ đâu để bắt đầu' : 'Đã tạm dừng'));
     const title = $('music-title');
     if (title) title.textContent = customTrackName || 'Lo-fi chill';
     const moods = $('music-moods');
@@ -352,9 +390,16 @@
     customAudio.loop = true;
     customAudio.preload = 'metadata';
     customAudio.addEventListener('error', () => syncUI('Không đọc được tệp nhạc này. Hãy thử định dạng âm thanh khác.'));
-    window.addEventListener('pagehide', () => {
-      if (customObjectUrl) URL.revokeObjectURL(customObjectUrl);
-    }, { once: true });
+    restoringTrack = true;
+    storedTrack('readonly', store => store.get('current')).then(file => {
+      if (trackRevision === 0 && file instanceof File) setCustomTrack(file);
+    }).catch(() => {
+      if (trackRevision === 0) trackStorageWarning = 'Không thể mở bộ nhớ nhạc trên thiết bị.';
+    }).finally(() => {
+      if (trackRevision !== 0) return;
+      restoringTrack = false;
+      syncUI();
+    });
     btn.addEventListener('click', e => {
       e.stopPropagation();
       const open = panel.classList.toggle('hidden') === false;
@@ -379,11 +424,8 @@
         return;
       }
       stop();
-      if (customObjectUrl) URL.revokeObjectURL(customObjectUrl);
-      customObjectUrl = URL.createObjectURL(file);
-      customTrackName = file.name;
-      customAudio.src = customObjectUrl;
-      customAudio.load();
+      saveCustomTrack(file);
+      setCustomTrack(file);
       wantOn = true;
       localStorage.setItem(LS_ON, 'true');
       start();
@@ -391,11 +433,8 @@
     $('music-default').addEventListener('click', () => {
       const resume = playing || wantOn;
       stop();
-      if (customObjectUrl) URL.revokeObjectURL(customObjectUrl);
-      customObjectUrl = '';
-      customTrackName = '';
-      customAudio.removeAttribute('src');
-      customAudio.load();
+      saveCustomTrack(null);
+      setCustomTrack(null);
       wantOn = resume;
       localStorage.setItem(LS_ON, String(wantOn));
       if (resume) start();
@@ -484,7 +523,7 @@
       const kick1 = e => {
         // bấm vào chính bảng nhạc thì để nút Phát/Tạm dừng tự xử lý
         if (e && e.target && e.target.closest && e.target.closest('#music-widget')) return;
-        if (!wantOn || playing) return;
+        if (!wantOn || playing || restoringTrack) return;
         window.removeEventListener('pointerdown', kick1, true);
         window.removeEventListener('keydown', kick1, true);
         start();
