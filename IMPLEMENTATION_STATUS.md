@@ -1,6 +1,6 @@
-# Trạng thái triển khai Polygot Grammar Lab
+# Trạng thái mã nguồn Polygot Grammar Lab
 
-Grammar Lab được tích hợp vào phòng luyện tập hiện có. Mở **Luyện ngữ pháp** hoặc **Luyện viết Hán tự**, rồi chọn **Mở Grammar Lab**. Nút quay về đưa người dùng trở lại bài cơ bản, trình nhập bài hoặc bàn Hán tự.
+> Phần luyện ngữ pháp và luyện viết Hán tự đã được gỡ khỏi giao diện. Tài liệu này ghi lại các module cũ còn trong mã nguồn; dữ liệu luyện tập đã lưu vẫn được giữ trong sao lưu/khôi phục.
 
 | Giai đoạn | Nội dung đã triển khai |
 |---|---|
@@ -11,7 +11,7 @@ Grammar Lab được tích hợp vào phòng luyện tập hiện có. Mở **Lu
 | 5. Đánh giá | Năng lực 0–100, radar, hoạt động 7 ngày, phân tích lỗi, SRS 1/3/7/14/30/60 ngày và chọn câu dựa trên lịch ôn, lỗi, độ khó, từ quen. |
 | 6. Động lực | XP có giới hạn theo sự kiện, Rank dựa trên điểm năng lực và số ngày có dữ liệu, chuỗi ngày, nhiệm vụ, thành tựu và Weekly Boss dựa trên dữ liệu trong tuần. |
 | 7. Tích hợp | Đọc kho từ qua giao diện cục bộ, bộ chấm theo quy tắc, JSON tiến độ và sao lưu chung, PWA ngoại tuyến sau khi tải các tài nguyên tĩnh. |
-| 8. Kiểm thử | Build thành công, 17/17 bài Playwright đạt, kiểm tra thêm điều hướng dưới tại 390 px và các mốc SRS. |
+| 8. Kiểm thử | Build thành công, 16/16 bài Playwright đạt sau khi gỡ phần luyện tập khỏi giao diện. |
 
 ## Cấu trúc
 
@@ -29,7 +29,6 @@ js/grammar-lab/
 js/offline.js
 manifest.webmanifest
 sw.js
-partials/practice.html
 tests/ui.spec.js
 ```
 

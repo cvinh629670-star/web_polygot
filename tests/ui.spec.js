@@ -2,7 +2,7 @@ import { test as base, expect } from '@playwright/test';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const later = Date.now() + 30 * 86_400_000;
-const earlier = Date.now() - 86_400_000;
+const earlier = Date.now() - 3_600_000;
 const savedWords = [
   { id: 'en-new', lang: 'en', word: 'Hello', meaning: 'Xin chào', srsLevel: 0, nextReviewTime: 0 },
   { id: 'en-learning', lang: 'en', word: 'Memory', meaning: 'Trí nhớ', srsLevel: 3, nextReviewTime: earlier },
@@ -49,7 +49,7 @@ const test = base.extend({
 
 async function openApp(page, url = '/') {
   await page.goto(url);
-  await expect(page.locator('#react-navigation-root .pg-nav-button')).toHaveCount(6);
+  await expect(page.locator('#react-navigation-root [data-slot="button"][aria-controls="view-vocab"]')).toBeVisible();
   await expect(page.locator('.pg-dashboard')).toBeVisible();
   await expect(page.locator('.pg-hero')).toHaveCount(0);
 }
@@ -64,7 +64,34 @@ async function expectStats(page, { total, unlearned, learning, mastered, due }) 
   await expect(page.getByRole('progressbar', { name: 'Tỷ lệ từ vựng đã thành thạo' })).toHaveAttribute('aria-valuenow', String(mastery));
 }
 
+function readStudioPalette(page) {
+  return page.evaluate(() => ({
+    accent: getComputedStyle(document.querySelector('.studio-brand h1 span')).color,
+    background: getComputedStyle(document.body).backgroundColor,
+  }));
+}
+
+test('overdue SRS loses one level per full day and resets at zero without charging twice', async ({ page }) => {
+  await openApp(page);
+  const due = await page.evaluate(() => {
+    const words = JSON.parse(localStorage.getItem('polyglot_words'));
+    const word = words.find(item => item.id === 'en-learning');
+    Object.assign(word, { nextReviewTime: Date.now() - 2.5 * 86400000, interval: 6, reps: 2, ef: 2 });
+    localStorage.setItem('polyglot_words', JSON.stringify(words));
+    return word.nextReviewTime;
+  });
+  const savedWord = () => page.evaluate(() => JSON.parse(localStorage.getItem('polyglot_words')).find(item => item.id === 'en-learning'));
+  await openApp(page);
+  expect(await savedWord()).toMatchObject({ srsLevel: 1, nextReviewTime: due });
+  await openApp(page);
+  expect(await savedWord()).toMatchObject({ srsLevel: 1, nextReviewTime: due });
+  await page.clock.install({ time: due + 3 * 86400000 });
+  await openApp(page);
+  expect(await savedWord()).toMatchObject({ srsLevel: 0, nextReviewTime: 0, interval: 0, reps: 0, ef: 2.5 });
+});
+
 test('preserves saved vocabulary without a reset marker and shows real statistics for four languages', async ({ page }, testInfo) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await openApp(page);
   await expectStats(page, { total: 4, unlearned: 1, learning: 2, mastered: 1, due: 2 });
   await page.screenshot({ path: testInfo.outputPath('desktop.png'), fullPage: true });
@@ -74,6 +101,7 @@ test('preserves saved vocabulary without a reset marker and shows real statistic
   await expect(selectedLanguage).toHaveAttribute('id', 'lang-btn-en');
   await page.locator('#lang-btn-zh').focus();
   await expect(selectedLanguage).toHaveAttribute('id', 'lang-btn-en');
+  const palettes = [await readStudioPalette(page)];
   for (const [lang, stats] of [
     ['ko', { total: 2, unlearned: 1, learning: 0, mastered: 1, due: 1 }],
     ['zh', { total: 1, unlearned: 0, learning: 1, mastered: 0, due: 0 }],
@@ -83,10 +111,14 @@ test('preserves saved vocabulary without a reset marker and shows real statistic
     await expect(selectedLanguage).toHaveAttribute('id', `lang-btn-${lang}`);
     await expectStats(page, stats);
     await expect(page.locator('body')).toHaveClass(new RegExp(`theme-${lang}`));
+    palettes.push(await readStudioPalette(page));
   }
+  expect(new Set(palettes.map(palette => palette.accent)).size).toBe(4);
+  expect(new Set(palettes.map(palette => palette.background)).size).toBe(4);
   await page.reload();
   await expect(selectedLanguage).toHaveAttribute('id', 'lang-btn-ja');
   await expectStats(page, { total: 3, unlearned: 1, learning: 1, mastered: 1, due: 2 });
+  expect(await readStudioPalette(page)).toEqual(palettes.at(-1));
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('polyglot_words')))).toEqual(savedWords);
   expect(await page.evaluate(() => localStorage.getItem('polyglot_gemini_key'))).toBe('saved-test-value');
 });
@@ -158,11 +190,13 @@ test('vocabulary cards, search, selection, export and empty-library import work 
   await expect(page.locator('#preset-lang-label')).toHaveText('EN');
 });
 
-test('all six React navigation controls open the right view and load the game only on demand', async ({ page }) => {
+test('all five React navigation controls open the right view and load the game only on demand', async ({ page }) => {
   await openApp(page);
   const frame = page.locator('#zombie-game-frame');
+  await expect(page.locator('#react-navigation-root button[aria-controls="view-listening"]')).toHaveCount(0);
+  await expect(page.locator('#view-listening')).toHaveCount(0);
   expect(await frame.getAttribute('src')).toBeNull();
-  for (const tab of ['flashcards', 'listening', 'nemesis', 'vip', 'game', 'vocab']) {
+  for (const tab of ['flashcards', 'nemesis', 'vip', 'game', 'vocab']) {
     const button = page.locator(`#react-navigation-root button[aria-controls="view-${tab}"]`);
     await button.click();
     await expect(button).toHaveAttribute('aria-current', 'page');
@@ -182,90 +216,21 @@ test('all six React navigation controls open the right view and load the game on
   await expect(page.locator('.pg-dashboard')).toBeVisible();
 });
 
-test('the practice room switches between grammar and interactive Hanzi writing', async ({ page }) => {
+test('grammar and Hanzi practice are absent from navigation and quick access', async ({ page }) => {
   await openApp(page);
-  const entry = page.locator('#react-navigation-root button[aria-controls="view-listening"]');
-  await entry.click();
-  await expect(page.locator('#practice-title')).toHaveText('Luyện ngữ pháp');
-  for (let index = 0; index < 8; index++) {
-    await page.locator('[data-answer="0"]').click();
-    await expect(page.locator('[data-feedback]')).toContainText('Đúng!');
-    await page.locator('[data-next]').click();
+  for (const language of ['en', 'ko', 'zh', 'ja']) {
+    await page.locator(`#lang-btn-${language}`).click();
+    await expect(page.locator('#react-navigation-root')).not.toContainText('Luyện ngữ pháp');
+    await expect(page.locator('#react-navigation-root')).not.toContainText('Luyện viết Hán tự');
   }
-  await expect(page.locator('#practice-content')).toContainText('8/8');
-  await page.locator('#grammar-import-file').setInputFiles({
-    name: 'grammar.json',
-    mimeType: 'application/json',
-    buffer: Buffer.from(JSON.stringify([{
-      topic: 'Bài tự thêm', theory: 'Dùng does để hỏi với he.', question: '___ he swim?',
-      options: ['Do', 'Does'], correctIndex: 1
-    }])),
-  });
-  await page.getByText('Bài tự thêm', { exact: true }).click();
-  await expect(page.getByText('Dùng does để hỏi với he.')).toBeVisible();
-  await expect(page.locator('[data-grammar-quiz]')).toContainText('Câu 1/9');
-  for (const lang of ['ko', 'ja']) {
-    await page.locator(`#lang-btn-${lang}`).click();
-    await expect(page.locator(`#practice-content h3[lang="${lang}"]`)).toBeVisible();
-  }
-  await page.locator('#lang-btn-zh').click();
-  await expect(entry).toHaveText('Luyện viết Hán tự');
-  await page.locator('#hanzi-character').selectOption('3');
-  await page.locator('#hanzi-stroke').click();
-  await expect(page.locator('#hanzi-stroke-count')).toHaveText('1/2 nét');
-  const board = page.locator('#hanzi-board');
-  const bounds = await board.boundingBox();
-  const pixelAlpha = () => board.evaluate(element => element.getContext('2d').getImageData(75, 75, 1, 1).data[3]);
-  await page.mouse.move(bounds.x + bounds.width / 4, bounds.y + bounds.height / 4);
-  await page.mouse.down();
-  await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 4);
-  await page.mouse.up();
-  await expect.poll(pixelAlpha).toBeGreaterThan(0);
-  await page.locator('#hanzi-eraser').click();
-  await page.mouse.click(bounds.x + bounds.width / 4, bounds.y + bounds.height / 4);
-  expect(await pixelAlpha()).toBe(0);
-  await page.locator('#hanzi-clear').click();
-  expect(await pixelAlpha()).toBe(0);
-  await page.locator('#hanzi-new').fill('山 水 火 山');
-  await page.locator('#hanzi-add button').click();
-  await expect(page.locator('#hanzi-add-status')).toHaveText('Đã lưu 3 chữ mới.');
-  await expect(page.locator('#hanzi-stroke-count')).toHaveText('Mẫu mặt chữ');
-  await page.reload();
-  await entry.click();
-  await expect(page.locator('#hanzi-character option')).toHaveCount(11);
-});
-
-test('Grammar Lab records an error, supports retry and persists XP and SRS locally', async ({ page }) => {
-  await openApp(page);
-  await page.locator('[aria-controls="view-listening"]').click();
-  await page.locator('#open-grammar-lab').click();
-  const lab = page.locator('#grammar-lab');
-  await expect(lab.getByRole('heading', { name: 'Polygot Grammar Lab' })).toBeVisible();
-  await lab.getByRole('button', { name: 'Kiến thức', exact: true }).click();
-  await lab.locator('[data-action="lesson"][data-value="en-present"]').click();
-  await lab.getByRole('button', { name: 'Đánh dấu đã học' }).click();
-  await lab.getByRole('button', { name: 'Luyện bài này', exact: true }).click();
-  await lab.getByRole('button', { name: 'go', exact: true }).click();
-  await expect(lab.locator('.lab-feedback')).toContainText('Cần luyện thêm');
-  await lab.locator('[data-action="tab"][data-value="review"]').click();
-  await lab.getByRole('button', { name: 'Luyện các lỗi chưa sửa' }).click();
-  await lab.getByRole('button', { name: 'goes', exact: true }).click();
-  await expect(lab.locator('.lab-feedback')).toContainText('Đúng!');
-  const progress = await page.evaluate(() => grammarLabRepository.read().profiles.en);
-  expect(progress.answers.map(answer => answer.result)).toEqual(['wrong', 'correct']);
-  expect(progress.reviews['en-present'].next).toBeGreaterThan(Date.now());
-  expect(progress.awards['answer-en-present-1']).toBe(5);
-  expect(progress.awards['repair-en-present-1']).toBe(8);
-  await page.reload();
-  await page.locator('[aria-controls="view-listening"]').click();
-  await page.locator('#open-grammar-lab').click();
-  await lab.locator('[data-action="tab"][data-value="review"]').click();
-  await lab.locator('.lab-lapses summary').click();
-  await expect(lab.locator('.lab-lapses')).toContainText('Đã khắc phục');
-  await page.locator('#lang-btn-zh').click();
-  await expect(lab).toHaveAttribute('data-lang', 'zh');
-  await expect(lab.getByText('Tiếng Trung', { exact: false })).toBeVisible();
-  await expect(lab.getByText('Chuỗi ngày', { exact: true }).locator('..')).toContainText('0');
+  const trigger = page.getByRole('button', { name: /Truy cập nhanh/ });
+  const dialog = page.getByRole('dialog', { name: 'Hôm nay bạn muốn học gì?' });
+  await trigger.click();
+  const search = dialog.getByRole('textbox', { name: 'Tìm khu vực học tập' });
+  await search.fill('ngữ pháp');
+  await expect(dialog.getByRole('status')).toContainText('Không tìm thấy khu vực phù hợp.');
+  await search.fill('hán tự');
+  await expect(dialog.getByRole('status')).toContainText('Không tìm thấy khu vực phù hợp.');
 });
 
 test('Grammar Lab engine accepts sample answers in all ten exercise formats', async ({ page }) => {
@@ -284,45 +249,6 @@ test('Grammar Lab engine accepts sample answers in all ten exercise formats', as
     expect(Object.keys(checks[lang])).toHaveLength(10);
     expect(Object.values(checks[lang]).filter(result => result === 'correct')).toHaveLength(9);
     expect(checks[lang].writing).toBe('self');
-  }
-});
-
-test('Grammar Lab backs up progress and restores it after a confirmed reset on mobile', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await openApp(page);
-  await page.locator('[aria-controls="view-listening"]').click();
-  await page.locator('#open-grammar-lab').click();
-  const lab = page.locator('#grammar-lab');
-  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
-  await page.evaluate(() => grammarLabRepository.update('en', profile => {
-    profile.learned['en-present'] = Date.now();
-    profile.awards['learn-en-present'] = 10;
-  }));
-  await lab.locator('[data-action="tab"][data-value="profile"]').click();
-  const download = page.waitForEvent('download');
-  await lab.locator('[data-action="export"]').click();
-  const file = await (await download).path();
-  page.once('dialog', dialog => dialog.accept());
-  await lab.locator('[data-action="reset"]').click();
-  expect(await page.evaluate(() => grammarLabRepository.read().profiles.en)).toBeUndefined();
-  page.once('dialog', dialog => dialog.accept());
-  await lab.locator('#lab-restore-file').setInputFiles(file);
-  await expect(lab.locator('.lab-status')).toHaveText('Đã khôi phục dữ liệu.');
-  expect(await page.evaluate(() => grammarLabRepository.read().profiles.en.awards['learn-en-present'])).toBe(10);
-});
-
-test('Grammar Lab can open and practice offline after its PWA is ready', async ({ page }) => {
-  await openApp(page);
-  await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
-  await page.context().setOffline(true);
-  try {
-    await page.reload({ waitUntil:'load' });
-    await page.locator('[aria-controls="view-listening"]').click();
-    await page.locator('#open-grammar-lab').click();
-    await page.locator('#grammar-lab').getByRole('button', { name:'Luyện nhanh', exact:true }).click();
-    await expect(page.locator('#grammar-lab .lab-page')).toContainText('Câu 1/');
-  } finally {
-    await page.context().setOffline(false);
   }
 });
 
@@ -387,17 +313,17 @@ test('quick access filters Vietnamese labels, restores focus, and works from ano
   await expect(dialog).toBeVisible();
   const search = dialog.getByRole('textbox', { name: 'Tìm khu vực học tập' });
   await expect(search).toBeFocused();
-  await search.fill('luyen ngu phap');
-  await expect(dialog.getByRole('button', { name: /Luyện ngữ pháp/ })).toBeVisible();
+  await search.fill('the on tap');
+  await expect(dialog.getByRole('button', { name: /Thẻ ôn tập/ })).toBeVisible();
   await expect(dialog.getByRole('button', { name: /Zombie Survival/ })).toHaveCount(0);
   await page.keyboard.press('Escape');
   await expect(dialog).toHaveCount(0);
   await expect(trigger).toBeFocused();
   await page.keyboard.press('Control+k');
   await expect(dialog).toBeVisible();
-  await dialog.getByRole('button', { name: /Luyện ngữ pháp/ }).click();
-  await expect(page.locator('#view-listening')).toBeVisible();
-  const nav = page.locator('#react-navigation-root button[aria-controls="view-listening"]');
+  await dialog.getByRole('button', { name: /Thẻ ôn tập/ }).click();
+  await expect(page.locator('#view-flashcards')).toBeVisible();
+  const nav = page.locator('#react-navigation-root button[aria-controls="view-flashcards"]');
   await nav.focus();
   await page.keyboard.press('Control+k');
   await expect(dialog).toBeVisible();
@@ -411,18 +337,24 @@ test('quick access filters Vietnamese labels, restores focus, and works from ano
 });
 
 test('quick language switching and dark mode persist across reload', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await openApp(page);
   await page.getByRole('button', { name: /Truy cập nhanh/ }).click();
   const dialog = page.getByRole('dialog', { name: 'Hôm nay bạn muốn học gì?' });
   await dialog.getByRole('button', { name: /Tiếng Hàn/ }).click();
   await expectStats(page, { total: 2, unlearned: 1, learning: 0, mastered: 1, due: 1 });
+  const lightPalette = await readStudioPalette(page);
   await page.locator('button[onclick="toggleDarkMode()"]').click();
   await expect(page.locator('html')).toHaveClass(/dark/);
   await expect.poll(() => page.evaluate(() => window.polyglotUI.getSnapshot().dark)).toBe(true);
+  const darkPalette = await readStudioPalette(page);
+  expect(darkPalette.accent).not.toBe(lightPalette.accent);
+  expect(darkPalette.background).not.toBe(lightPalette.background);
   await page.reload();
   await expect(page.locator('html')).toHaveClass(/dark/);
   await expect(page.locator('body')).toHaveClass(/theme-ko/);
   await expect(page.locator('.pg-dashboard-language')).toContainText('Tiếng Hàn');
+  expect(await readStudioPalette(page)).toEqual(darkPalette);
 });
 
 for (const width of [390, 320]) {
@@ -464,13 +396,24 @@ for (const width of [390, 320]) {
 test('reduced motion keeps the dashboard and navigation usable', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await openApp(page);
+  const body = page.locator('body');
+  await expect(body).toHaveCSS('transition-property', /--theme-color/);
+  // Read the animation in the same browser task as the click.
+  const themeTransitionStarted = await body.evaluate(element => {
+    getComputedStyle(element).getPropertyValue('--theme-color');
+    document.getElementById('lang-btn-ko').click();
+    return element.getAnimations().some(animation => animation.transitionProperty === '--theme-color');
+  });
+  expect(themeTransitionStarted).toBe(true);
   // Change the preference while a view transition is still active. The visible
   // content must reach its final state even when the animation is cancelled.
-  await page.locator('#react-navigation-root button[aria-controls="view-listening"]').click();
+  await page.locator('#react-navigation-root button[aria-controls="view-flashcards"]').click();
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await expect(page.locator('#view-listening')).toBeVisible();
-  await expect(page.locator('#view-listening')).toHaveCSS('opacity', '1');
-  await expect(page.locator('#view-listening')).toHaveCSS('transform', 'none');
+  await expect(body).not.toHaveCSS('transition-property', /--theme-color/);
+  await page.locator('#lang-btn-en').click();
+  await expect(page.locator('#view-flashcards')).toBeVisible();
+  await expect(page.locator('#view-flashcards')).toHaveCSS('opacity', '1');
+  await expect(page.locator('#view-flashcards')).toHaveCSS('transform', 'none');
   await page.locator('#react-navigation-root button[aria-controls="view-vocab"]').click();
   await expect(page.locator('.pg-dashboard')).toHaveCSS('opacity', '1');
   await page.locator('#react-dashboard-root').getByRole('button', { name: 'Bắt đầu ôn tập' }).click();
@@ -484,8 +427,8 @@ test('the built site can open directly from index.html without a development ser
   const indexPath = fileURLToPath(new URL('../index.html', import.meta.url));
   await openApp(page, pathToFileURL(indexPath).href);
   await expectStats(page, { total: 4, unlearned: 1, learning: 2, mastered: 1, due: 2 });
-  await page.locator('#react-navigation-root button[aria-controls="view-listening"]').click();
-  await expect(page.locator('#view-listening')).toBeVisible();
+  await expect(page.locator('#react-navigation-root button[aria-controls="view-listening"]')).toHaveCount(0);
+  await expect(page.locator('#view-listening')).toHaveCount(0);
 });
 
 test('removes login and migrates saved account data to local storage', async ({ page }) => {

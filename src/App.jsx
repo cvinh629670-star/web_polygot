@@ -8,8 +8,6 @@ import {
   CircleHelp,
   Command,
   Crown,
-  BookText,
-  PenLine,
   Layers,
   Plus,
   Search,
@@ -45,18 +43,10 @@ const numberFormatter = new Intl.NumberFormat('vi-VN');
 const sections = [
   { id: 'vocab', label: 'Từ vựng', description: 'Thêm và quản lý ngân hàng từ của bạn', icon: BookOpen },
   { id: 'flashcards', label: 'Thẻ ôn tập', description: 'Ghi nhớ từ bằng lặp lại ngắt quãng', icon: Layers },
-  { id: 'listening', label: 'Luyện ngữ pháp', description: 'Làm bài tập và xem giải thích ngữ pháp', icon: BookText },
   { id: 'game', label: 'Zombie Survival', description: 'Thử sức với trò chơi từ vựng', icon: Skull },
   { id: 'nemesis', label: 'Kẻ thù ác', description: 'Chinh phục những từ thường quên', icon: ShieldAlert, count: 'nemesis' },
   { id: 'vip', label: 'Từ vựng VIP', description: 'Những từ bạn đã thành thạo', icon: Crown, count: 'mastered' },
 ];
-
-function sectionsForLanguage(language) {
-  if (language !== 'zh') return sections;
-  return sections.map(section => section.id === 'listening'
-    ? { ...section, label: 'Luyện viết Hán tự', description: 'Xem thứ tự nét và luyện viết chữ Hán', icon: PenLine }
-    : section);
-}
 
 const formatNumber = value => numberFormatter.format(Number(value) || 0);
 const normalizeSearch = value => value.toLocaleLowerCase('vi').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd');
@@ -79,11 +69,11 @@ export function Navigation({ snapshot, actions }) {
       ? active.left - left - gutter
       : Math.max(0, active.right - right + gutter);
     if (Math.abs(offset) > 1) navigation.scrollBy({ left: offset, behavior: 'instant' });
-  }, [snapshot.tab, snapshot.lang]);
+  }, [snapshot.tab]);
 
   return (
     <div ref={navigationRef} className="pg-navigation">
-      {sectionsForLanguage(snapshot.lang).map(({ id, label, icon: Icon, count }) => {
+      {sections.map(({ id, label, icon: Icon, count }) => {
         const active = snapshot.tab === id;
         return (
           <Button
@@ -146,7 +136,7 @@ function QuickAccess({ snapshot, actions, showTrigger = true }) {
     changeOpen(false);
     actions.navigate(tab);
   };
-  const filteredSections = sectionsForLanguage(snapshot.lang).filter(section => normalizeSearch(`${section.label} ${section.description}`).includes(normalizeSearch(query.trim())));
+  const filteredSections = sections.filter(section => normalizeSearch(`${section.label} ${section.description}`).includes(normalizeSearch(query.trim())));
 
   return (
     <Dialog open={open} onOpenChange={changeOpen}>

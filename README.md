@@ -33,15 +33,13 @@ Trên máy này, `build.ps1` cũng tìm được Node portable trong `%USERPROFI
 
 ## Mã nguồn
 
-### Polygot Grammar Lab
+### Dữ liệu luyện tập cũ
 
-Chọn ngôn ngữ, mở **Luyện ngữ pháp** hoặc **Luyện viết Hán tự**, sau đó chọn **Mở Grammar Lab**. Cây kỹ năng dùng để xem lý thuyết, đánh dấu bài đã học và bắt đầu luyện. **Ôn tập** chứa lịch SRS và các câu từng sai. **Hồ sơ** có năng lực, thành tựu, xuất hoặc khôi phục tệp JSON và đặt lại tiến độ của ngôn ngữ đang chọn.
-
-Grammar Lab lưu tiến độ riêng cho Anh, Hàn, Trung và Nhật. Các bài JSON nhập từ giao diện ngữ pháp cơ bản được bổ sung vào thư viện Lab. Bản sao lưu trong **Cài đặt** cũng bao gồm tiến độ Lab.
+Phần luyện ngữ pháp và luyện viết Hán tự đã được gỡ khỏi giao diện. Dữ liệu cũ của hai phần vẫn được giữ trong chức năng sao lưu và khôi phục để tránh mất tiến độ đã lưu trên thiết bị.
 
 Để dùng PWA, chạy `npm run build` rồi `npm run preview`. Mở trang qua localhost hoặc HTTPS và đợi lần tải đầu hoàn tất trước khi ngắt mạng. Trình duyệt hỗ trợ PWA có thể cài ứng dụng từ menu trình duyệt. Nếu mở trực tiếp `index.html`, các tệp học cục bộ vẫn dùng được.
 
-Các module của Lab nằm trong `js/grammar-lab/`. Đọc [trạng thái triển khai](./IMPLEMENTATION_STATUS.md) để xem cấu trúc, phạm vi và hướng mở rộng.
+Các module dữ liệu luyện tập cũ nằm trong `js/grammar-lab/`. Đọc [trạng thái triển khai](./IMPLEMENTATION_STATUS.md) để biết thêm về mã nguồn được giữ lại.
 
 - `index.template.html`, `partials/`: khung trang và các phòng học. `index.html` là tệp được tạo tự động; sửa ở nguồn rồi build lại.
 - `src/App.jsx`: điều hướng React, bảng tổng quan với số liệu thật, tiến độ thành thạo và truy cập nhanh bằng Ctrl/Cmd+K.

@@ -563,7 +563,6 @@
     // Điều hướng phòng học và chỉ tải iframe Zombie khi người dùng cần.
     function switchNavTab(tab) {
       const tabChanged = currentTab !== tab;
-      if (tab !== 'listening') grammarLab.suspend();
       if (tab !== 'game') exitGameFullscreen();
       currentTab = tab;
       const zombieGameFrame = document.getElementById('zombie-game-frame');
@@ -583,7 +582,7 @@
           visible: tab === 'game'
         }, '*');
       }
-      const views = ['vocab', 'flashcards', 'listening', 'game', 'nemesis', 'vip'];
+      const views = ['vocab', 'flashcards', 'game', 'nemesis', 'vip'];
       
       views.forEach(v => {
         const viewEl = document.getElementById(`view-${v}`);
@@ -3247,7 +3246,6 @@
     function renderAllViews() {
       syncZombieGameData();
       renderVocabList();
-      if (currentTab === 'listening') renderLanguagePractice(currentLang);
       updateStats();
       if (currentTab === 'vip') renderVIPList();
       if (currentTab === 'nemesis') renderNemesisList();
