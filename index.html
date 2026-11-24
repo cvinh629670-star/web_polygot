@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="./assets/fontawesome.css">
   <!-- Google Fonts -->
   <meta name="theme-color" content="#17142c">
+  <link rel="manifest" href="./manifest.webmanifest">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
@@ -15,6 +16,7 @@
 
   <link rel="stylesheet" href="./css/app.css">
   <link rel="stylesheet" href="./css/graphics.css">
+  <link rel="stylesheet" href="./css/grammar-lab.css">
   <link rel="stylesheet" href="./assets/app-ui.css">
 </head>
 <body class="theme-en bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-300">
@@ -28,43 +30,39 @@
         <div class="studio-brand-mark" aria-hidden="true">
           <span></span><span></span><span></span>
         </div>
-        <div>
-          <h1>
-            PolyGlot<span> SRS</span>
-          </h1>
-        </div>
+        <h1>PolyGlot<span> SRS</span></h1>
       </div>
 
-      <!-- Language Selector Tabs with Hover Indicator -->
-      <div id="language-tabs" onmouseleave="restoreLangIndicator()" class="relative flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl border border-slate-200 dark:border-slate-700">
-        <div id="lang-indicator" class="absolute top-1 bottom-1 rounded-xl transition-all duration-300 ease-out shadow-lg pointer-events-none bg-blue-600"></div>
-
-        <button onmouseenter="previewLangIndicator('en')" onfocus="previewLangIndicator('en')" onclick="switchLanguage('en')" id="lang-btn-en" class="lang-tab relative z-10 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors duration-300 flex items-center gap-1.5 text-white">
-          <span>🇬🇧</span> <span class="hidden md:inline">Tiếng Anh</span>
+      <div id="language-tabs" role="group" aria-label="Ngôn ngữ đang học">
+        <button type="button" onclick="switchLanguage('en')" id="lang-btn-en" class="lang-tab" aria-label="Tiếng Anh" aria-pressed="true">
+          <span class="studio-lang-code" aria-hidden="true">EN</span>
+          <span class="studio-lang-full">Tiếng Anh</span><span class="studio-lang-short" aria-hidden="true">Anh</span>
         </button>
-        <button onmouseenter="previewLangIndicator('ko')" onfocus="previewLangIndicator('ko')" onclick="switchLanguage('ko')" id="lang-btn-ko" class="lang-tab relative z-10 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors duration-300 flex items-center gap-1.5 text-slate-600 dark:text-slate-400">
-          <span>🇰🇷</span> <span class="hidden md:inline">Tiếng Hàn</span>
+        <button type="button" onclick="switchLanguage('ko')" id="lang-btn-ko" class="lang-tab" aria-label="Tiếng Hàn" aria-pressed="false">
+          <span class="studio-lang-code" aria-hidden="true">KO</span>
+          <span class="studio-lang-full">Tiếng Hàn</span><span class="studio-lang-short" aria-hidden="true">Hàn</span>
         </button>
-        <button onmouseenter="previewLangIndicator('zh')" onfocus="previewLangIndicator('zh')" onclick="switchLanguage('zh')" id="lang-btn-zh" class="lang-tab relative z-10 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors duration-300 flex items-center gap-1.5 text-slate-600 dark:text-slate-400">
-          <span>🇨🇳</span> <span class="hidden md:inline">Tiếng Trung</span>
+        <button type="button" onclick="switchLanguage('zh')" id="lang-btn-zh" class="lang-tab" aria-label="Tiếng Trung" aria-pressed="false">
+          <span class="studio-lang-code" aria-hidden="true">ZH</span>
+          <span class="studio-lang-full">Tiếng Trung</span><span class="studio-lang-short" aria-hidden="true">Trung</span>
         </button>
-        <button onmouseenter="previewLangIndicator('ja')" onfocus="previewLangIndicator('ja')" onclick="switchLanguage('ja')" id="lang-btn-ja" class="lang-tab relative z-10 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors duration-300 flex items-center gap-1.5 text-slate-600 dark:text-slate-400">
-          <span>🇯🇵</span> <span class="hidden md:inline">Tiếng Nhật</span>
+        <button type="button" onclick="switchLanguage('ja')" id="lang-btn-ja" class="lang-tab" aria-label="Tiếng Nhật" aria-pressed="false">
+          <span class="studio-lang-code" aria-hidden="true">JA</span>
+          <span class="studio-lang-full">Tiếng Nhật</span><span class="studio-lang-short" aria-hidden="true">Nhật</span>
         </button>
       </div>
 
       <!-- Controls: Audio, Settings & Theme Toggle -->
-      <div class="studio-controls flex items-center gap-2">
-        <!-- Streak Indicator (New) -->
-        <div class="studio-streak hidden sm:flex items-center gap-1.5 px-3 py-1.5 font-bold text-xs" title="Chuỗi ngày học liên tục">
-          <i class="fa-solid fa-fire" aria-hidden="true"></i><span id="streak-counter">0</span> ngày
+      <div class="studio-controls">
+        <div class="studio-streak" title="Chuỗi ngày học liên tục">
+          <i class="fa-solid fa-fire" aria-hidden="true"></i><span><span id="streak-counter">0</span> ngày</span>
         </div>
 
-        <button onclick="toggleAutoTTS()" id="auto-tts-btn" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="Tự động phát âm khi lật thẻ">
-          <i class="fa-solid fa-headset text-sm"></i>
+        <button type="button" onclick="toggleAutoTTS()" id="auto-tts-btn" aria-label="Tự động phát âm khi lật thẻ" aria-pressed="false" title="Tự động phát âm khi lật thẻ">
+          <i class="fa-solid fa-headset" aria-hidden="true"></i>
         </button>
         <div id="music-widget">
-          <button type="button" id="music-btn" aria-haspopup="true" aria-expanded="false" aria-controls="music-panel" aria-label="Nhạc nền đang tắt" title="Nhạc nền chill" class="rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+          <button type="button" id="music-btn" aria-haspopup="dialog" aria-expanded="false" aria-controls="music-panel" aria-label="Nhạc nền đang tắt" title="Nhạc nền">
             <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
           </button>
           <div id="music-panel" class="hidden" role="dialog" aria-label="Nhạc nền">
@@ -92,371 +90,60 @@
             <p class="text-[11px] opacity-60 mt-3 leading-snug">Chọn tệp âm thanh trên thiết bị để phát nhạc riêng; tệp không được tải lên.</p>
           </div>
         </div>
-        <button onclick="toggleAudio()" id="audio-toggle-btn" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="Bật/Tắt âm thanh hiệu ứng">
-          <i class="fa-solid fa-volume-high text-sm"></i>
+        <button type="button" onclick="toggleAudio()" id="audio-toggle-btn" aria-label="Âm thanh hiệu ứng" aria-pressed="true" title="Âm thanh hiệu ứng">
+          <i class="fa-solid fa-volume-high" aria-hidden="true"></i>
         </button>
-        <button onclick="openSettingsModal()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="Cài đặt API Key & AI">
-          <i class="fa-solid fa-gear text-sm"></i>
+        <button type="button" onclick="openSettingsModal()" aria-label="Cài đặt" title="Cài đặt">
+          <i class="fa-solid fa-gear" aria-hidden="true"></i>
         </button>
-        <button onclick="toggleDarkMode()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="Chuyển chế độ Sáng/Tối">
-          <i id="dark-icon" class="fa-solid fa-moon text-sm"></i>
+        <button type="button" onclick="toggleDarkMode()" id="theme-toggle-btn" aria-label="Chế độ tối" aria-pressed="false" title="Chuyển chế độ sáng/tối">
+          <i id="dark-icon" class="fa-solid fa-moon" aria-hidden="true"></i>
         </button>
       </div>
 
     </div>
+    <nav id="react-navigation-root" class="pg-ui studio-nav" aria-label="Các khu vực học tập">
+      <div class="pg-navigation studio-nav-fallback">
+        <button type="button" onclick="switchNavTab('vocab')" id="nav-vocab" class="pg-nav-button" aria-controls="view-vocab" aria-current="page">
+          <span class="pg-nav-icon" aria-hidden="true"><i class="fa-solid fa-book-open"></i></span> Từ vựng
+        </button>
+        <button type="button" onclick="switchNavTab('flashcards')" id="nav-flashcards" class="pg-nav-button" aria-controls="view-flashcards">
+          <span class="pg-nav-icon" aria-hidden="true"><i class="fa-solid fa-layer-group"></i></span> Thẻ ôn tập
+        </button>
+        <button type="button" onclick="switchNavTab('listening')" id="nav-listening" class="pg-nav-button" aria-controls="view-listening">
+          <span class="pg-nav-icon" aria-hidden="true"><i class="fa-solid fa-book"></i></span> Luyện ngữ pháp
+        </button>
+        <button type="button" onclick="switchNavTab('game')" id="nav-game" class="pg-nav-button" aria-controls="view-game">
+          <span class="pg-nav-icon" aria-hidden="true"><i class="fa-solid fa-skull"></i></span> Zombie Survival
+        </button>
+        <button type="button" onclick="switchNavTab('nemesis')" id="nav-nemesis" class="pg-nav-button" aria-controls="view-nemesis">
+          <span class="pg-nav-icon" aria-hidden="true"><i class="fa-solid fa-shield-halved"></i></span> Kẻ thù ác <span id="nemesis-badge-count" class="pg-nav-count hidden xl:inline-flex">0</span>
+        </button>
+        <button type="button" onclick="switchNavTab('vip')" id="nav-vip" class="pg-nav-button" aria-controls="view-vip">
+          <span class="pg-nav-icon" aria-hidden="true"><i class="fa-solid fa-crown"></i></span> Từ vựng VIP <span id="vip-badge-count" class="pg-nav-count hidden xl:inline-flex">0</span>
+        </button>
+      </div>
+    </nav>
   </header>
-
-  <!-- NAVIGATION BAR -->
-  <nav id="react-navigation-root" class="pg-ui studio-nav" aria-label="Các khu vực học tập">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-nowrap items-center justify-between gap-1 py-2">
-      <button onclick="switchNavTab('vocab')" id="nav-vocab" title="Danh Sách Từ Vựng" aria-label="Danh Sách Từ Vựng" class="nav-btn min-w-0 justify-center px-2 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 xl:px-3">
-        <i class="fa-solid fa-book"></i><span class="hidden xl:inline">Danh Sách Từ Vựng</span>
-      </button>
-      <button onclick="switchNavTab('flashcards')" id="nav-flashcards" title="Thẻ Ôn Tập (Flashcards)" aria-label="Thẻ Ôn Tập (Flashcards)" class="nav-btn min-w-0 justify-center px-2 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 xl:px-3">
-        <i class="fa-solid fa-clone"></i><span class="hidden xl:inline">Thẻ Ôn Tập (Flashcards)</span>
-      </button>
-      <button onclick="switchNavTab('listening')" id="nav-listening" title="Phòng Luyện Nghe" aria-label="Phòng Luyện Nghe" class="nav-btn min-w-0 justify-center px-2 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 xl:px-3">
-        <i class="fa-solid fa-headphones"></i><span class="hidden xl:inline">Phòng Luyện Nghe</span>
-      </button>
-      <button onclick="switchNavTab('production')" id="nav-production" title="Phòng Luyện Chủ Động" aria-label="Phòng Luyện Chủ Động" class="nav-btn min-w-0 justify-center px-2 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 xl:px-3">
-        <i class="fa-solid fa-comments"></i><span class="hidden xl:inline">Phòng Luyện Chủ Động</span>
-      </button>
-      <button onclick="switchNavTab('game')" id="nav-game" title="Zombie Survival" aria-label="Zombie Survival" class="nav-btn min-w-0 justify-center px-2 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 xl:px-3">
-        <i class="fa-solid fa-skull text-rose-500"></i><span class="hidden xl:inline">Zombie Survival</span>
-      </button>
-      <button onclick="switchNavTab('nemesis')" id="nav-nemesis" title="Kẻ Thù Ác" aria-label="Kẻ Thù Ác" class="nav-btn min-w-0 justify-center px-2 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 xl:px-3">
-        <i class="fa-solid fa-skull text-rose-500"></i><span class="hidden xl:inline">Kẻ Thù Ác 💀</span><span id="nemesis-badge-count" class="hidden xl:inline-flex px-2 py-0.5 text-[10px] rounded-full bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300 font-bold">0</span>
-      </button>
-      <button onclick="switchNavTab('vip')" id="nav-vip" title="Danh Sách VIP" aria-label="Danh Sách VIP" class="nav-btn min-w-0 justify-center px-2 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 xl:px-3">
-        <i class="fa-solid fa-crown text-amber-400"></i><span class="hidden xl:inline">Danh Sách VIP 👑</span><span id="vip-badge-count" class="hidden xl:inline-flex px-2 py-0.5 text-[10px] rounded-full bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 font-bold">0</span>
-      </button>
-    </div>
-  </nav>
 
   <!-- MAIN CONTAINER -->
   <main class="studio-shell studio-main flex-grow">
 
     <div id="react-dashboard-root" class="pg-ui"></div>
 
-  <!-- Chọn tình huống, xem lịch sử và bắt đầu phiên luyện giao tiếp. -->
-  <section id="view-production" class="tab-view hidden space-y-5">
-    <div class="studio-room-hero studio-room-hero--production">
-      <div class="studio-room-copy">
-        <span class="studio-room-icon" aria-hidden="true"><i class="fa-solid fa-comments"></i></span>
-        <div>
-          <h2>Luyện giao tiếp</h2>
-          <p>Nhập vai trong tình huống thực tế, luyện phản hồi qua hội thoại và xem nhận xét sau mỗi lượt.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="studio-production-grid">
-      <aside class="studio-room-panel space-y-4 p-4 sm:p-5" aria-label="Thư viện tình huống">
-        <div class="grid grid-cols-2 gap-3">
-          <label class="text-xs font-bold text-slate-500 dark:text-slate-400">Trình độ
-            <select id="production-level" onchange="renderProductionScenarios()" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
-              <option value="all">Tất cả</option><option>A1</option><option>A2</option><option>B1</option><option>B2</option><option>C1</option><option>C2</option>
-            </select>
-          </label>
-          <label class="text-xs font-bold text-slate-500 dark:text-slate-400">Độ khó
-            <select id="production-difficulty" onchange="renderProductionScenarios()" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
-              <option value="easy">Dễ</option><option value="normal" selected>Bình thường</option><option value="challenging">Thử thách</option>
-            </select>
-          </label>
-        </div>
-        <select id="production-category" onchange="renderProductionScenarios()" class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
-          <option value="all">Tất cả danh mục</option>
-          <option>Đời sống hằng ngày</option><option>Du lịch</option><option>Giao tiếp xã hội</option><option>Học tập</option><option>Công việc</option><option>Giải quyết vấn đề</option>
-        </select>
-        <button type="button" onclick="openCustomProductionScenarioModal()" class="listening-accent w-full rounded-xl px-3.5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:shadow-md" aria-haspopup="dialog" aria-controls="production-custom-scenario-modal">
-          <i class="fa-solid fa-plus mr-2"></i>Tạo tình huống riêng
-        </button>
-        <input id="production-search" oninput="renderProductionScenarios()" type="search" placeholder="Tìm tình huống..." class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm outline-none focus-ring-theme dark:border-slate-600 dark:bg-slate-900">
-        <div id="production-scenario-list" class="max-h-[28rem] space-y-2 overflow-y-auto pr-1"></div>
-        <div id="production-progress-summary" class="space-y-2"></div>
-        <div id="production-history" class="space-y-2"></div>
-      </aside>
-
-      <div class="min-w-0 space-y-4">
-        <button type="button" id="production-resume-btn" onclick="openProductionSession()" class="hidden listening-accent rounded-xl px-4 py-2.5 text-sm font-bold text-white shadow-sm"><i class="fa-solid fa-comments mr-2"></i>Tiếp tục buổi luyện</button>
-        <div id="production-scenario-detail" class="studio-room-panel p-5 sm:p-7">
-          <div class="flex min-h-32 items-center justify-center text-center text-sm text-slate-400">Chọn một tình huống để xem mục tiêu và bắt đầu luyện.</div>
-        </div>
-        <div id="production-report" class="hidden"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Phiên luyện hiển thị hội thoại, gợi ý và phản hồi theo từng bước. -->
-  <div id="production-session-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-950/55 p-3 backdrop-blur-sm sm:p-6" role="dialog" aria-modal="true" aria-labelledby="production-session-title" onclick="if(event.target===this) closeProductionSession()">
-    <div id="production-session" class="production-session-gradient hidden max-h-[92dvh] w-full max-w-4xl overflow-y-auto rounded-3xl border border-white/60 shadow-2xl dark:border-white/10">
-      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/40 bg-white/45 p-3 backdrop-blur-md dark:border-white/10 dark:bg-slate-950/30">
-        <div><p id="production-session-title" class="text-sm font-bold text-slate-900 dark:text-white"></p><p id="production-progress" class="text-xs text-slate-600 dark:text-slate-300"></p></div>
-        <div class="flex items-center gap-2">
-          <button type="button" onclick="closeProductionSession()" class="rounded-lg border border-slate-300/70 bg-white/60 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-white dark:border-slate-600 dark:bg-slate-800/70 dark:text-slate-200 dark:hover:bg-slate-700"><i class="fa-solid fa-down-left-and-up-right-to-center mr-1"></i>Thu nhỏ</button>
-          <button type="button" id="production-end-btn" onclick="finishProductionSession()" class="rounded-lg border border-rose-200 bg-white/70 px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 dark:border-rose-900 dark:bg-slate-900/60 dark:hover:bg-rose-950/30"><i class="fa-solid fa-flag-checkered mr-1"></i>Kết thúc & nhận báo cáo</button>
-        </div>
-      </div>
-      <div class="border-b border-white/30 bg-white/25 px-4 py-3 dark:border-white/10 dark:bg-slate-950/15">
-        <p id="production-stage-title" class="text-[10px] font-extrabold uppercase tracking-wide text-theme-main"></p>
-        <p id="production-stage-prompt-label" class="mt-2 text-[10px] font-extrabold uppercase tracking-wide text-slate-500 dark:text-slate-400"></p>
-        <p id="production-stage-task" class="mt-1 rounded-xl border border-theme-main/20 bg-white/70 px-3 py-2.5 text-sm font-semibold leading-6 text-slate-800 dark:bg-slate-900/50 dark:text-slate-100"></p>
-      </div>
-      <div id="production-transcript" class="h-[min(38vh,22rem)] min-h-36 space-y-3 overflow-y-auto bg-white/20 p-4 backdrop-blur-sm dark:bg-slate-950/20" aria-live="polite"></div>
-      <div id="production-hints" class="hidden border-t border-white/40 bg-white/45 p-3 backdrop-blur-md dark:border-white/10 dark:bg-slate-950/30"></div>
-      <div id="production-stage-feedback" class="hidden border-t border-white/40 bg-white/45 p-3 backdrop-blur-md dark:border-white/10 dark:bg-slate-950/30"></div>
-      <form onsubmit="sendProductionMessage(event)" class="border-t border-white/40 bg-white/55 p-3 backdrop-blur-md dark:border-white/10 dark:bg-slate-950/35">
-        <div class="flex items-end gap-2">
-          <textarea id="production-message" rows="2" maxlength="1200" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();this.form.requestSubmit()}" placeholder="Dựa vào gợi ý tiếng Việt phía trên, hãy tự viết bằng ngôn ngữ đang học..." class="min-h-12 flex-1 resize-y rounded-xl border border-slate-300 bg-white/85 px-3 py-2.5 text-sm outline-none focus-ring-theme dark:border-slate-600 dark:bg-slate-900/85" required></textarea>
-          <button type="button" id="production-handwriting-btn" onclick="openProductionHandwriting()" class="hidden rounded-xl border border-theme-main/30 bg-white/80 px-3 py-3 font-bold text-theme-main hover:bg-white dark:bg-slate-800/80 dark:hover:bg-slate-700" aria-label="Mở bảng viết tay" title="Mở bảng viết tay"><i class="fa-solid fa-pen-nib"></i></button>
-          <button type="submit" id="production-send-btn" class="listening-accent rounded-xl px-4 py-3 font-bold text-white"><i class="fa-solid fa-paper-plane"></i></button>
-        </div>
-        <div class="mt-2 flex flex-wrap items-center justify-between gap-2">
-          <div class="flex gap-2">
-            <button type="button" onclick="requestProductionHint('vocabulary')" class="text-xs font-semibold text-theme-main hover:underline">Gợi ý từ vựng</button>
-            <button type="button" onclick="requestProductionHint('structure')" class="text-xs font-semibold text-theme-main hover:underline">Gợi ý cấu trúc</button>
-            <button type="button" onclick="showProductionSampleAnswers()" class="text-xs font-semibold text-theme-main hover:underline">Đối chiếu mẫu</button>
-          </div>
-          <span id="production-voice-status" class="text-[11px] text-slate-500 dark:text-slate-400"></span>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <div id="production-custom-scenario-modal" class="fixed inset-0 z-[110] hidden items-center justify-center bg-slate-950/55 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="production-custom-scenario-title" onclick="if(event.target===this) closeCustomProductionScenarioModal()">
-    <div class="max-h-[92dvh] w-full max-w-xl overflow-y-auto rounded-3xl border border-white/60 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-800">
-      <div class="flex items-start justify-between gap-4 border-b border-slate-200 bg-theme-subtle p-5 dark:border-slate-700">
-        <div>
-          <p class="text-[10px] font-extrabold uppercase tracking-wider text-theme-main">Phòng luyện chủ động</p>
-          <h2 id="production-custom-scenario-title" class="mt-1 text-xl font-extrabold text-slate-900 dark:text-white">Tạo tình huống riêng</h2>
-          <p id="production-custom-scenario-language" class="mt-1 text-xs text-slate-600 dark:text-slate-300"></p>
-        </div>
-        <button type="button" onclick="closeCustomProductionScenarioModal()" class="rounded-lg p-2 text-slate-500 hover:bg-white/70 hover:text-slate-800 dark:text-slate-300 dark:hover:bg-slate-700" aria-label="Đóng">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-      <form id="production-custom-form" onsubmit="handleAddCustomProductionScenario(event)" class="space-y-3 p-5">
-        <div class="rounded-xl border border-theme-main/20 bg-theme-subtle/40 p-3">
-          <p class="text-xs font-extrabold text-slate-700 dark:text-slate-200">Tạo từ file mẫu JSON</p>
-          <p class="mt-1 text-[11px] leading-5 text-slate-500 dark:text-slate-400">Tải mẫu, điền tình huống rồi nhập file để tự động điền biểu mẫu. Kiểm tra lại nội dung trước khi lưu.</p>
-          <details class="mt-2 text-[10px] text-slate-500 dark:text-slate-400">
-            <summary class="cursor-pointer font-bold">Định dạng file</summary>
-            <p class="mt-1 leading-5">File JSON là một đối tượng gồm <code>title</code>, <code>category</code>, <code>level</code>, <code>context</code>, <code>objective</code>, <code>tasks</code> và <code>promptsVi</code>. Các trường <code>npcPrompts</code>, <code>keywords</code>, <code>alternatives</code>, <code>grammarCues</code> và <code>sampleAnswers</code> là tùy chọn, mỗi phần tử tương ứng một bước. Từ khóa và cụm từ trong mỗi bước có thể là mảng hoặc chuỗi ngăn cách bằng dấu phẩy.</p>
-          </details>
-          <div class="mt-2 flex flex-wrap gap-2">
-            <button type="button" onclick="downloadCustomProductionTemplate()" class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"><i class="fa-solid fa-download mr-1"></i>Tải file mẫu .json</button>
-            <button type="button" onclick="document.getElementById('production-custom-file').click()" class="rounded-lg bg-theme px-3 py-2 text-xs font-bold text-white"><i class="fa-solid fa-file-import mr-1"></i>Thêm từ file .json</button>
-            <input id="production-custom-file" type="file" accept=".json,application/json" class="hidden" onchange="handleCustomProductionFile(event)">
-          </div>
-        </div>
-        <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Tên tình huống
-          <input id="production-custom-title" required maxlength="100" placeholder="Ví dụ: Đổi sản phẩm bị lỗi" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal text-slate-800 outline-none focus-ring-theme dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100">
-        </label>
-        <div class="grid gap-3 sm:grid-cols-2">
-          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Danh mục
-            <select id="production-custom-category" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal text-slate-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100">
-              <option>Đời sống hằng ngày</option><option>Du lịch</option><option>Giao tiếp xã hội</option><option>Học tập</option><option>Công việc</option><option>Giải quyết vấn đề</option>
-            </select>
-          </label>
-          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Trình độ
-            <select id="production-custom-level" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal text-slate-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100">
-              <option>A1</option><option>A2</option><option selected>B1</option><option>B2</option><option>C1</option><option>C2</option>
-            </select>
-          </label>
-        </div>
-        <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Bối cảnh và mục tiêu giao tiếp
-          <textarea id="production-custom-context" required maxlength="1500" rows="4" placeholder="Mô tả tình huống, vấn đề cần giải quyết và điều bạn muốn đạt được..." class="mt-1 w-full resize-y rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal leading-6 text-slate-800 outline-none focus-ring-theme dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"></textarea>
-        </label>
-        <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Mục tiêu chính
-          <input id="production-custom-objective" required maxlength="240" placeholder="Ví dụ: Đổi được sản phẩm hoặc thống nhất hoàn tiền." class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal text-slate-800 outline-none focus-ring-theme dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100">
-        </label>
-        <div class="grid gap-3 sm:grid-cols-2">
-          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Vai của bạn
-            <input id="production-custom-user-role" maxlength="80" placeholder="Khách hàng" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal text-slate-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100">
-          </label>
-          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Vai nhân vật đối thoại
-            <input id="production-custom-npc-role" maxlength="80" placeholder="Nhân viên cửa hàng" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal text-slate-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100">
-          </label>
-        </div>
-        <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Mục tiêu hội thoại <span class="font-normal text-slate-400">(mỗi dòng là một bước)</span>
-          <textarea id="production-custom-tasks" required maxlength="700" rows="3" placeholder="Gọi món chính&#10;Hỏi về thành phần món ăn&#10;Gọi đồ uống và xác nhận hóa đơn" class="mt-1 w-full resize-y rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal leading-6 text-slate-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"></textarea>
-        </label>
-        <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Gợi ý câu trả lời bằng tiếng Việt <span class="font-normal text-slate-400">(mỗi dòng tương ứng một bước; người học cần diễn đạt ý này bằng ngôn ngữ đang học)</span>
-          <textarea id="production-custom-prompts-vi" required maxlength="1000" rows="3" placeholder="Xin chào, cho tôi gọi một phần hamburger được không?&#10;Món này có đậu phộng không? Tôi bị dị ứng với đậu phộng.&#10;Cho tôi một ly nước lọc, cảm ơn." class="mt-1 w-full resize-y rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal leading-6 text-slate-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"></textarea>
-        </label>
-        <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Lời mở đầu cho từng bước <span class="font-normal text-slate-400">(mỗi dòng ứng với mục tiêu; ngôn ngữ đang học)</span>
-          <textarea id="production-custom-npc-prompts" maxlength="700" rows="3" placeholder="Hello, how can I help you today?&#10;Could you show me the receipt?&#10;Would you prefer a replacement or a refund?" class="mt-1 w-full resize-y rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal leading-6 text-slate-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"></textarea>
-        </label>
-        <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Từ khóa/mẫu được chấp nhận <span class="font-normal text-slate-400">(mỗi dòng ứng với mục tiêu theo thứ tự; từ đồng nghĩa ngăn bằng dấu phẩy)</span>
-          <textarea id="production-custom-keywords" maxlength="700" rows="3" placeholder="bị lỗi, không hoạt động&#10;hóa đơn, bảo hành, ngày mua&#10;đổi, thay thế, hoàn tiền, giải pháp" class="mt-1 w-full resize-y rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal leading-6 text-slate-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"></textarea>
-        </label>
-        <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Cụm từ thay thế được chấp nhận <span class="font-normal text-slate-400">(tùy chọn; mỗi dòng ứng với mục tiêu)</span>
-          <textarea id="production-custom-alternatives" maxlength="1000" rows="3" placeholder="please, could you help&#10;I bought it, I have my receipt&#10;replacement, could I get my money back" class="mt-1 w-full resize-y rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal leading-6 text-slate-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"></textarea>
-        </label>
-        <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Cấu trúc cần luyện <span class="font-normal text-slate-400">(tùy chọn; cụm từ cần nhận diện theo từng mục tiêu)</span>
-          <textarea id="production-custom-grammar-cues" maxlength="700" rows="3" placeholder="could you, would you&#10;because, so&#10;I agree, please confirm" class="mt-1 w-full resize-y rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal leading-6 text-slate-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"></textarea>
-        </label>
-        <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Câu trả lời mẫu <span class="font-normal text-slate-400">(mỗi dòng ứng với mục tiêu; chỉ hiện sau lần thử đầu tiên)</span>
-          <textarea id="production-custom-samples" maxlength="1000" rows="3" placeholder="Hello, this item stopped working yesterday.&#10;I have the receipt and it is still under warranty.&#10;Could you replace it or issue a refund?" class="mt-1 w-full resize-y rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal leading-6 text-slate-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"></textarea>
-        </label>
-        <div class="flex justify-end gap-2 pt-1">
-          <button type="button" onclick="closeCustomProductionScenarioModal()" class="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700">Hủy</button>
-          <button id="production-custom-submit" class="listening-accent rounded-xl px-4 py-2.5 text-sm font-bold text-white" type="submit"><i class="fa-solid fa-floppy-disk mr-2"></i>Lưu tình huống</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- VIEW: LISTENING STORIES -->
-  <section id="view-listening" class="tab-view hidden space-y-6">
+  <section id="view-listening" class="tab-view hidden space-y-5">
     <div class="studio-room-hero studio-room-hero--listening">
       <div class="studio-room-copy">
-        <span class="studio-room-icon" aria-hidden="true"><i class="fa-solid fa-headphones"></i></span>
-        <div>
-          <h2>Luyện nghe qua truyện</h2>
-          <p>Nghe một câu chuyện, chọn từ để tra nghĩa và lưu vào bộ từ vựng của bạn.</p>
-        </div>
+        <span class="studio-room-icon" aria-hidden="true"><i class="fa-solid fa-pen"></i></span>
+        <div><h2 id="practice-title"></h2><p id="practice-intro"></p></div>
       </div>
-
-      <div class="studio-room-actions">
-        <button type="button" onclick="toggleListeningLibrary()" id="listening-library-toggle" aria-expanded="true" aria-controls="listening-library-column" class="studio-room-action studio-room-action--icon" aria-label="Bật hoặc tắt thư viện câu chuyện" title="Ẩn thư viện câu chuyện">
-          <i class="fa-solid fa-eye-slash"></i>
-        </button>
-        <button type="button" onclick="openListeningStoryModal()" class="studio-room-action" aria-haspopup="dialog" aria-controls="listening-story-modal">
-          <i class="fa-solid fa-book-medical mr-1"></i>Thêm câu chuyện
-        </button>
-      </div>
-
     </div>
-
-    <div class="studio-listening-grid grid grid-cols-1 gap-5 lg:grid-cols-4">
-      <!-- Thư viện câu chuyện cho ngôn ngữ đang học. -->
-      <div id="listening-library-column" class="lg:col-span-1 space-y-3">
-        <div id="listening-library" class="studio-room-panel space-y-3 p-4">
-          <div class="flex items-center justify-between gap-2">
-            <h3 class="font-bold">Thư viện câu chuyện</h3>
-            <span id="listening-story-count" class="text-xs text-slate-400 font-semibold"></span>
-          </div>
-          <div id="listening-story-list" class="max-h-[34rem] overflow-y-auto space-y-2 pr-1">
-            <p class="p-4 text-sm text-slate-400">Đang tải câu chuyện...</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Nội dung bài nghe, trình phát và bảng tra từ tương tác. -->
-      <div id="listening-story-workspace" class="lg:col-span-2">
-        <div class="studio-room-panel studio-reader p-4 sm:p-6">
-          <div class="relative space-y-5">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div class="flex items-center gap-3">
-                <span id="listening-current-story-icon" class="listening-accent flex h-11 w-11 items-center justify-center rounded-2xl text-white shadow-lg"><i class="fa-solid fa-book-open"></i></span>
-                <div>
-                  <h3 id="listening-story-title" class="font-extrabold text-slate-900 dark:text-white">Chọn một câu chuyện</h3>
-                  <p id="listening-story-meta" class="text-xs text-slate-500 dark:text-slate-400">Các từ đã có trong danh sách sẽ được tô nổi bật</p>
-                </div>
-              </div>
-              <div class="flex items-center gap-2">
-                <span id="listening-status" role="status" aria-live="polite" class="hidden self-start sm:self-auto rounded-full border border-indigo-200 dark:border-indigo-400/30 bg-white/80 dark:bg-slate-900/60 px-3 py-1.5 text-xs font-semibold text-indigo-700 dark:text-indigo-300"></span>
-              </div>
-            </div>
-
-            <div class="flex flex-wrap items-center gap-2 border-b border-indigo-100 pb-4 dark:border-slate-700">
-              <button type="button" onclick="playListeningPassage()" class="listening-accent px-4 py-2.5 rounded-xl text-white text-sm font-bold shadow-lg transition">
-                <i class="fa-solid fa-play mr-1"></i> Nghe bài
-              </button>
-              <button type="button" onclick="pauseListeningPassage()" class="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/80 dark:bg-slate-800 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 transition">
-                <i class="fa-solid fa-pause mr-1"></i> Tạm dừng / Tiếp tục
-              </button>
-              <button type="button" onclick="stopListeningPassage()" class="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/80 dark:bg-slate-800 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 transition">
-                <i class="fa-solid fa-stop mr-1"></i> Dừng
-              </button>
-            </div>
-
-            <div class="studio-reader-page p-4 sm:p-7">
-              <div id="listening-passage" class="min-h-40 text-base sm:text-lg leading-9 whitespace-pre-wrap text-slate-700 dark:text-slate-200">Chọn một câu chuyện có sẵn để bắt đầu luyện nghe.</div>
-            </div>
-            <div id="listening-passage-words" class="hidden flex-wrap items-center gap-2" aria-label="Từ vựng được chọn"></div>
-          </div>
-        </div>
-      </div>
-
-      <aside class="lg:col-span-1">
-        <div class="studio-room-panel min-h-56 p-4">
-          <div class="mb-4 flex items-center gap-2 border-b border-slate-100 pb-3 dark:border-slate-700">
-            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600 dark:bg-indigo-400/15 dark:text-indigo-300"><i class="fa-solid fa-language"></i></span>
-            <div>
-              <h3 class="text-sm font-extrabold text-slate-800 dark:text-white">Tra từ vựng</h3>
-              <p class="text-[11px] text-slate-500 dark:text-slate-400">Nghĩa và phát âm</p>
-            </div>
-          </div>
-          <div id="listening-word-detail" aria-live="polite">
-            <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 text-center dark:border-slate-700 dark:bg-slate-900/60">
-              <i class="fa-solid fa-arrow-left-long mb-2 text-indigo-400"></i>
-              <p class="text-xs leading-5 text-slate-500 dark:text-slate-400">Di chuột vào một từ trong câu chuyện để xem nghĩa.</p>
-            </div>
-          </div>
-        </div>
-      </aside>
+    <div class="lab-entry" aria-label="Chọn chế độ luyện tập">
+      <button type="button" class="lab-button lab-primary" id="open-grammar-lab" aria-controls="grammar-lab" aria-expanded="false" onclick="toggleGrammarLab()">Mở Grammar Lab</button>
     </div>
+    <div id="grammar-lab" class="pg-ui hidden"></div>
+    <div id="practice-content"></div>
   </section>
-
-  <!-- Tạo hoặc nhập câu chuyện để lưu vào thư viện trên thiết bị. -->
-  <div id="listening-story-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/65 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="listening-story-modal-title" onclick="if(event.target===this)closeListeningStoryModal()">
-    <div class="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-3xl border border-slate-200 bg-white p-5 shadow-2xl dark:border-slate-700 dark:bg-slate-800 sm:p-7">
-      <div class="mb-5 flex items-start justify-between gap-4">
-        <div class="flex items-center gap-3">
-          <span class="listening-accent flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-xl text-white shadow-lg"><i class="fa-solid fa-book-open-reader"></i></span>
-          <div>
-            <h2 id="listening-story-modal-title" class="text-lg font-extrabold text-slate-900 dark:text-white">Thêm câu chuyện</h2>
-            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Thư viện tiếng <span id="listening-story-modal-language" class="font-bold text-theme-main"></span></p>
-          </div>
-        </div>
-        <button type="button" onclick="closeListeningStoryModal()" class="rounded-xl p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-white" aria-label="Đóng">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-      <form id="listening-story-form" onsubmit="handleAddListeningStory(event)" class="space-y-3">
-        <h3 class="text-sm font-bold text-slate-700 dark:text-slate-200"><i class="fa-solid fa-pen-to-square mr-1 text-theme-main"></i>Tự nhập</h3>
-        <input type="text" id="listening-new-story-title" required maxlength="100" placeholder="Tên câu chuyện" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-theme-main dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
-        <input type="text" id="listening-new-story-level" maxlength="60" placeholder="Trình độ (không bắt buộc, ví dụ: Cơ bản)" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-theme-main dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
-        <textarea id="listening-new-story-text" required maxlength="20000" rows="5" placeholder="Nhập nội dung câu chuyện..." class="w-full resize-y rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-theme-main dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200"></textarea>
-        <div class="rounded-2xl border border-slate-200 p-3 dark:border-slate-700">
-          <div class="mb-2 flex items-center justify-between gap-3">
-            <label class="text-xs font-bold text-slate-600 dark:text-slate-300">Logo câu chuyện</label>
-            <span id="listening-story-logo-preview" class="listening-accent flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl text-xl text-white"><i class="fa-solid fa-book-open"></i></span>
-          </div>
-          <div class="flex flex-wrap gap-2" aria-label="Chọn logo có sẵn">
-            <button type="button" data-story-logo="📖" onclick="selectListeningStoryLogo('📖')" class="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xl hover:border-theme-main dark:border-slate-600" aria-label="Logo sách">📖</button>
-            <button type="button" data-story-logo="🌊" onclick="selectListeningStoryLogo('🌊')" class="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xl hover:border-theme-main dark:border-slate-600" aria-label="Logo sóng biển">🌊</button>
-            <button type="button" data-story-logo="🌱" onclick="selectListeningStoryLogo('🌱')" class="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xl hover:border-theme-main dark:border-slate-600" aria-label="Logo cây non">🌱</button>
-            <button type="button" data-story-logo="🌙" onclick="selectListeningStoryLogo('🌙')" class="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xl hover:border-theme-main dark:border-slate-600" aria-label="Logo mặt trăng">🌙</button>
-            <button type="button" data-story-logo="🧭" onclick="selectListeningStoryLogo('🧭')" class="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xl hover:border-theme-main dark:border-slate-600" aria-label="Logo la bàn">🧭</button>
-            <button type="button" data-story-logo="🏙️" onclick="selectListeningStoryLogo('🏙️')" class="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xl hover:border-theme-main dark:border-slate-600" aria-label="Logo thành phố">🏙️</button>
-            <button type="button" data-story-logo="🐾" onclick="selectListeningStoryLogo('🐾')" class="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xl hover:border-theme-main dark:border-slate-600" aria-label="Logo dấu chân">🐾</button>
-          </div>
-          <label for="listening-story-logo-file" class="mt-3 block text-xs font-semibold text-slate-500 dark:text-slate-400">Hoặc tải logo riêng (PNG, JPG, WEBP, tối đa 256 KB)</label>
-          <input type="file" id="listening-story-logo-file" accept="image/png,image/jpeg,image/webp" onchange="handleListeningStoryLogoFile(event)" class="mt-1 block w-full text-xs text-slate-600 file:mr-2 file:rounded-lg file:border-0 file:bg-theme-subtle file:px-3 file:py-2 file:font-bold file:text-theme-main dark:text-slate-300">
-        </div>
-        <button type="submit" class="listening-accent w-full rounded-xl px-3 py-3 text-sm font-bold text-white shadow-md transition">
-          <i class="fa-solid fa-plus mr-1"></i>Thêm vào thư viện
-        </button>
-      </form>
-      <div class="my-5 flex items-center gap-3 text-xs font-bold uppercase tracking-wider text-slate-400">
-        <span class="h-px flex-1 bg-slate-200 dark:bg-slate-700"></span>Hoặc thêm từ file<span class="h-px flex-1 bg-slate-200 dark:bg-slate-700"></span>
-      </div>
-      <label for="listening-story-file" class="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">File câu chuyện (.txt hoặc .json)</label>
-      <input type="file" id="listening-story-file" accept=".txt,.json,text/plain,application/json" onchange="handleListeningStoryFile(event)" class="block w-full text-xs text-slate-600 file:mr-2 file:rounded-lg file:border-0 file:bg-theme-subtle file:px-3 file:py-2 file:font-bold file:text-theme-main dark:text-slate-300">
-      <p class="mt-2 text-[11px] leading-4 text-slate-500 dark:text-slate-400">TXT dùng toàn bộ nội dung làm truyện. JSON hỗ trợ một truyện hoặc danh sách truyện với các trường <code class="font-mono">title</code>, <code class="font-mono">text</code> và <code class="font-mono">level</code> tùy chọn.</p>
-      <div class="mt-4 flex flex-wrap gap-2">
-        <button type="button" onclick="downloadListeningStoryTemplate('json')" class="rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700">
-          <i class="fa-solid fa-download mr-1"></i>Tải mẫu JSON
-        </button>
-        <button type="button" onclick="downloadListeningStoryTemplate('txt')" class="rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700">
-          <i class="fa-solid fa-download mr-1"></i>Tải mẫu TXT
-        </button>
-      </div>
-    </div>
-  </div>
 
   <!-- VIEW 1: VOCABULARY MANAGER -->
   <section id="view-vocab" class="tab-view space-y-6">
@@ -507,29 +194,32 @@
       <div id="vocab-layout" class="grid">
         
         <!-- Add Vocab Form Dynamic by Language -->
-        <div id="add-word-panel" class="studio-room-panel bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm h-fit space-y-4">
-          <div class="flex items-center justify-between gap-2">
-            <span class="text-lg font-bold flex items-center gap-2">
-              <i class="fa-solid fa-plus-circle text-theme-main"></i> Thêm Từ Vựng Mới
-            </span>
+        <dialog id="add-word-panel" class="studio-room-panel vocab-panel" aria-labelledby="add-word-title">
+          <div class="vocab-panel-heading">
+            <h2 id="add-word-title" class="studio-collection-title">
+              <span class="studio-collection-icon" aria-hidden="true"><i class="fa-solid fa-pen-nib"></i></span> Thêm từ mới
+            </h2>
             <div class="flex items-center gap-2">
-              <span id="form-lang-tag" class="px-2.5 py-1 rounded-lg bg-theme-subtle text-theme-main text-xs font-bold uppercase">EN</span>
-              <button type="button" onclick="toggleAddWordPanel(false)" aria-label="Ẩn phần thêm từ vựng" title="Ẩn phần thêm từ vựng" aria-controls="add-word-panel" class="rounded-lg border border-slate-200 p-2 text-slate-500 hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-700">
-                <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+              <span id="form-lang-tag">EN</span>
+              <button type="button" onclick="this.closest('dialog').close()" aria-label="Đóng form thêm từ" class="vocab-control vocab-collapse">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
               </button>
             </div>
           </div>
 
-          <form id="add-word-form" onsubmit="handleAddWord(event)" class="space-y-3.5">
+          <form id="add-word-form" onsubmit="handleAddWord(event)">
             <!-- Word Input Field with Custom Tool Buttons -->
             <div>
-              <div class="flex items-center justify-between mb-1">
-                <label id="label-input-word" class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Từ vựng *</label>
+              <div class="vocab-field-heading">
+                <label id="label-input-word" for="input-word">Từ vựng *</label>
                 <div id="word-input-tools" class="flex items-center gap-1.5 text-xs font-bold">
                   <!-- Dynamic Input Tool Buttons injected via JS -->
                 </div>
               </div>
-              <input type="text" id="input-word" required placeholder="Nhập từ vựng..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-900 focus-ring-theme text-sm transition">
+              <div class="vocab-field-control">
+                <i class="fa-solid fa-language" aria-hidden="true"></i>
+                <input type="text" id="input-word" required autofocus placeholder="Nhập từ vựng...">
+              </div>
               
               <!-- Korean Virtual Keyboard Panel -->
               <div id="korean-keyboard" class="hidden mt-2 p-3 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-2xl shadow-xl space-y-2 text-xs">
@@ -553,17 +243,23 @@
             </div>
 
             <div>
-              <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">Nghĩa tiếng Việt *</label>
-              <input type="text" id="input-meaning" required placeholder="Nhập nghĩa tiếng Việt..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-900 focus-ring-theme text-sm transition">
+              <label for="input-meaning" class="vocab-field-heading">Nghĩa tiếng Việt *</label>
+              <div class="vocab-field-control">
+                <i class="fa-solid fa-align-left" aria-hidden="true"></i>
+                <input type="text" id="input-meaning" required placeholder="Nhập nghĩa tiếng Việt...">
+              </div>
             </div>
 
             <!-- Phonetic Input Wrapper (Dynamic: Visible for EN/ZH/JA, Hidden for KO) -->
             <div id="phonetic-wrapper">
-              <div class="flex items-center justify-between mb-1">
-                <label id="label-input-phonetic" class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Phiên âm / Ghi chú</label>
+              <div class="vocab-field-heading">
+                <label id="label-input-phonetic" for="input-phonetic">Phiên âm / Ghi chú</label>
                 <div id="phonetic-tools" class="flex items-center gap-1 text-xs font-bold text-theme-main"></div>
               </div>
-              <input type="text" id="input-phonetic" placeholder="Phiên âm..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-900 focus-ring-theme text-sm transition">
+              <div class="vocab-field-control">
+                <i class="fa-solid fa-volume-low" aria-hidden="true"></i>
+                <input type="text" id="input-phonetic" placeholder="Phiên âm...">
+              </div>
               
               <!-- IPA Phonetic Keyboard Box (English) -->
               <div id="ipa-keyboard" class="hidden mt-2 p-3 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-2xl shadow-xl space-y-2.5 text-xs">
@@ -604,49 +300,56 @@
 
             <!-- Example Sentence Input Field -->
             <div>
-              <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">Câu ví dụ mẫu (Context)</label>
-              <textarea id="input-example" rows="2" placeholder="Ví dụ câu sử dụng..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-900 focus-ring-theme text-xs transition resize-none"></textarea>
+              <label for="input-example" class="vocab-field-heading">Câu ví dụ</label>
+              <div class="vocab-field-control">
+                <i class="fa-solid fa-quote-left" aria-hidden="true"></i>
+                <textarea id="input-example" rows="2" placeholder="Ví dụ câu sử dụng..."></textarea>
+              </div>
             </div>
 
-            <button type="submit" class="w-full py-3 rounded-xl bg-theme text-white font-bold text-sm bg-theme-hover shadow-md hover:shadow-lg transition flex items-center justify-center gap-2">
-              <i class="fa-solid fa-plus"></i> Thêm Vào Danh Sách
+            <p id="add-word-error" class="text-xs text-rose-700 dark:text-rose-300" role="alert" hidden></p>
+            <button type="submit" class="vocab-control vocab-primary">
+              <i class="fa-solid fa-plus" aria-hidden="true"></i> Thêm vào danh sách
             </button>
           </form>
 
-          <!-- Import / Preset Packs Link Button -->
-          <div class="pt-2 border-t border-slate-200 dark:border-slate-700 flex flex-col gap-2">
-            <button onclick="openImportModal()" class="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold transition flex items-center justify-center gap-2">
-              <i class="fa-solid fa-file-import text-theme-main"></i> Nhập / Tải Bộ Từ Mẫu
-            </button>
-          </div>
-        </div>
+        </dialog>
 
         <!-- Vocab List Table / Cards -->
-        <div id="vocab-list-panel" class="studio-room-panel min-w-0 p-4 sm:p-6 space-y-4">
-          <h2 class="studio-collection-title"><span class="studio-collection-icon" aria-hidden="true"><i class="fa-solid fa-book-open"></i></span> Kho từ vựng</h2>
+        <div id="vocab-list-panel" class="studio-room-panel vocab-panel">
+          <div class="vocab-panel-heading">
+            <h2 id="vocab-list-title" class="studio-collection-title"><span class="studio-collection-icon" aria-hidden="true"><i class="fa-solid fa-book-open"></i></span> Kho từ vựng</h2>
+            <p id="vocab-results-count" class="vocab-results-count" role="status"></p>
+          </div>
           
           <!-- Filter & Search Controls -->
-          <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-            <button type="button" id="show-add-word-panel" onclick="toggleAddWordPanel(true)" aria-label="Hiện phần thêm từ vựng" title="Hiện phần thêm từ vựng" aria-controls="add-word-panel" aria-expanded="false" class="items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700">
-              <i class="fa-solid fa-chevron-right" aria-hidden="true"></i> Thêm từ
+          <div class="vocab-toolbar">
+            <button type="button" id="show-add-word-panel" onclick="openAddWordDialog()" aria-haspopup="dialog" aria-controls="add-word-panel" class="vocab-control">
+              <i class="fa-solid fa-plus" aria-hidden="true"></i> Thêm từ
             </button>
-            <div class="relative flex-grow">
-              <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-              <input type="text" id="search-vocab-input" oninput="renderVocabList()" placeholder="Tìm kiếm từ vựng, nghĩa hoặc ví dụ..." class="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-900 text-sm focus-ring-theme">
+            <button type="button" onclick="openImportModal()" class="vocab-control" aria-label="Nhập từ hoặc tải bộ mẫu">
+              <i class="fa-solid fa-file-import" aria-hidden="true"></i> Nhập từ
+            </button>
+            <div class="vocab-field-control vocab-search">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+              <input type="search" id="search-vocab-input" aria-label="Tìm từ vựng" oninput="renderVocabList()" placeholder="Tìm từ, nghĩa hoặc ví dụ…">
             </div>
 
-            <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-              <select id="filter-srs-select" onchange="renderVocabList()" class="px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-900 text-xs font-semibold focus-ring-theme">
+            <div class="vocab-toolbar-actions">
+              <label class="vocab-filter">
+                <i class="fa-solid fa-filter" aria-hidden="true"></i>
+                <select id="filter-srs-select" aria-label="Lọc theo tiến độ" onchange="renderVocabList()">
                 <option value="all">Tất cả tiến độ</option>
                 <option value="0">Chưa học</option>
                 <option value="1">Đã học (Level 1)</option>
                 <option value="reviewing">Đang ôn (1-7)</option>
                 <option value="vip">VIP (👑 Level 8+)</option>
-              </select>
+                </select>
+              </label>
 
-              <details id="vocab-delete-menu" class="relative">
-                <summary class="list-none cursor-pointer px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 text-xs font-bold transition flex items-center gap-1.5">
-                  <i class="fa-solid fa-trash-can"></i> Xóa <i class="fa-solid fa-chevron-down text-[10px]"></i>
+              <details id="vocab-delete-menu" name="vocab-actions" class="relative">
+                <summary class="vocab-control">
+                  <i class="fa-solid fa-trash-can" aria-hidden="true"></i> Xóa
                 </summary>
                 <div class="absolute right-0 mt-1 w-64 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 py-1 z-30">
                   <button onclick="requestBulkDelete('selected')" class="w-full text-left px-3 py-2.5 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-700">
@@ -662,49 +365,57 @@
               </details>
 
               <!-- Export Dropdown -->
-              <div class="relative group">
-                <button class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-xs font-bold transition flex items-center gap-1.5">
-                  <i class="fa-solid fa-file-export text-slate-500"></i> Xuất
-                </button>
-                <div class="absolute right-0 mt-1 w-36 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 py-1 hidden group-hover:block group-focus-within:block z-30">
-                  <button onclick="exportVocab('csv')" class="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2">
+              <details id="vocab-export-menu" name="vocab-actions" class="relative">
+                <summary class="vocab-control">
+                  <i class="fa-solid fa-arrow-up-from-bracket" aria-hidden="true"></i> Xuất
+                </summary>
+                <div class="absolute right-0 mt-1 w-36 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 py-1 z-30">
+                  <button type="button" onclick="this.closest('details').open = false; exportVocab('csv')" class="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2">
                     <i class="fa-solid fa-file-csv text-emerald-500"></i> Xuất File CSV
                   </button>
-                  <button onclick="exportVocab('json')" class="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2">
+                  <button type="button" onclick="this.closest('details').open = false; exportVocab('json')" class="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2">
                     <i class="fa-solid fa-code text-amber-500"></i> Xuất File JSON
                   </button>
                 </div>
-              </div>
+              </details>
             </div>
           </div>
 
           <!-- Table Container -->
           <div class="studio-vocab-table overflow-x-auto">
-            <table id="vocab-table" class="w-full text-left text-sm">
-              <thead class="bg-slate-100 dark:bg-slate-900/80 text-xs font-bold uppercase text-slate-500 dark:text-slate-400">
-                <tr>
-                  <th class="p-3.5 text-center">
+            <table id="vocab-table" role="table" aria-labelledby="vocab-list-title" class="w-full text-left text-sm">
+              <thead role="rowgroup" class="bg-slate-100 dark:bg-slate-900/80 text-xs font-bold uppercase text-slate-500 dark:text-slate-400">
+                <tr role="row">
+                  <th role="columnheader" scope="col" class="p-3.5 text-center">
                     <input id="select-visible-words" type="checkbox" aria-label="Chọn tất cả từ đang hiển thị" onchange="selectVisibleWords(this.checked)" class="rounded border-slate-300 text-rose-600 focus:ring-rose-500">
+                    <label for="select-visible-words" class="vocab-select-label">Chọn tất cả</label>
                   </th>
-                  <th class="p-3.5">Từ Vựng & Nghe</th>
-                  <th class="p-3.5">Nghĩa & Ví Dụ Mẫu</th>
-                  <th class="p-3.5 text-center">Tiến độ SRS</th>
-                  <th class="p-3.5 text-center">Thời Gian Ôn Tiếp</th>
-                  <th class="p-3.5 text-right">Thao tác</th>
+                  <th role="columnheader" scope="col" class="p-3.5">Từ vựng</th>
+                  <th role="columnheader" scope="col" class="p-3.5">Nghĩa & ví dụ</th>
+                  <th role="columnheader" scope="col" class="p-3.5 text-center">Tiến độ SRS</th>
+                  <th role="columnheader" scope="col" class="p-3.5 text-center">Ôn tiếp</th>
+                  <th role="columnheader" scope="col" class="p-3.5 text-right">Thao tác</th>
                 </tr>
               </thead>
-              <tbody id="vocab-table-body" class="divide-y divide-slate-200 dark:divide-slate-700">
+              <tbody id="vocab-table-body" role="rowgroup">
                 <!-- Dynamic Content -->
               </tbody>
             </table>
           </div>
 
           <!-- Empty State -->
-          <div id="vocab-empty-state" class="hidden py-12 text-center space-y-3">
-            <div class="w-16 h-16 mx-auto rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 text-2xl">
-              <i class="fa-solid fa-folder-open"></i>
+          <div id="vocab-empty-state" class="hidden" data-mode="library">
+            <div class="vocab-empty-graphic" aria-hidden="true">
+              <span class="vocab-empty-card"><i class="fa-solid fa-book-open"></i></span>
+              <i class="fa-solid fa-magnifying-glass vocab-empty-search"></i>
             </div>
-            <p class="text-sm font-semibold text-slate-500 dark:text-slate-400">Không tìm thấy từ vựng phù hợp!</p>
+            <p id="vocab-empty-message">Kho từ vựng của ngôn ngữ này đang trống</p>
+            <button type="button" class="vocab-control vocab-empty-import" onclick="openImportModal()">
+              <i class="fa-solid fa-layer-group" aria-hidden="true"></i> Nhập bộ từ mẫu
+            </button>
+            <button type="button" class="vocab-control vocab-empty-reset" onclick="resetVocabFilters()">
+              <i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Đặt lại bộ lọc
+            </button>
           </div>
 
         </div>
@@ -776,8 +487,8 @@
                 <p id="card-front-phonetic" class="text-sm sm:text-base text-slate-500 dark:text-slate-400 font-medium italic">---</p>
               </div>
               
-              <p class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                <i class="fa-solid fa-hand-pointer text-theme-main"></i> Chạm / Space để xem mặt sau
+              <p class="flashcard-flip-hint">
+                <i class="fa-solid fa-rotate" aria-hidden="true"></i> Chạm hoặc nhấn <kbd>Space</kbd> để lật thẻ
               </p>
             </div>
 
@@ -812,21 +523,39 @@
           </div>
         </div>
 
+        <div id="flashcard-session-end" class="studio-room-panel hidden">
+          <div class="flashcard-end-emblem" aria-hidden="true">
+            <span><i id="flashcard-end-icon" class="fa-solid fa-check"></i></span>
+          </div>
+          <div role="status">
+            <h3 id="flashcard-end-title"></h3>
+            <p id="flashcard-end-message"></p>
+          </div>
+          <div class="flashcard-end-actions">
+            <button type="button" onclick="document.getElementById('flashcard-mode-select').focus()">
+              <i class="fa-solid fa-sliders" aria-hidden="true"></i> Đổi chế độ ôn
+            </button>
+            <button type="button" onclick="switchNavTab('vocab')">
+              <i class="fa-solid fa-book-open" aria-hidden="true"></i> Về kho từ
+            </button>
+          </div>
+        </div>
+
         <!-- Review Evaluation Buttons -->
         <div id="flashcard-controls" class="grid grid-cols-2 gap-4">
           <button onclick="evaluateFlashcard(false)" class="py-3.5 px-4 rounded-2xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-sm shadow-md hover:shadow-lg transition flex flex-col items-center justify-center gap-0.5">
-            <span class="flex items-center gap-1.5"><i class="fa-solid fa-xmark"></i> Chưa nhớ</span>
+            <span class="flex items-center gap-2"><i class="fa-solid fa-xmark flashcard-rating-icon" aria-hidden="true"></i> Chưa nhớ</span>
             <span id="btn-prev-srs-text" class="text-[10px] font-normal opacity-85">(Reset Cấp 1)</span>
           </button>
 
           <button onclick="evaluateFlashcard(true)" class="py-3.5 px-4 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm shadow-md hover:shadow-lg transition flex flex-col items-center justify-center gap-0.5">
-            <span class="flex items-center gap-1.5"><i class="fa-solid fa-check"></i> Đã nhớ</span>
+            <span class="flex items-center gap-2"><i class="fa-solid fa-check flashcard-rating-icon" aria-hidden="true"></i> Đã nhớ</span>
             <span id="btn-next-srs-text" class="text-[10px] font-normal opacity-85">(+1 SRS)</span>
           </button>
         </div>
 
         <!-- Keyboard Shortcuts Hint Footer -->
-        <div class="text-center text-[11px] text-slate-400 dark:text-slate-500 font-semibold pt-1">
+        <div id="flashcard-shortcuts" class="text-center text-[11px] text-slate-400 dark:text-slate-500 font-semibold pt-1">
           <span class="text-slate-600 dark:text-slate-300">Phím tắt:</span> 
           <kbd class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono">Space</kbd> Lật thẻ &nbsp;|&nbsp; 
           <kbd class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono">←</kbd> Chưa nhớ &nbsp;|&nbsp; 
@@ -963,7 +692,7 @@
         <div>
           <label class="block font-bold text-slate-700 dark:text-slate-200 mb-1">Gemini API Key (tùy chọn cho phân tích game):</label>
           <input type="password" id="gemini-api-key-input" placeholder="Dán Gemini API Key của bạn vào đây..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-900 focus-ring-theme font-mono text-xs">
-          <p class="text-[11px] text-slate-400 mt-1">Phòng luyện chủ động hoạt động hoàn toàn ngoại tuyến, không dùng khóa này. Gemini chỉ được dùng tùy chọn cho phân tích trong trò chơi.</p>
+          <p class="text-[11px] text-slate-400 mt-1">Gemini chỉ được dùng tùy chọn cho phân tích trong trò chơi.</p>
         </div>
 
         <div class="pt-2 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
@@ -991,7 +720,7 @@
   </div>
 
   <!-- HANDWRITING CANVAS MODAL (BÀN PHÍM VIẾT TAY TRUNG / HÀN / NHẬT) -->
-  <div id="handwriting-modal" class="studio-modal fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-[120] hidden flex items-center justify-center p-4">
+  <dialog id="handwriting-modal" class="studio-modal" aria-labelledby="hw-title">
     <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-slate-200 dark:border-slate-700">
       <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
         <div class="flex items-center gap-2">
@@ -1029,7 +758,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </dialog>
 
   <!-- FILE IMPORT MODAL & PRESET PACKS -->
   <div id="import-modal" class="studio-modal fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -1174,9 +903,16 @@
   <!-- APPLICATION JAVASCRIPT LOGIC -->
   <!-- Chuyển dữ liệu cũ trước khi khởi tạo logic học và gắn React. -->
   <script src="./js/local-data.js"></script>
+  <script src="./js/starter-vocabulary.js"></script>
+  <script src="./js/language-practice.js"></script>
+  <script src="./js/grammar-lab/content.js"></script>
+  <script src="./js/grammar-lab/repository.js"></script>
+  <script src="./js/grammar-lab/engine.js"></script>
+  <script src="./js/grammar-lab/ui.js"></script>
   <script src="./js/app.js"></script>
   <script src="./js/audio.js"></script>
   <script src="./js/ui-bridge.js"></script>
   <script src="./assets/app-ui.js"></script>
+  <script src="./js/offline.js"></script>
 </body>
 </html>

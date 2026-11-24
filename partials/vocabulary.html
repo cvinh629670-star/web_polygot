@@ -47,29 +47,32 @@
       <div id="vocab-layout" class="grid">
         
         <!-- Add Vocab Form Dynamic by Language -->
-        <div id="add-word-panel" class="studio-room-panel bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm h-fit space-y-4">
-          <div class="flex items-center justify-between gap-2">
-            <span class="text-lg font-bold flex items-center gap-2">
-              <i class="fa-solid fa-plus-circle text-theme-main"></i> Thêm Từ Vựng Mới
-            </span>
+        <dialog id="add-word-panel" class="studio-room-panel vocab-panel" aria-labelledby="add-word-title">
+          <div class="vocab-panel-heading">
+            <h2 id="add-word-title" class="studio-collection-title">
+              <span class="studio-collection-icon" aria-hidden="true"><i class="fa-solid fa-pen-nib"></i></span> Thêm từ mới
+            </h2>
             <div class="flex items-center gap-2">
-              <span id="form-lang-tag" class="px-2.5 py-1 rounded-lg bg-theme-subtle text-theme-main text-xs font-bold uppercase">EN</span>
-              <button type="button" onclick="toggleAddWordPanel(false)" aria-label="Ẩn phần thêm từ vựng" title="Ẩn phần thêm từ vựng" aria-controls="add-word-panel" class="rounded-lg border border-slate-200 p-2 text-slate-500 hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-700">
-                <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+              <span id="form-lang-tag">EN</span>
+              <button type="button" onclick="this.closest('dialog').close()" aria-label="Đóng form thêm từ" class="vocab-control vocab-collapse">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
               </button>
             </div>
           </div>
 
-          <form id="add-word-form" onsubmit="handleAddWord(event)" class="space-y-3.5">
+          <form id="add-word-form" onsubmit="handleAddWord(event)">
             <!-- Word Input Field with Custom Tool Buttons -->
             <div>
-              <div class="flex items-center justify-between mb-1">
-                <label id="label-input-word" class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Từ vựng *</label>
+              <div class="vocab-field-heading">
+                <label id="label-input-word" for="input-word">Từ vựng *</label>
                 <div id="word-input-tools" class="flex items-center gap-1.5 text-xs font-bold">
                   <!-- Dynamic Input Tool Buttons injected via JS -->
                 </div>
               </div>
-              <input type="text" id="input-word" required placeholder="Nhập từ vựng..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-900 focus-ring-theme text-sm transition">
+              <div class="vocab-field-control">
+                <i class="fa-solid fa-language" aria-hidden="true"></i>
+                <input type="text" id="input-word" required autofocus placeholder="Nhập từ vựng...">
+              </div>
               
               <!-- Korean Virtual Keyboard Panel -->
               <div id="korean-keyboard" class="hidden mt-2 p-3 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-2xl shadow-xl space-y-2 text-xs">
@@ -93,17 +96,23 @@
             </div>
 
             <div>
-              <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">Nghĩa tiếng Việt *</label>
-              <input type="text" id="input-meaning" required placeholder="Nhập nghĩa tiếng Việt..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-900 focus-ring-theme text-sm transition">
+              <label for="input-meaning" class="vocab-field-heading">Nghĩa tiếng Việt *</label>
+              <div class="vocab-field-control">
+                <i class="fa-solid fa-align-left" aria-hidden="true"></i>
+                <input type="text" id="input-meaning" required placeholder="Nhập nghĩa tiếng Việt...">
+              </div>
             </div>
 
             <!-- Phonetic Input Wrapper (Dynamic: Visible for EN/ZH/JA, Hidden for KO) -->
             <div id="phonetic-wrapper">
-              <div class="flex items-center justify-between mb-1">
-                <label id="label-input-phonetic" class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Phiên âm / Ghi chú</label>
+              <div class="vocab-field-heading">
+                <label id="label-input-phonetic" for="input-phonetic">Phiên âm / Ghi chú</label>
                 <div id="phonetic-tools" class="flex items-center gap-1 text-xs font-bold text-theme-main"></div>
               </div>
-              <input type="text" id="input-phonetic" placeholder="Phiên âm..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-900 focus-ring-theme text-sm transition">
+              <div class="vocab-field-control">
+                <i class="fa-solid fa-volume-low" aria-hidden="true"></i>
+                <input type="text" id="input-phonetic" placeholder="Phiên âm...">
+              </div>
               
               <!-- IPA Phonetic Keyboard Box (English) -->
               <div id="ipa-keyboard" class="hidden mt-2 p-3 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-2xl shadow-xl space-y-2.5 text-xs">
@@ -144,49 +153,56 @@
 
             <!-- Example Sentence Input Field -->
             <div>
-              <label class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">Câu ví dụ mẫu (Context)</label>
-              <textarea id="input-example" rows="2" placeholder="Ví dụ câu sử dụng..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-900 focus-ring-theme text-xs transition resize-none"></textarea>
+              <label for="input-example" class="vocab-field-heading">Câu ví dụ</label>
+              <div class="vocab-field-control">
+                <i class="fa-solid fa-quote-left" aria-hidden="true"></i>
+                <textarea id="input-example" rows="2" placeholder="Ví dụ câu sử dụng..."></textarea>
+              </div>
             </div>
 
-            <button type="submit" class="w-full py-3 rounded-xl bg-theme text-white font-bold text-sm bg-theme-hover shadow-md hover:shadow-lg transition flex items-center justify-center gap-2">
-              <i class="fa-solid fa-plus"></i> Thêm Vào Danh Sách
+            <p id="add-word-error" class="text-xs text-rose-700 dark:text-rose-300" role="alert" hidden></p>
+            <button type="submit" class="vocab-control vocab-primary">
+              <i class="fa-solid fa-plus" aria-hidden="true"></i> Thêm vào danh sách
             </button>
           </form>
 
-          <!-- Import / Preset Packs Link Button -->
-          <div class="pt-2 border-t border-slate-200 dark:border-slate-700 flex flex-col gap-2">
-            <button onclick="openImportModal()" class="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold transition flex items-center justify-center gap-2">
-              <i class="fa-solid fa-file-import text-theme-main"></i> Nhập / Tải Bộ Từ Mẫu
-            </button>
-          </div>
-        </div>
+        </dialog>
 
         <!-- Vocab List Table / Cards -->
-        <div id="vocab-list-panel" class="studio-room-panel min-w-0 p-4 sm:p-6 space-y-4">
-          <h2 class="studio-collection-title"><span class="studio-collection-icon" aria-hidden="true"><i class="fa-solid fa-book-open"></i></span> Kho từ vựng</h2>
+        <div id="vocab-list-panel" class="studio-room-panel vocab-panel">
+          <div class="vocab-panel-heading">
+            <h2 id="vocab-list-title" class="studio-collection-title"><span class="studio-collection-icon" aria-hidden="true"><i class="fa-solid fa-book-open"></i></span> Kho từ vựng</h2>
+            <p id="vocab-results-count" class="vocab-results-count" role="status"></p>
+          </div>
           
           <!-- Filter & Search Controls -->
-          <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-            <button type="button" id="show-add-word-panel" onclick="toggleAddWordPanel(true)" aria-label="Hiện phần thêm từ vựng" title="Hiện phần thêm từ vựng" aria-controls="add-word-panel" aria-expanded="false" class="items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700">
-              <i class="fa-solid fa-chevron-right" aria-hidden="true"></i> Thêm từ
+          <div class="vocab-toolbar">
+            <button type="button" id="show-add-word-panel" onclick="openAddWordDialog()" aria-haspopup="dialog" aria-controls="add-word-panel" class="vocab-control">
+              <i class="fa-solid fa-plus" aria-hidden="true"></i> Thêm từ
             </button>
-            <div class="relative flex-grow">
-              <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-              <input type="text" id="search-vocab-input" oninput="renderVocabList()" placeholder="Tìm kiếm từ vựng, nghĩa hoặc ví dụ..." class="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-900 text-sm focus-ring-theme">
+            <button type="button" onclick="openImportModal()" class="vocab-control" aria-label="Nhập từ hoặc tải bộ mẫu">
+              <i class="fa-solid fa-file-import" aria-hidden="true"></i> Nhập từ
+            </button>
+            <div class="vocab-field-control vocab-search">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+              <input type="search" id="search-vocab-input" aria-label="Tìm từ vựng" oninput="renderVocabList()" placeholder="Tìm từ, nghĩa hoặc ví dụ…">
             </div>
 
-            <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-              <select id="filter-srs-select" onchange="renderVocabList()" class="px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-900 text-xs font-semibold focus-ring-theme">
+            <div class="vocab-toolbar-actions">
+              <label class="vocab-filter">
+                <i class="fa-solid fa-filter" aria-hidden="true"></i>
+                <select id="filter-srs-select" aria-label="Lọc theo tiến độ" onchange="renderVocabList()">
                 <option value="all">Tất cả tiến độ</option>
                 <option value="0">Chưa học</option>
                 <option value="1">Đã học (Level 1)</option>
                 <option value="reviewing">Đang ôn (1-7)</option>
                 <option value="vip">VIP (👑 Level 8+)</option>
-              </select>
+                </select>
+              </label>
 
-              <details id="vocab-delete-menu" class="relative">
-                <summary class="list-none cursor-pointer px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 text-xs font-bold transition flex items-center gap-1.5">
-                  <i class="fa-solid fa-trash-can"></i> Xóa <i class="fa-solid fa-chevron-down text-[10px]"></i>
+              <details id="vocab-delete-menu" name="vocab-actions" class="relative">
+                <summary class="vocab-control">
+                  <i class="fa-solid fa-trash-can" aria-hidden="true"></i> Xóa
                 </summary>
                 <div class="absolute right-0 mt-1 w-64 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 py-1 z-30">
                   <button onclick="requestBulkDelete('selected')" class="w-full text-left px-3 py-2.5 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-700">
@@ -202,49 +218,57 @@
               </details>
 
               <!-- Export Dropdown -->
-              <div class="relative group">
-                <button class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-xs font-bold transition flex items-center gap-1.5">
-                  <i class="fa-solid fa-file-export text-slate-500"></i> Xuất
-                </button>
-                <div class="absolute right-0 mt-1 w-36 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 py-1 hidden group-hover:block group-focus-within:block z-30">
-                  <button onclick="exportVocab('csv')" class="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2">
+              <details id="vocab-export-menu" name="vocab-actions" class="relative">
+                <summary class="vocab-control">
+                  <i class="fa-solid fa-arrow-up-from-bracket" aria-hidden="true"></i> Xuất
+                </summary>
+                <div class="absolute right-0 mt-1 w-36 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 py-1 z-30">
+                  <button type="button" onclick="this.closest('details').open = false; exportVocab('csv')" class="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2">
                     <i class="fa-solid fa-file-csv text-emerald-500"></i> Xuất File CSV
                   </button>
-                  <button onclick="exportVocab('json')" class="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2">
+                  <button type="button" onclick="this.closest('details').open = false; exportVocab('json')" class="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2">
                     <i class="fa-solid fa-code text-amber-500"></i> Xuất File JSON
                   </button>
                 </div>
-              </div>
+              </details>
             </div>
           </div>
 
           <!-- Table Container -->
           <div class="studio-vocab-table overflow-x-auto">
-            <table id="vocab-table" class="w-full text-left text-sm">
-              <thead class="bg-slate-100 dark:bg-slate-900/80 text-xs font-bold uppercase text-slate-500 dark:text-slate-400">
-                <tr>
-                  <th class="p-3.5 text-center">
+            <table id="vocab-table" role="table" aria-labelledby="vocab-list-title" class="w-full text-left text-sm">
+              <thead role="rowgroup" class="bg-slate-100 dark:bg-slate-900/80 text-xs font-bold uppercase text-slate-500 dark:text-slate-400">
+                <tr role="row">
+                  <th role="columnheader" scope="col" class="p-3.5 text-center">
                     <input id="select-visible-words" type="checkbox" aria-label="Chọn tất cả từ đang hiển thị" onchange="selectVisibleWords(this.checked)" class="rounded border-slate-300 text-rose-600 focus:ring-rose-500">
+                    <label for="select-visible-words" class="vocab-select-label">Chọn tất cả</label>
                   </th>
-                  <th class="p-3.5">Từ Vựng & Nghe</th>
-                  <th class="p-3.5">Nghĩa & Ví Dụ Mẫu</th>
-                  <th class="p-3.5 text-center">Tiến độ SRS</th>
-                  <th class="p-3.5 text-center">Thời Gian Ôn Tiếp</th>
-                  <th class="p-3.5 text-right">Thao tác</th>
+                  <th role="columnheader" scope="col" class="p-3.5">Từ vựng</th>
+                  <th role="columnheader" scope="col" class="p-3.5">Nghĩa & ví dụ</th>
+                  <th role="columnheader" scope="col" class="p-3.5 text-center">Tiến độ SRS</th>
+                  <th role="columnheader" scope="col" class="p-3.5 text-center">Ôn tiếp</th>
+                  <th role="columnheader" scope="col" class="p-3.5 text-right">Thao tác</th>
                 </tr>
               </thead>
-              <tbody id="vocab-table-body" class="divide-y divide-slate-200 dark:divide-slate-700">
+              <tbody id="vocab-table-body" role="rowgroup">
                 <!-- Dynamic Content -->
               </tbody>
             </table>
           </div>
 
           <!-- Empty State -->
-          <div id="vocab-empty-state" class="hidden py-12 text-center space-y-3">
-            <div class="w-16 h-16 mx-auto rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 text-2xl">
-              <i class="fa-solid fa-folder-open"></i>
+          <div id="vocab-empty-state" class="hidden" data-mode="library">
+            <div class="vocab-empty-graphic" aria-hidden="true">
+              <span class="vocab-empty-card"><i class="fa-solid fa-book-open"></i></span>
+              <i class="fa-solid fa-magnifying-glass vocab-empty-search"></i>
             </div>
-            <p class="text-sm font-semibold text-slate-500 dark:text-slate-400">Không tìm thấy từ vựng phù hợp!</p>
+            <p id="vocab-empty-message">Kho từ vựng của ngôn ngữ này đang trống</p>
+            <button type="button" class="vocab-control vocab-empty-import" onclick="openImportModal()">
+              <i class="fa-solid fa-layer-group" aria-hidden="true"></i> Nhập bộ từ mẫu
+            </button>
+            <button type="button" class="vocab-control vocab-empty-reset" onclick="resetVocabFilters()">
+              <i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Đặt lại bộ lọc
+            </button>
           </div>
 
         </div>

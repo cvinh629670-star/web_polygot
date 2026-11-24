@@ -1,0 +1,15 @@
+{
+ "id": "./",
+ "name": "PolyGlot SRS · Grammar Lab",
+ "short_name": "PolyGlot",
+ "lang": "vi",
+ "start_url": "./index.html",
+ "scope": "./",
+ "display": "standalone",
+ "background_color": "#f7f6fb",
+ "theme_color": "#17142c",
+ "icons": [
+  { "src": "./assets/polyglot-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+  { "src": "./assets/polyglot-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+ ]
+}

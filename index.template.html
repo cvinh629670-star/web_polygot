@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="./assets/fontawesome.css">
   <!-- Google Fonts -->
   <meta name="theme-color" content="#17142c">
+  <link rel="manifest" href="./manifest.webmanifest">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
@@ -15,6 +16,7 @@
 
   <link rel="stylesheet" href="./css/app.css">
   <link rel="stylesheet" href="./css/graphics.css">
+  <link rel="stylesheet" href="./css/grammar-lab.css">
   <link rel="stylesheet" href="./assets/app-ui.css">
 </head>
 <body class="theme-en bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-300">
@@ -28,43 +30,39 @@
         <div class="studio-brand-mark" aria-hidden="true">
           <span></span><span></span><span></span>
         </div>
-        <div>
-          <h1>
-            PolyGlot<span> SRS</span>
-          </h1>
-        </div>
+        <h1>PolyGlot<span> SRS</span></h1>
       </div>
 
-      <!-- Language Selector Tabs with Hover Indicator -->
-      <div id="language-tabs" onmouseleave="restoreLangIndicator()" class="relative flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl border border-slate-200 dark:border-slate-700">
-        <div id="lang-indicator" class="absolute top-1 bottom-1 rounded-xl transition-all duration-300 ease-out shadow-lg pointer-events-none bg-blue-600"></div>
-
-        <button onmouseenter="previewLangIndicator('en')" onfocus="previewLangIndicator('en')" onclick="switchLanguage('en')" id="lang-btn-en" class="lang-tab relative z-10 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors duration-300 flex items-center gap-1.5 text-white">
-          <span>🇬🇧</span> <span class="hidden md:inline">Tiếng Anh</span>
+      <div id="language-tabs" role="group" aria-label="Ngôn ngữ đang học">
+        <button type="button" onclick="switchLanguage('en')" id="lang-btn-en" class="lang-tab" aria-label="Tiếng Anh" aria-pressed="true">
+          <span class="studio-lang-code" aria-hidden="true">EN</span>
+          <span class="studio-lang-full">Tiếng Anh</span><span class="studio-lang-short" aria-hidden="true">Anh</span>
         </button>
-        <button onmouseenter="previewLangIndicator('ko')" onfocus="previewLangIndicator('ko')" onclick="switchLanguage('ko')" id="lang-btn-ko" class="lang-tab relative z-10 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors duration-300 flex items-center gap-1.5 text-slate-600 dark:text-slate-400">
-          <span>🇰🇷</span> <span class="hidden md:inline">Tiếng Hàn</span>
+        <button type="button" onclick="switchLanguage('ko')" id="lang-btn-ko" class="lang-tab" aria-label="Tiếng Hàn" aria-pressed="false">
+          <span class="studio-lang-code" aria-hidden="true">KO</span>
+          <span class="studio-lang-full">Tiếng Hàn</span><span class="studio-lang-short" aria-hidden="true">Hàn</span>
         </button>
-        <button onmouseenter="previewLangIndicator('zh')" onfocus="previewLangIndicator('zh')" onclick="switchLanguage('zh')" id="lang-btn-zh" class="lang-tab relative z-10 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors duration-300 flex items-center gap-1.5 text-slate-600 dark:text-slate-400">
-          <span>🇨🇳</span> <span class="hidden md:inline">Tiếng Trung</span>
+        <button type="button" onclick="switchLanguage('zh')" id="lang-btn-zh" class="lang-tab" aria-label="Tiếng Trung" aria-pressed="false">
+          <span class="studio-lang-code" aria-hidden="true">ZH</span>
+          <span class="studio-lang-full">Tiếng Trung</span><span class="studio-lang-short" aria-hidden="true">Trung</span>
         </button>
-        <button onmouseenter="previewLangIndicator('ja')" onfocus="previewLangIndicator('ja')" onclick="switchLanguage('ja')" id="lang-btn-ja" class="lang-tab relative z-10 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors duration-300 flex items-center gap-1.5 text-slate-600 dark:text-slate-400">
-          <span>🇯🇵</span> <span class="hidden md:inline">Tiếng Nhật</span>
+        <button type="button" onclick="switchLanguage('ja')" id="lang-btn-ja" class="lang-tab" aria-label="Tiếng Nhật" aria-pressed="false">
+          <span class="studio-lang-code" aria-hidden="true">JA</span>
+          <span class="studio-lang-full">Tiếng Nhật</span><span class="studio-lang-short" aria-hidden="true">Nhật</span>
         </button>
       </div>
 
       <!-- Controls: Audio, Settings & Theme Toggle -->
-      <div class="studio-controls flex items-center gap-2">
-        <!-- Streak Indicator (New) -->
-        <div class="studio-streak hidden sm:flex items-center gap-1.5 px-3 py-1.5 font-bold text-xs" title="Chuỗi ngày học liên tục">
-          <i class="fa-solid fa-fire" aria-hidden="true"></i><span id="streak-counter">0</span> ngày
+      <div class="studio-controls">
+        <div class="studio-streak" title="Chuỗi ngày học liên tục">
+          <i class="fa-solid fa-fire" aria-hidden="true"></i><span><span id="streak-counter">0</span> ngày</span>
         </div>
 
-        <button onclick="toggleAutoTTS()" id="auto-tts-btn" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="Tự động phát âm khi lật thẻ">
-          <i class="fa-solid fa-headset text-sm"></i>
+        <button type="button" onclick="toggleAutoTTS()" id="auto-tts-btn" aria-label="Tự động phát âm khi lật thẻ" aria-pressed="false" title="Tự động phát âm khi lật thẻ">
+          <i class="fa-solid fa-headset" aria-hidden="true"></i>
         </button>
         <div id="music-widget">
-          <button type="button" id="music-btn" aria-haspopup="true" aria-expanded="false" aria-controls="music-panel" aria-label="Nhạc nền đang tắt" title="Nhạc nền chill" class="rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+          <button type="button" id="music-btn" aria-haspopup="dialog" aria-expanded="false" aria-controls="music-panel" aria-label="Nhạc nền đang tắt" title="Nhạc nền">
             <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
           </button>
           <div id="music-panel" class="hidden" role="dialog" aria-label="Nhạc nền">
@@ -92,54 +90,48 @@
             <p class="text-[11px] opacity-60 mt-3 leading-snug">Chọn tệp âm thanh trên thiết bị để phát nhạc riêng; tệp không được tải lên.</p>
           </div>
         </div>
-        <button onclick="toggleAudio()" id="audio-toggle-btn" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="Bật/Tắt âm thanh hiệu ứng">
-          <i class="fa-solid fa-volume-high text-sm"></i>
+        <button type="button" onclick="toggleAudio()" id="audio-toggle-btn" aria-label="Âm thanh hiệu ứng" aria-pressed="true" title="Âm thanh hiệu ứng">
+          <i class="fa-solid fa-volume-high" aria-hidden="true"></i>
         </button>
-        <button onclick="openSettingsModal()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="Cài đặt API Key & AI">
-          <i class="fa-solid fa-gear text-sm"></i>
+        <button type="button" onclick="openSettingsModal()" aria-label="Cài đặt" title="Cài đặt">
+          <i class="fa-solid fa-gear" aria-hidden="true"></i>
         </button>
-        <button onclick="toggleDarkMode()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="Chuyển chế độ Sáng/Tối">
-          <i id="dark-icon" class="fa-solid fa-moon text-sm"></i>
+        <button type="button" onclick="toggleDarkMode()" id="theme-toggle-btn" aria-label="Chế độ tối" aria-pressed="false" title="Chuyển chế độ sáng/tối">
+          <i id="dark-icon" class="fa-solid fa-moon" aria-hidden="true"></i>
         </button>
       </div>
 
     </div>
+    <nav id="react-navigation-root" class="pg-ui studio-nav" aria-label="Các khu vực học tập">
+      <div class="pg-navigation studio-nav-fallback">
+        <button type="button" onclick="switchNavTab('vocab')" id="nav-vocab" class="pg-nav-button" aria-controls="view-vocab" aria-current="page">
+          <span class="pg-nav-icon" aria-hidden="true"><i class="fa-solid fa-book-open"></i></span> Từ vựng
+        </button>
+        <button type="button" onclick="switchNavTab('flashcards')" id="nav-flashcards" class="pg-nav-button" aria-controls="view-flashcards">
+          <span class="pg-nav-icon" aria-hidden="true"><i class="fa-solid fa-layer-group"></i></span> Thẻ ôn tập
+        </button>
+        <button type="button" onclick="switchNavTab('listening')" id="nav-listening" class="pg-nav-button" aria-controls="view-listening">
+          <span class="pg-nav-icon" aria-hidden="true"><i class="fa-solid fa-book"></i></span> Luyện ngữ pháp
+        </button>
+        <button type="button" onclick="switchNavTab('game')" id="nav-game" class="pg-nav-button" aria-controls="view-game">
+          <span class="pg-nav-icon" aria-hidden="true"><i class="fa-solid fa-skull"></i></span> Zombie Survival
+        </button>
+        <button type="button" onclick="switchNavTab('nemesis')" id="nav-nemesis" class="pg-nav-button" aria-controls="view-nemesis">
+          <span class="pg-nav-icon" aria-hidden="true"><i class="fa-solid fa-shield-halved"></i></span> Kẻ thù ác <span id="nemesis-badge-count" class="pg-nav-count hidden xl:inline-flex">0</span>
+        </button>
+        <button type="button" onclick="switchNavTab('vip')" id="nav-vip" class="pg-nav-button" aria-controls="view-vip">
+          <span class="pg-nav-icon" aria-hidden="true"><i class="fa-solid fa-crown"></i></span> Từ vựng VIP <span id="vip-badge-count" class="pg-nav-count hidden xl:inline-flex">0</span>
+        </button>
+      </div>
+    </nav>
   </header>
-
-  <!-- NAVIGATION BAR -->
-  <nav id="react-navigation-root" class="pg-ui studio-nav" aria-label="Các khu vực học tập">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-nowrap items-center justify-between gap-1 py-2">
-      <button onclick="switchNavTab('vocab')" id="nav-vocab" title="Danh Sách Từ Vựng" aria-label="Danh Sách Từ Vựng" class="nav-btn min-w-0 justify-center px-2 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 xl:px-3">
-        <i class="fa-solid fa-book"></i><span class="hidden xl:inline">Danh Sách Từ Vựng</span>
-      </button>
-      <button onclick="switchNavTab('flashcards')" id="nav-flashcards" title="Thẻ Ôn Tập (Flashcards)" aria-label="Thẻ Ôn Tập (Flashcards)" class="nav-btn min-w-0 justify-center px-2 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 xl:px-3">
-        <i class="fa-solid fa-clone"></i><span class="hidden xl:inline">Thẻ Ôn Tập (Flashcards)</span>
-      </button>
-      <button onclick="switchNavTab('listening')" id="nav-listening" title="Phòng Luyện Nghe" aria-label="Phòng Luyện Nghe" class="nav-btn min-w-0 justify-center px-2 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 xl:px-3">
-        <i class="fa-solid fa-headphones"></i><span class="hidden xl:inline">Phòng Luyện Nghe</span>
-      </button>
-      <button onclick="switchNavTab('production')" id="nav-production" title="Phòng Luyện Chủ Động" aria-label="Phòng Luyện Chủ Động" class="nav-btn min-w-0 justify-center px-2 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 xl:px-3">
-        <i class="fa-solid fa-comments"></i><span class="hidden xl:inline">Phòng Luyện Chủ Động</span>
-      </button>
-      <button onclick="switchNavTab('game')" id="nav-game" title="Zombie Survival" aria-label="Zombie Survival" class="nav-btn min-w-0 justify-center px-2 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 xl:px-3">
-        <i class="fa-solid fa-skull text-rose-500"></i><span class="hidden xl:inline">Zombie Survival</span>
-      </button>
-      <button onclick="switchNavTab('nemesis')" id="nav-nemesis" title="Kẻ Thù Ác" aria-label="Kẻ Thù Ác" class="nav-btn min-w-0 justify-center px-2 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 xl:px-3">
-        <i class="fa-solid fa-skull text-rose-500"></i><span class="hidden xl:inline">Kẻ Thù Ác 💀</span><span id="nemesis-badge-count" class="hidden xl:inline-flex px-2 py-0.5 text-[10px] rounded-full bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300 font-bold">0</span>
-      </button>
-      <button onclick="switchNavTab('vip')" id="nav-vip" title="Danh Sách VIP" aria-label="Danh Sách VIP" class="nav-btn min-w-0 justify-center px-2 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 xl:px-3">
-        <i class="fa-solid fa-crown text-amber-400"></i><span class="hidden xl:inline">Danh Sách VIP 👑</span><span id="vip-badge-count" class="hidden xl:inline-flex px-2 py-0.5 text-[10px] rounded-full bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 font-bold">0</span>
-      </button>
-    </div>
-  </nav>
 
   <!-- MAIN CONTAINER -->
   <main class="studio-shell studio-main flex-grow">
 
     <div id="react-dashboard-root" class="pg-ui"></div>
 
-<!-- INCLUDE:production -->
-<!-- INCLUDE:listening -->
+<!-- INCLUDE:practice -->
 <!-- INCLUDE:vocabulary -->
 <!-- INCLUDE:flashcards -->
 <!-- INCLUDE:zombie -->
@@ -207,7 +199,7 @@
         <div>
           <label class="block font-bold text-slate-700 dark:text-slate-200 mb-1">Gemini API Key (tùy chọn cho phân tích game):</label>
           <input type="password" id="gemini-api-key-input" placeholder="Dán Gemini API Key của bạn vào đây..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-900 focus-ring-theme font-mono text-xs">
-          <p class="text-[11px] text-slate-400 mt-1">Phòng luyện chủ động hoạt động hoàn toàn ngoại tuyến, không dùng khóa này. Gemini chỉ được dùng tùy chọn cho phân tích trong trò chơi.</p>
+          <p class="text-[11px] text-slate-400 mt-1">Gemini chỉ được dùng tùy chọn cho phân tích trong trò chơi.</p>
         </div>
 
         <div class="pt-2 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
@@ -235,7 +227,7 @@
   </div>
 
   <!-- HANDWRITING CANVAS MODAL (BÀN PHÍM VIẾT TAY TRUNG / HÀN / NHẬT) -->
-  <div id="handwriting-modal" class="studio-modal fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-[120] hidden flex items-center justify-center p-4">
+  <dialog id="handwriting-modal" class="studio-modal" aria-labelledby="hw-title">
     <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-slate-200 dark:border-slate-700">
       <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
         <div class="flex items-center gap-2">
@@ -273,7 +265,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </dialog>
 
   <!-- FILE IMPORT MODAL & PRESET PACKS -->
   <div id="import-modal" class="studio-modal fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -418,9 +410,16 @@
   <!-- APPLICATION JAVASCRIPT LOGIC -->
   <!-- Chuyển dữ liệu cũ trước khi khởi tạo logic học và gắn React. -->
   <script src="./js/local-data.js"></script>
+  <script src="./js/starter-vocabulary.js"></script>
+  <script src="./js/language-practice.js"></script>
+  <script src="./js/grammar-lab/content.js"></script>
+  <script src="./js/grammar-lab/repository.js"></script>
+  <script src="./js/grammar-lab/engine.js"></script>
+  <script src="./js/grammar-lab/ui.js"></script>
   <script src="./js/app.js"></script>
   <script src="./js/audio.js"></script>
   <script src="./js/ui-bridge.js"></script>
   <script src="./assets/app-ui.js"></script>
+  <script src="./js/offline.js"></script>
 </body>
 </html>

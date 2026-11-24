@@ -62,8 +62,8 @@
                 <p id="card-front-phonetic" class="text-sm sm:text-base text-slate-500 dark:text-slate-400 font-medium italic">---</p>
               </div>
               
-              <p class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                <i class="fa-solid fa-hand-pointer text-theme-main"></i> Chạm / Space để xem mặt sau
+              <p class="flashcard-flip-hint">
+                <i class="fa-solid fa-rotate" aria-hidden="true"></i> Chạm hoặc nhấn <kbd>Space</kbd> để lật thẻ
               </p>
             </div>
 
@@ -98,21 +98,39 @@
           </div>
         </div>
 
+        <div id="flashcard-session-end" class="studio-room-panel hidden">
+          <div class="flashcard-end-emblem" aria-hidden="true">
+            <span><i id="flashcard-end-icon" class="fa-solid fa-check"></i></span>
+          </div>
+          <div role="status">
+            <h3 id="flashcard-end-title"></h3>
+            <p id="flashcard-end-message"></p>
+          </div>
+          <div class="flashcard-end-actions">
+            <button type="button" onclick="document.getElementById('flashcard-mode-select').focus()">
+              <i class="fa-solid fa-sliders" aria-hidden="true"></i> Đổi chế độ ôn
+            </button>
+            <button type="button" onclick="switchNavTab('vocab')">
+              <i class="fa-solid fa-book-open" aria-hidden="true"></i> Về kho từ
+            </button>
+          </div>
+        </div>
+
         <!-- Review Evaluation Buttons -->
         <div id="flashcard-controls" class="grid grid-cols-2 gap-4">
           <button onclick="evaluateFlashcard(false)" class="py-3.5 px-4 rounded-2xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-sm shadow-md hover:shadow-lg transition flex flex-col items-center justify-center gap-0.5">
-            <span class="flex items-center gap-1.5"><i class="fa-solid fa-xmark"></i> Chưa nhớ</span>
+            <span class="flex items-center gap-2"><i class="fa-solid fa-xmark flashcard-rating-icon" aria-hidden="true"></i> Chưa nhớ</span>
             <span id="btn-prev-srs-text" class="text-[10px] font-normal opacity-85">(Reset Cấp 1)</span>
           </button>
 
           <button onclick="evaluateFlashcard(true)" class="py-3.5 px-4 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm shadow-md hover:shadow-lg transition flex flex-col items-center justify-center gap-0.5">
-            <span class="flex items-center gap-1.5"><i class="fa-solid fa-check"></i> Đã nhớ</span>
+            <span class="flex items-center gap-2"><i class="fa-solid fa-check flashcard-rating-icon" aria-hidden="true"></i> Đã nhớ</span>
             <span id="btn-next-srs-text" class="text-[10px] font-normal opacity-85">(+1 SRS)</span>
           </button>
         </div>
 
         <!-- Keyboard Shortcuts Hint Footer -->
-        <div class="text-center text-[11px] text-slate-400 dark:text-slate-500 font-semibold pt-1">
+        <div id="flashcard-shortcuts" class="text-center text-[11px] text-slate-400 dark:text-slate-500 font-semibold pt-1">
           <span class="text-slate-600 dark:text-slate-300">Phím tắt:</span> 
           <kbd class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono">Space</kbd> Lật thẻ &nbsp;|&nbsp; 
           <kbd class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono">←</kbd> Chưa nhớ &nbsp;|&nbsp; 

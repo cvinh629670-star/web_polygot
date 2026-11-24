@@ -122,6 +122,11 @@
 
     // Dữ liệu phục hồi từ thiết bị và trạng thái của phiên học hiện tại.
     let wordsState = JSON.parse(localStorage.getItem('polyglot_words')) || SEED_WORDS;
+    try {
+      wordsState = addStarterVocabulary(wordsState);
+    } catch (error) {
+      console.warn('Không thể thêm bộ từ vựng cơ bản:', error);
+    }
     let currentLang = localStorage.getItem('polyglot_lang') || 'en';
     let geminiApiKey = localStorage.getItem('polyglot_gemini_key') || '';
     let autoTTS = localStorage.getItem('polyglot_auto_tts') === 'true';
@@ -372,11 +377,7 @@
     function updateAutoTTSBtn() {
       const btn = document.getElementById('auto-tts-btn');
       const check = document.getElementById('settings-auto-tts-check');
-      if (btn) {
-        btn.innerHTML = autoTTS 
-          ? '<i class="fa-solid fa-headset text-sm text-theme-main"></i>' 
-          : '<i class="fa-solid fa-headset text-sm opacity-50"></i>';
-      }
+      if (btn) btn.setAttribute('aria-pressed', String(autoTTS));
       if (check) check.checked = autoTTS;
     }
 
@@ -386,13 +387,8 @@
     function initTheme() {
       const isDark = localStorage.getItem('polyglot_dark') === 'true' || 
         (!('polyglot_dark' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
-      if (isDark) {
-        document.documentElement.classList.add('dark');
-        document.getElementById('dark-icon').className = 'fa-solid fa-sun text-sm text-amber-400';
-      } else {
-        document.documentElement.classList.remove('dark');
-        document.getElementById('dark-icon').className = 'fa-solid fa-moon text-sm';
-      }
+      document.documentElement.classList.toggle('dark', isDark);
+      updateThemeButton(isDark);
 
       updateAutoTTSBtn();
       switchLanguage(currentLang, false);
@@ -401,18 +397,20 @@
     function toggleDarkMode() {
       const isDark = document.documentElement.classList.toggle('dark');
       localStorage.setItem('polyglot_dark', isDark);
-      document.getElementById('dark-icon').className = isDark 
-        ? 'fa-solid fa-sun text-sm text-amber-400' 
-        : 'fa-solid fa-moon text-sm';
+      updateThemeButton(isDark);
       window.polyglotUI?.sync();
+    }
+
+    function updateThemeButton(isDark) {
+      document.getElementById('theme-toggle-btn').setAttribute('aria-pressed', String(isDark));
+      document.getElementById('dark-icon').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
     }
 
     function toggleAudio() {
       soundEnabled = !soundEnabled;
       const btn = document.getElementById('audio-toggle-btn');
-      btn.innerHTML = soundEnabled 
-        ? '<i class="fa-solid fa-volume-high text-sm"></i>' 
-        : '<i class="fa-solid fa-volume-xmark text-sm text-rose-500"></i>';
+      btn.setAttribute('aria-pressed', String(soundEnabled));
+      btn.firstElementChild.className = soundEnabled ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark';
       showToast(soundEnabled ? '🔊 Đã bật âm thanh hiệu ứng' : '🔇 Đã tắt âm thanh hiệu ứng', 'info');
     }
 
@@ -460,12 +458,6 @@
     }
 
     function switchLanguage(lang, triggerRender = true) {
-      if (lang !== currentLang) {
-        discardActiveProductionSession();
-        selectedProductionScenarioId = '';
-        document.getElementById('production-scenario-detail').innerHTML = '<div class="flex min-h-32 items-center justify-center text-center text-sm text-slate-400">Chọn một tình huống để xem mục tiêu và bắt đầu luyện.</div>';
-        document.getElementById('production-report').classList.add('hidden');
-      }
       currentLang = lang;
       saveState();
 
@@ -475,7 +467,9 @@
       const formTag = document.getElementById('form-lang-tag');
       if (formTag) formTag.innerText = lang.toUpperCase();
 
-      updateLangIndicator(lang);
+      document.querySelectorAll('#language-tabs .lang-tab').forEach(button => {
+        button.setAttribute('aria-pressed', String(button.id === `lang-btn-${lang}`));
+      });
       adaptAddWordFormForLang(lang);
 
       if (triggerRender) {
@@ -566,44 +560,10 @@
       }
     }
 
-    function updateLangIndicator(lang) {
-      const activeBtn = document.getElementById(`lang-btn-${lang}`);
-      const indicator = document.getElementById('lang-indicator');
-      if (!activeBtn || !indicator) return;
-
-      positionLangIndicator(activeBtn, lang);
-
-      const allBtns = document.querySelectorAll('.lang-tab');
-      allBtns.forEach(btn => {
-        if (btn.id === `lang-btn-${lang}`) {
-          btn.classList.remove('text-slate-600', 'dark:text-slate-400');
-          btn.classList.add('text-white');
-        } else {
-          btn.classList.remove('text-white');
-          btn.classList.add('text-slate-600', 'dark:text-slate-400');
-        }
-      });
-    }
-
-    function positionLangIndicator(button, lang) {
-      const indicator = document.getElementById('lang-indicator');
-      if (!button || !indicator) return;
-      const colorMap = { en: 'bg-blue-600', ko: 'bg-pink-600', zh: 'bg-red-600', ja: 'bg-orange-600' };
-      indicator.style.left = `${button.offsetLeft}px`;
-      indicator.style.width = `${button.offsetWidth}px`;
-      indicator.className = `absolute top-1 bottom-1 rounded-xl transition-all duration-300 ease-out shadow-lg pointer-events-none ${colorMap[lang] || 'bg-blue-600'}`;
-    }
-
-    function previewLangIndicator(lang) {
-      positionLangIndicator(document.getElementById(`lang-btn-${lang}`), lang);
-    }
-
-    function restoreLangIndicator() {
-      updateLangIndicator(currentLang);
-    }
-
     // Điều hướng phòng học và chỉ tải iframe Zombie khi người dùng cần.
     function switchNavTab(tab) {
+      const tabChanged = currentTab !== tab;
+      if (tab !== 'listening') grammarLab.suspend();
       if (tab !== 'game') exitGameFullscreen();
       currentTab = tab;
       const zombieGameFrame = document.getElementById('zombie-game-frame');
@@ -623,25 +583,13 @@
           visible: tab === 'game'
         }, '*');
       }
-      const views = ['vocab', 'flashcards', 'listening', 'production', 'game', 'nemesis', 'vip'];
+      const views = ['vocab', 'flashcards', 'listening', 'game', 'nemesis', 'vip'];
       
       views.forEach(v => {
         const viewEl = document.getElementById(`view-${v}`);
         const navBtn = document.getElementById(`nav-${v}`);
-        
-        if (v === tab) {
-          if (viewEl) viewEl.classList.remove('hidden');
-          if (navBtn) {
-            navBtn.classList.add('bg-theme', 'text-white', 'shadow-md');
-            navBtn.classList.remove('text-slate-600', 'dark:text-slate-300', 'hover:bg-slate-100', 'dark:hover:bg-slate-800');
-          }
-        } else {
-          if (viewEl) viewEl.classList.add('hidden');
-          if (navBtn) {
-            navBtn.classList.remove('bg-theme', 'text-white', 'shadow-md');
-            navBtn.classList.add('text-slate-600', 'dark:text-slate-300', 'hover:bg-slate-100', 'dark:hover:bg-slate-800');
-          }
-        }
+        viewEl?.classList.toggle('hidden', v !== tab);
+        navBtn?.setAttribute('aria-current', v === tab ? 'page' : 'false');
       });
 
       if (tab === 'game') {
@@ -654,6 +602,7 @@
       }
 
       renderAllViews();
+      if (tabChanged) window.scrollTo({ top: 0, behavior: 'instant' });
     }
 
     // Phòng giao tiếp kết hợp tình huống mẫu, nội dung tự tạo và lịch sử luyện tập.
@@ -1017,16 +966,6 @@
       editingProductionScenarioId = '';
       document.querySelector('[aria-controls="production-custom-scenario-modal"]')?.focus();
     }
-
-    document.addEventListener('keydown', event => {
-      if (event.key === 'Escape') {
-        if (!document.getElementById('production-custom-scenario-modal').classList.contains('hidden')) {
-          closeCustomProductionScenarioModal();
-        } else if (!document.getElementById('production-session-modal').classList.contains('hidden')) {
-          closeProductionSession();
-        }
-      }
-    });
 
     function startProductionSession(replayScenarioId = '') {
       const scenario = getProductionScenarios().find(item => item.id === (replayScenarioId || selectedProductionScenarioId));
@@ -2025,12 +1964,6 @@
       }
     }
 
-    document.addEventListener('keydown', event => {
-      if (event.key === 'Escape' && !document.getElementById('listening-story-modal').classList.contains('hidden')) {
-        closeListeningStoryModal();
-      }
-    });
-
     function toggleListeningLibrary() {
       listeningLibraryCollapsed = !listeningLibraryCollapsed;
       const libraryColumn = document.getElementById('listening-library-column');
@@ -2722,12 +2655,11 @@
       const table = document.getElementById('vocab-table');
       if (!tbody) return;
 
-      if (table) table.classList.toggle('min-w-[760px]', currentLang === 'ko');
-
-      const searchVal = (document.getElementById('search-vocab-input')?.value || '').toLowerCase();
+      const searchVal = (document.getElementById('search-vocab-input')?.value || '').trim().toLowerCase();
       const filterSrs = document.getElementById('filter-srs-select')?.value || 'all';
 
       let filtered = wordsState.filter(w => w.lang === currentLang);
+      const total = filtered.length;
 
       if (searchVal) {
         filtered = filtered.filter(w => 
@@ -2754,49 +2686,69 @@
         selectVisibleCheckbox.indeterminate = selectedVisibleCount > 0 && selectedVisibleCount < filtered.length;
       }
 
+      const resultCount = document.getElementById('vocab-results-count');
+      const emptyMessage = document.getElementById('vocab-empty-message');
+      if (resultCount) {
+        const visible = filtered.length.toLocaleString('vi-VN');
+        const count = filtered.length === total ? visible : `${visible} / ${total.toLocaleString('vi-VN')}`;
+        resultCount.textContent = `${count} từ`;
+      }
+      if (table) table.closest('.studio-vocab-table').hidden = filtered.length === 0;
       if (filtered.length === 0) {
         tbody.innerHTML = '';
-        if (emptyState) emptyState.classList.remove('hidden');
+        if (emptyMessage) emptyMessage.textContent = total ? 'Không tìm thấy từ vựng phù hợp' : 'Kho từ vựng của ngôn ngữ này đang trống';
+        if (emptyState) {
+          emptyState.dataset.mode = total ? 'filtered' : 'library';
+          emptyState.classList.remove('hidden');
+        }
         return;
       }
 
       if (emptyState) emptyState.classList.add('hidden');
       tbody.innerHTML = filtered.map(item => `
-        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
-          <td class="p-3.5 text-center">
+        <tr role="row">
+          <td role="cell" class="vocab-cell-select p-3.5 text-center">
             <input type="checkbox" value="${escapeHTML(item.id)}" ${selectedWordIds.has(item.id) ? 'checked' : ''} onchange="setWordSelected(this.value, this.checked)" aria-label="Chọn từ ${escapeHTML(item.word)}" class="rounded border-slate-300 text-rose-600 focus:ring-rose-500">
           </td>
-          <td class="p-3.5">
+          <td role="cell" class="vocab-cell-word p-3.5">
             <div class="flex items-center gap-2.5">
-              <button onclick="speakWord('${escapeHTML(item.word)}', '${item.lang}')" class="w-8 h-8 rounded-xl bg-theme-subtle text-theme-main hover:scale-105 transition flex items-center justify-center text-xs flex-shrink-0" title="Phát âm">
-                <i class="fa-solid fa-volume-high"></i>
+              <button type="button" data-word="${escapeHTML(item.word)}" data-lang="${escapeHTML(item.lang)}" onclick="speakWord(this.dataset.word, this.dataset.lang)" class="vocab-pronounce" title="Phát âm" aria-label="Phát âm ${escapeHTML(item.word)}">
+                <i class="fa-solid fa-volume-high" aria-hidden="true"></i>
               </button>
               <div>
-                <span class="font-bold text-slate-900 dark:text-white block text-base ${item.lang === 'ko' ? 'whitespace-nowrap' : ''}">${escapeHTML(item.word)}</span>
-                ${item.phonetic ? `<span class="text-xs text-slate-400 italic">${escapeHTML(item.phonetic)}</span>` : ''}
+                <span lang="${item.lang}" class="vocab-word">${escapeHTML(item.word)}</span>
+                ${item.phonetic ? `<span class="vocab-phonetic">${escapeHTML(item.phonetic)}</span>` : ''}
               </div>
             </div>
           </td>
-          <td class="p-3.5">
-            <span class="font-semibold text-slate-800 dark:text-slate-200 block">${escapeHTML(item.meaning)}</span>
-            ${item.example ? `<span class="text-xs text-slate-500 dark:text-slate-400 italic block mt-0.5"><i class="fa-solid fa-quote-left text-theme-main text-[10px] mr-1"></i>${escapeHTML(item.example)}</span>` : ''}
+          <td role="cell" class="vocab-cell-meaning p-3.5">
+            <span class="vocab-meaning">${escapeHTML(item.meaning)}</span>
+            ${item.example ? `<span class="vocab-example">${escapeHTML(item.example)}</span>` : ''}
           </td>
-          <td class="p-3.5 text-center">${getSRSBadgeHTML(item.srsLevel)}</td>
-          <td class="p-3.5 text-center">
+          <td role="cell" class="vocab-cell-level p-3.5 text-center" data-stage="${item.srsLevel >= 8 ? 'vip' : item.srsLevel > 0 ? 'learning' : 'new'}">${getSRSBadgeHTML(item.srsLevel)}</td>
+          <td role="cell" class="vocab-cell-review p-3.5 text-center">
             <span class="next-review-timer" data-next-time="${item.nextReviewTime || 0}" data-srs-level="${item.srsLevel || 0}">
               ${formatNextReviewTime(item.nextReviewTime, item.srsLevel)}
             </span>
           </td>
-          <td class="p-3.5 text-right space-x-1">
-            <button onclick="openEditModal('${item.id}')" class="p-2 rounded-xl text-slate-400 hover:text-theme-main hover:bg-theme-subtle transition" title="Sửa từ vựng">
-              <i class="fa-solid fa-pen-to-square"></i>
+          <td role="cell" class="vocab-cell-actions p-3.5 text-right">
+            <button type="button" data-id="${escapeHTML(item.id)}" onclick="openEditModal(this.dataset.id)" title="Sửa từ vựng" aria-label="Sửa từ ${escapeHTML(item.word)}">
+              <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
             </button>
-            <button onclick="openDeleteModal('${item.id}')" class="p-2 rounded-xl text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition" title="Xóa từ vựng">
-              <i class="fa-solid fa-trash-can"></i>
+            <button type="button" data-id="${escapeHTML(item.id)}" onclick="openDeleteModal(this.dataset.id)" title="Xóa từ vựng" aria-label="Xóa từ ${escapeHTML(item.word)}">
+              <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
             </button>
           </td>
         </tr>
       `).join('');
+    }
+
+    function resetVocabFilters() {
+      const search = document.getElementById('search-vocab-input');
+      search.value = '';
+      document.getElementById('filter-srs-select').value = 'all';
+      renderVocabList();
+      search.focus();
     }
 
     function setWordSelected(id, isSelected) {
@@ -2832,20 +2784,10 @@
       }
     }
 
-    function toggleAddWordPanel(show) {
-      const layout = document.getElementById('vocab-layout');
-      const hideButton = document.querySelector('#add-word-panel button[aria-controls="add-word-panel"]');
-      const showButton = document.getElementById('show-add-word-panel');
-      const panel = document.getElementById('add-word-panel');
-      if (!layout || !panel || !hideButton || !showButton) {
-        throw new Error('Không tìm thấy giao diện thêm từ vựng.');
-      }
-
-      layout.classList.toggle('vocab-form-hidden', !show);
-      hideButton.setAttribute('aria-expanded', String(show));
-      showButton.setAttribute('aria-expanded', String(show));
-      panel.setAttribute('aria-hidden', String(!show));
-      panel.inert = !show;
+    function openAddWordDialog() {
+      const dialog = document.getElementById('add-word-panel');
+      document.getElementById('add-word-error').hidden = true;
+      if (!dialog.open) dialog.showModal();
     }
 
     function handleAddWord(e) {
@@ -2860,11 +2802,18 @@
       const phonetic = phoneticInput ? phoneticInput.value.trim() : '';
       const example = exampleInput.value.trim();
 
-      if (!word || !meaning) return;
+      const error = document.getElementById('add-word-error');
+      error.hidden = true;
+      if (!word || !meaning) {
+        error.textContent = 'Nhập từ vựng và nghĩa tiếng Việt.';
+        error.hidden = false;
+        return;
+      }
 
       const isDuplicate = wordsState.some(w => w.lang === currentLang && w.word.toLowerCase() === word.toLowerCase());
       if (isDuplicate) {
-        showToast(`⚠️ Từ "${word}" đã có trong danh sách từ vựng ${currentLang.toUpperCase()}!`, 'warning');
+        error.textContent = `Từ “${word}” đã có trong kho từ vựng.`;
+        error.hidden = false;
         return;
       }
 
@@ -2892,6 +2841,7 @@
       if (phoneticInput) phoneticInput.value = '';
       exampleInput.value = '';
 
+      document.getElementById('add-word-panel').close();
       showToast(`✅ Đã thêm từ "${word}" vào danh sách!`, 'success');
       renderAllViews();
     }
@@ -2958,11 +2908,20 @@
       [PRODUCTION_HISTORY_STORAGE_KEY]: value => Array.isArray(value) && value.every(item => item && typeof item === 'object' && !Array.isArray(item)),
       polyglot_streak: value => /^\d+$/.test(value),
       polyglot_last_date: value => typeof value === 'string',
-      polyglot_lang: value => ['en', 'ko', 'zh', 'ja'].includes(value)
+      polyglot_lang: value => ['en', 'ko', 'zh', 'ja'].includes(value),
+      [grammarStorageKey]: value => isBackupDictionary(value) && Object.entries(value).every(([lang, lessons]) => {
+        if (!['en', 'ko', 'ja'].includes(lang)) return false;
+        parseGrammarLessons(lessons);
+        return true;
+      }),
+      [grammarLabStorageKey]: value => grammarLabRepository.validate(value),
+      [hanziStorageKey]: value => Array.isArray(value) && value.every(char =>
+        typeof char === 'string' && /^\p{Script=Han}$/u.test(char))
     };
     const learningBackupCollections = new Set([
       'polyglot_words', LISTENING_STORIES_STORAGE_KEY, CUSTOM_PRODUCTION_STORAGE_KEY,
-      PRODUCTION_SCENARIO_OVERRIDES_STORAGE_KEY, PRODUCTION_HISTORY_STORAGE_KEY
+      PRODUCTION_SCENARIO_OVERRIDES_STORAGE_KEY, PRODUCTION_HISTORY_STORAGE_KEY,
+      grammarStorageKey, hanziStorageKey, grammarLabStorageKey
     ]);
     const learningBackupFormat = 'polyglot-learning-backup';
 
@@ -2998,11 +2957,13 @@
       try {
         const backup = JSON.parse(await file.text());
         if (backup?.format !== learningBackupFormat || backup.version !== 1 || !isBackupDictionary(backup.data)) throw new Error();
-        changes = Object.entries(learningBackupFields).map(([key, validate]) => {
+        changes = Object.entries(learningBackupFields).flatMap(([key, validate]) => {
+          // Bản sao cũ chưa có hai mục luyện tập, nên giữ dữ liệu hiện tại của các mục đó.
+          if ([grammarStorageKey, hanziStorageKey, grammarLabStorageKey].includes(key) && !Object.hasOwn(backup.data, key)) return [];
           const value = backup.data[key];
           if (value !== null && (typeof value !== 'string' ||
             !validate(learningBackupCollections.has(key) ? JSON.parse(value) : value))) throw new Error();
-          return [key, value];
+          return [[key, value]];
         });
       } catch {
         setLearningBackupStatus('Tệp sao lưu không hợp lệ hoặc dùng phiên bản chưa được hỗ trợ.');
@@ -3286,9 +3247,7 @@
     function renderAllViews() {
       syncZombieGameData();
       renderVocabList();
-      renderListeningStories();
-      renderProductionScenarios();
-      renderProductionHistory();
+      if (currentTab === 'listening') renderLanguagePractice(currentLang);
       updateStats();
       if (currentTab === 'vip') renderVIPList();
       if (currentTab === 'nemesis') renderNemesisList();
@@ -3865,18 +3824,23 @@
       const progressBar = document.getElementById('flashcard-progress-bar');
       const nextSrsText = document.getElementById('btn-next-srs-text');
       const prevSrsText = document.getElementById('btn-prev-srs-text');
+      const sessionEnded = fcQueue.length === 0;
+      const endPanel = document.getElementById('flashcard-session-end');
+      for (const id of ['flashcard-container', 'flashcard-controls', 'flashcard-shortcuts']) {
+        document.getElementById(id).classList.toggle('hidden', sessionEnded);
+      }
+      endPanel.classList.toggle('hidden', !sessionEnded);
 
-      if (fcQueue.length === 0) {
-        document.getElementById('card-srs-badge').innerHTML = '<span class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 text-xs font-bold"><i class="fa-solid fa-check mr-1"></i> Hoàn thành</span>';
-        document.getElementById('card-front-word').innerText = 'Hoàn thành lượt ôn!';
-        document.getElementById('card-front-phonetic').innerText = 'Không còn từ vựng nào trong danh mục này.';
-        document.getElementById('card-back-meaning').innerText = 'Hãy đổi chế độ ôn hoặc thêm từ mới!';
-        document.getElementById('card-back-phonetic-sub').innerText = '';
-        document.getElementById('card-back-example-container').classList.add('hidden');
-        if (counterEl) counterEl.innerText = '0 / 0';
-        if (progressBar) progressBar.style.width = '100%';
-        if (nextSrsText) nextSrsText.innerText = '(+1 SRS)';
-        if (prevSrsText) prevSrsText.innerText = '(Reset Cấp 1)';
+      if (sessionEnded) {
+        const finished = fcInitialCount > 0;
+        endPanel.dataset.state = finished ? 'complete' : 'empty';
+        document.getElementById('flashcard-end-icon').className = finished ? 'fa-solid fa-check' : 'fa-solid fa-layer-group';
+        document.getElementById('flashcard-end-title').textContent = finished ? 'Hoàn thành lượt ôn!' : 'Chưa có thẻ để ôn';
+        document.getElementById('flashcard-end-message').textContent = finished
+          ? `Bạn đã ôn ${fcInitialCount} từ trong lượt này.`
+          : 'Hãy chọn chế độ khác hoặc thêm từ vào kho.';
+        if (counterEl) counterEl.innerText = `${fcInitialCount} / ${fcInitialCount}`;
+        if (progressBar) progressBar.style.width = finished ? '100%' : '0%';
         return;
       }
 
@@ -4298,10 +4262,7 @@ Return JSON: {"matchedIndex": number}`;
       canvasEl.height = Math.round(h * gameDpr);
       gameBgCache = null;
     }
-    window.addEventListener('resize', () => {
-      resizeCanvas();
-      updateLangIndicator(currentLang);
-    });
+    window.addEventListener('resize', resizeCanvas);
 
     /* ---------- HD canvas helpers ---------- */
     const TAU = Math.PI * 2;
@@ -5054,14 +5015,14 @@ Return JSON: {"matchedIndex": number}`;
                           lang === 'ko' ? 'Bàn Phím Viết Tay Tiếng Hàn' : 'Bàn Phím Viết Tay Kanji';
       }
 
-      if (modal) modal.classList.remove('hidden');
+      if (modal && !modal.open) modal.showModal();
       initHWCanvas();
       clearHWCanvas();
     }
 
     function closeHandwritingModal() {
       const modal = document.getElementById('handwriting-modal');
-      if (modal) modal.classList.add('hidden');
+      modal?.close();
     }
 
     function initHWCanvas() {

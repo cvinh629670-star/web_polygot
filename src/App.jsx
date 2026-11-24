@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import {
-  ArrowRight,
   BookOpen,
   Brain,
   Check,
@@ -9,14 +8,13 @@ import {
   CircleHelp,
   Command,
   Crown,
-  Headphones,
+  BookText,
+  PenLine,
   Layers,
-  MessageCircle,
   Plus,
   Search,
   ShieldAlert,
   Skull,
-  Sparkles,
   Sprout,
   TrendingUp,
 } from 'lucide-react';
@@ -36,10 +34,10 @@ import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 const languages = [
-  { id: 'en', label: 'Tiếng Anh', flag: '🇬🇧', word: 'Hello', meaning: 'Xin chào', phonetic: '/həˈləʊ/' },
-  { id: 'ko', label: 'Tiếng Hàn', flag: '🇰🇷', word: '안녕하세요', meaning: 'Xin chào', phonetic: 'annyeonghaseyo' },
-  { id: 'zh', label: 'Tiếng Trung', flag: '🇨🇳', word: '你好', meaning: 'Xin chào', phonetic: 'nǐ hǎo' },
-  { id: 'ja', label: 'Tiếng Nhật', flag: '🇯🇵', word: 'こんにちは', meaning: 'Xin chào', phonetic: 'konnichiwa' },
+  { id: 'en', label: 'Tiếng Anh', flag: '🇬🇧' },
+  { id: 'ko', label: 'Tiếng Hàn', flag: '🇰🇷' },
+  { id: 'zh', label: 'Tiếng Trung', flag: '🇨🇳' },
+  { id: 'ja', label: 'Tiếng Nhật', flag: '🇯🇵' },
 ];
 
 const numberFormatter = new Intl.NumberFormat('vi-VN');
@@ -47,12 +45,18 @@ const numberFormatter = new Intl.NumberFormat('vi-VN');
 const sections = [
   { id: 'vocab', label: 'Từ vựng', description: 'Thêm và quản lý ngân hàng từ của bạn', icon: BookOpen },
   { id: 'flashcards', label: 'Thẻ ôn tập', description: 'Ghi nhớ từ bằng lặp lại ngắt quãng', icon: Layers },
-  { id: 'listening', label: 'Luyện nghe', description: 'Khám phá từ vựng qua những câu chuyện', icon: Headphones },
-  { id: 'production', label: 'Luyện giao tiếp', description: 'Thực hành trong tình huống thực tế', icon: MessageCircle },
+  { id: 'listening', label: 'Luyện ngữ pháp', description: 'Làm bài tập và xem giải thích ngữ pháp', icon: BookText },
   { id: 'game', label: 'Zombie Survival', description: 'Thử sức với trò chơi từ vựng', icon: Skull },
   { id: 'nemesis', label: 'Kẻ thù ác', description: 'Chinh phục những từ thường quên', icon: ShieldAlert, count: 'nemesis' },
   { id: 'vip', label: 'Từ vựng VIP', description: 'Những từ bạn đã thành thạo', icon: Crown, count: 'mastered' },
 ];
+
+function sectionsForLanguage(language) {
+  if (language !== 'zh') return sections;
+  return sections.map(section => section.id === 'listening'
+    ? { ...section, label: 'Luyện viết Hán tự', description: 'Xem thứ tự nét và luyện viết chữ Hán', icon: PenLine }
+    : section);
+}
 
 const formatNumber = value => numberFormatter.format(Number(value) || 0);
 const normalizeSearch = value => value.toLocaleLowerCase('vi').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd');
@@ -60,17 +64,34 @@ const normalizeSearch = value => value.toLocaleLowerCase('vi').normalize('NFD').
 // Tạo thanh điều hướng và cập nhật trạng thái phòng đang mở.
 export function Navigation({ snapshot, actions }) {
   const reducedMotion = useReducedMotion();
+  const navigationRef = useRef(null);
+  const activeButtonRef = useRef(null);
+
+  useEffect(() => {
+    const navigation = navigationRef.current;
+    const activeButton = activeButtonRef.current;
+    if (!navigation || !activeButton || navigation.scrollWidth <= navigation.clientWidth) return;
+
+    const { left, right } = navigation.getBoundingClientRect();
+    const active = activeButton.getBoundingClientRect();
+    const gutter = parseFloat(getComputedStyle(navigation).paddingLeft);
+    const offset = active.left < left + gutter
+      ? active.left - left - gutter
+      : Math.max(0, active.right - right + gutter);
+    if (Math.abs(offset) > 1) navigation.scrollBy({ left: offset, behavior: 'instant' });
+  }, [snapshot.tab, snapshot.lang]);
 
   return (
-    <div className="pg-navigation no-scrollbar flex items-center gap-1 overflow-x-auto" aria-label="Các khu vực học tập">
-      {sections.map(({ id, label, icon: Icon, count }) => {
+    <div ref={navigationRef} className="pg-navigation">
+      {sectionsForLanguage(snapshot.lang).map(({ id, label, icon: Icon, count }) => {
         const active = snapshot.tab === id;
         return (
           <Button
             key={id}
+            ref={active ? activeButtonRef : undefined}
             type="button"
             variant="ghost"
-            className={`pg-nav-button relative shrink-0 whitespace-nowrap rounded-lg px-3 text-sm font-semibold ${active ? 'pg-nav-active' : ''}`}
+            className="pg-nav-button"
             aria-current={active ? 'page' : undefined}
             aria-controls={`view-${id}`}
             onClick={() => actions.navigate(id)}
@@ -78,16 +99,16 @@ export function Navigation({ snapshot, actions }) {
             {active && (
               <motion.span
                 layoutId="pg-active-navigation"
-                className="pg-nav-indicator absolute inset-0 rounded-lg"
+                className="pg-nav-indicator"
                 transition={reducedMotion ? { duration: 0 } : { type: 'spring', stiffness: 420, damping: 35 }}
                 aria-hidden="true"
               />
             )}
-            <span className="relative z-10 flex items-center gap-2">
-              <Icon className="size-4" aria-hidden="true" />
+            <span className="pg-nav-content">
+              <span className="pg-nav-icon" aria-hidden="true"><Icon /></span>
               <span>{label}</span>
               {count && Number(snapshot[count]) > 0 && (
-                <span className="pg-nav-count rounded-md px-1.5 py-0.5 text-[10px] leading-none">{formatNumber(snapshot[count])}</span>
+                <span className="pg-nav-count">{formatNumber(snapshot[count])}</span>
               )}
             </span>
           </Button>
@@ -125,7 +146,7 @@ function QuickAccess({ snapshot, actions, showTrigger = true }) {
     changeOpen(false);
     actions.navigate(tab);
   };
-  const filteredSections = sections.filter(section => normalizeSearch(`${section.label} ${section.description}`).includes(normalizeSearch(query.trim())));
+  const filteredSections = sectionsForLanguage(snapshot.lang).filter(section => normalizeSearch(`${section.label} ${section.description}`).includes(normalizeSearch(query.trim())));
 
   return (
     <Dialog open={open} onOpenChange={changeOpen}>
@@ -187,25 +208,8 @@ function QuickAccess({ snapshot, actions, showTrigger = true }) {
   );
 }
 
-// Dựng minh họa theo ngôn ngữ và tùy chọn giảm chuyển động.
-function HeroIllustration({ language }) {
-  return (
-    <figure className="pg-hero-art">
-      <img src="./assets/studio-hero.webp" width="1200" height="800" alt="" fetchPriority="high" />
-      <figcaption className="pg-wordcard">
-        <span aria-hidden="true" className="pg-wordcard-flag">{language.flag}</span>
-        <div>
-          <span className="pg-wordcard-word" lang={language.id}>{language.word}</span>
-          <span className="pg-wordcard-phonetic">{language.phonetic} <span aria-hidden="true">·</span> {language.meaning}</span>
-        </div>
-      </figcaption>
-    </figure>
-  );
-}
-
 // Hiển thị tiến độ học từ dữ liệu SRS của ngôn ngữ hiện tại.
 export function Dashboard({ snapshot, actions }) {
-  const reducedMotion = useReducedMotion();
   const language = languages.find(item => item.id === snapshot.lang) || languages[0];
   const total = Math.max(0, Number(snapshot.total) || 0);
   const mastered = Math.max(0, Number(snapshot.mastered) || 0);
@@ -226,21 +230,13 @@ export function Dashboard({ snapshot, actions }) {
           <p className="pg-dashboard-language"><span aria-hidden="true">{language.flag}</span>{language.label}</p>
           <h2 className="pg-dashboard-title">Không gian học</h2>
         </div>
-        <QuickAccess snapshot={snapshot} actions={actions} />
-      </div>
-
-      <motion.section className="pg-hero relative isolate overflow-hidden" initial={reducedMotion ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reducedMotion ? 0 : 0.4 }} aria-labelledby="pg-hero-title">
-        <HeroIllustration language={language} />
-        <div className="pg-hero-content">
-          <Badge variant="secondary" className="pg-hero-badge gap-2 rounded-full"><Sparkles className="size-3.5" aria-hidden="true" />{formatNumber(snapshot.due)} TỪ SẴN SÀNG ÔN</Badge>
-          <h3 id="pg-hero-title">Học từ mới.<br /><span>Nhớ lâu hơn.</span></h3>
-          <p>Xây vốn từ {language.label.toLocaleLowerCase('vi')} và ôn lại đúng lúc với lặp lại ngắt quãng.</p>
-          <div className="pg-hero-actions">
-            {total > 0 && <Button type="button" className="pg-hero-primary gap-2 rounded-lg px-4" onClick={actions.review}>Bắt đầu ôn tập<ArrowRight className="size-4" aria-hidden="true" /></Button>}
-            <Button type="button" variant={total > 0 ? 'outline' : 'default'} className={`${total > 0 ? 'pg-hero-secondary' : 'pg-hero-primary'} gap-2 rounded-lg px-4`} onClick={actions.addWord}><Plus className="size-4" aria-hidden="true" />{total > 0 ? 'Thêm từ mới' : 'Thêm từ đầu tiên'}</Button>
-          </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge variant="secondary" className="pg-due-count">{formatNumber(snapshot.due)} TỪ SẴN SÀNG ÔN</Badge>
+          {total > 0 && <Button type="button" size="sm" onClick={actions.review}>Bắt đầu ôn tập</Button>}
+          <Button type="button" size="sm" variant="outline" onClick={actions.addWord}><Plus aria-hidden="true" />Thêm từ mới</Button>
+          <QuickAccess snapshot={snapshot} actions={actions} />
         </div>
-      </motion.section>
+      </div>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 sm:gap-4" aria-label={`Thống kê từ vựng ${language.label.toLocaleLowerCase('vi')}`}>
         {stats.map(({ label, value, icon: Icon, tone }) => (

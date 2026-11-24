@@ -36,14 +36,7 @@
       },
       addWord() {
         switchNavTab('vocab');
-        toggleAddWordPanel(true);
-        requestAnimationFrame(() => {
-          document.getElementById('add-word-panel').scrollIntoView({
-            behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
-            block: 'center',
-          });
-          document.getElementById('input-word').focus({ preventScroll: true });
-        });
+        openAddWordDialog();
       },
     },
   };

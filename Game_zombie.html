@@ -186,10 +186,10 @@ button:focus-visible, select:focus-visible { outline: 2px solid var(--mint); out
 .hid { display: none; }
 #m-start {
   background:
-    radial-gradient(ellipse at 12% 22%, #243a63 0, transparent 45%),
-    radial-gradient(ellipse at 93% 18%, #422e61 0, transparent 45%),
-    radial-gradient(ellipse at 48% 105%, #253643 0, transparent 65%),
-    #090c1c;
+    radial-gradient(ellipse at 15% 28%, #234c575e, transparent 48%),
+    radial-gradient(ellipse at 85% 40%, #4e336773, transparent 50%),
+    linear-gradient(#080b16db, #080b16f5),
+    url("./assets/zombie-background.png") center / cover;
   overflow: auto;
   backdrop-filter: none;
 }
@@ -202,6 +202,7 @@ button:focus-visible, select:focus-visible { outline: 2px solid var(--mint); out
   background: repeating-linear-gradient(0deg, transparent 0 39px, #b8c9ff22 40px), repeating-linear-gradient(90deg, transparent 0 39px, #b8c9ff22 40px);
   mask-image: linear-gradient(transparent, #000);
 }
+body:has(#m-start:not(.hid)) #toast { z-index: 11; }
 .home {
   position: relative;
   margin: auto;
@@ -233,54 +234,189 @@ button:focus-visible, select:focus-visible { outline: 2px solid var(--mint); out
 }
 .hc:last-child .cap { color: #ffd6e2; text-align: right; }
 .hm {
+  position: relative;
+  isolation: isolate;
   min-width: 0;
   display: grid;
-  justify-items: start;
-  gap: clamp(10px, 2vw, 18px);
-  padding: clamp(16px, 2.6vw, 34px);
-  border: 1px solid #9ba8f44d;
-  border-radius: 22px;
-  background: linear-gradient(155deg, #212946e8, #111728f5 68%);
-  box-shadow: 0 24px 65px #06081877, inset 0 1px #b7baff28;
+  gap: clamp(14px, 2vw, 22px);
+  padding: clamp(18px, 2.6vw, 32px);
+  border: 1px solid #4b5875;
+  border-radius: 24px;
+  background: radial-gradient(ellipse at 0 0, #5b6ba62b, transparent 67%), linear-gradient(145deg, #1a2238, #0e1425 74%);
+  box-shadow: 0 28px 68px #060818a8, inset 0 1px #d7deff21;
+}
+.hm::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  inset-inline: 20px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #92edce, #b7baff, transparent);
+  pointer-events: none;
 }
 .logo { min-width: 0; }
 .logo small {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  color: var(--indigo);
-  font-size: 11px;
+  gap: 6px;
+  padding: 4px 8px;
+  border: 1px solid #8ef2cb45;
+  border-radius: 6px;
+  background: #82dabb15;
+  color: var(--mint);
+  font-size: 10px;
   font-weight: 800;
-  letter-spacing: .13em;
+  letter-spacing: .11em;
   text-transform: uppercase;
 }
-.logo small::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 12px #9fffd39c; }
+.logo small::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 10px #9fffd39c; }
 .logo h1 {
-  margin: 10px 0;
+  margin: 12px 0 0;
   color: var(--white);
-  font-size: clamp(32px, 4.25vw, 64px);
+  font-size: clamp(40px, 6vw, 74px);
   font-weight: 900;
   letter-spacing: -.065em;
-  line-height: .93;
+  line-height: .94;
 }
-.logo h1 span { display: block; color: var(--indigo); }
-.tag { color: var(--muted); margin: 8px 0 0; font-size: 14px; line-height: 1.4; }
+.logo h1 span { display: block; margin-top: 5px; color: var(--indigo); font-size: clamp(21px, 3vw, 36px); letter-spacing: -.045em; line-height: 1.12; }
+.tag { color: var(--muted); margin: 9px 0 0; font-size: 13px; line-height: 1.45; }
 .start {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   width: 100%;
   padding: 10px 18px;
-  min-height: 48px;
+  min-height: 46px;
+  border-radius: 12px;
+  background: linear-gradient(105deg, #c3ffdf, #83ebc0);
   font-size: 15px;
-  box-shadow: 0 6px 24px #7affba22;
+  box-shadow: 0 8px 24px #60e1ab28, inset 0 1px #ecfff5;
 }
-.modeL {
-  width: 100%;
+.start i {
+  width: 14px;
+  height: 15px;
+  background: currentColor;
+  clip-path: polygon(15% 7%, 96% 50%, 15% 93%);
+}
+.start-settings {
   display: grid;
-  gap: 6px;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 650;
+  gap: 13px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #3f4b665e;
+  border-radius: 14px;
+  background: #080c18a0;
 }
-.modeL select { width: 100%; background: #0e1428; font-size: 13px; }
+#mode2 { margin: 0; padding: 0; border: 0; min-width: 0; }
+#mode2 legend, .modeL > label {
+  display: block;
+  margin: 0 0 7px;
+  padding: 0;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+.mode-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.mode-choice {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 6px;
+  align-items: start;
+  min-height: 52px;
+  padding: 8px;
+  border: 1px solid #394462;
+  border-radius: 9px;
+  background: #151d33;
+  cursor: pointer;
+}
+.mode-choice:hover { border-color: #737eac; background: #1c2740; }
+.mode-choice:has(:checked) { border-color: #7ce5bb; background: #203633; }
+.mode-choice:has(:focus-visible) { outline: 2px solid var(--mint); outline-offset: 2px; }
+.mode-choice input { margin: 2px 0 0; width: 13px; height: 13px; accent-color: #87ebc0; }
+.mode-choice strong, .mode-choice span span { display: block; font-size: 11px; line-height: 1.35; }
+.mode-choice span span { margin-top: 2px; color: var(--muted); font-size: 10px; }
+.mode-choice:has(:checked) strong { color: var(--mint); }
+.modeL { position: relative; }
+.modeL::after {
+  position: absolute;
+  content: '';
+  right: 14px;
+  bottom: 16px;
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid var(--indigo);
+  border-bottom: 2px solid var(--indigo);
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+.modeL select {
+  width: 100%;
+  appearance: none;
+  padding: 7px 29px 7px 10px;
+  background: #151d33;
+  font-size: 12px;
+  font-weight: 700;
+}
+.modeL select:hover { border-color: #737eac; }
+.modeL option { background: #151d33; color: var(--white); }
+@supports (appearance: base-select) and selector(::picker(select)) {
+  #vocab-mode,
+  #vocab-mode::picker(select) { appearance: base-select; }
+  #vocab-mode { align-items: center; padding-inline: 12px; }
+  .modeL::after { display: none; }
+  #vocab-mode::picker-icon { color: var(--indigo); }
+  #vocab-mode:open { border-color: var(--mint); }
+  #vocab-mode:open::picker-icon { transform: rotate(180deg); }
+  #vocab-mode::picker(select) {
+    box-sizing: border-box;
+    min-inline-size: anchor-size(width);
+    margin-block: 5px;
+    padding: 5px;
+    border: 1px solid #455270;
+    border-radius: 13px;
+    background: #101729;
+    color: var(--white);
+    box-shadow: 0 16px 30px #050812a6;
+  }
+  #vocab-mode option {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 37px;
+    padding: 5px 8px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    font-size: 12px;
+    font-weight: 650;
+  }
+  #vocab-mode option:hover,
+  #vocab-mode option:focus-visible { background: #24314d; }
+  #vocab-mode option:checked {
+    border-color: #4c8a76;
+    background: #1c3636;
+    color: var(--mint);
+  }
+  #vocab-mode option::before {
+    content: var(--source-icon) / "";
+    display: grid;
+    flex: none;
+    width: 22px;
+    height: 22px;
+    place-items: center;
+    border-radius: 6px;
+    color: var(--source-color);
+    background: color-mix(in srgb, var(--source-color) 16%, #151d33);
+    font-size: 14px;
+  }
+  #vocab-mode option::checkmark { order: 1; margin-inline-start: auto; color: var(--mint); }
+  #vocab-mode option[value="all"] { --source-icon: "\25a4"; --source-color: #b7b6ff; }
+  #vocab-mode option[value="unlearned"] { --source-icon: "+"; --source-color: #92e6bd; }
+  #vocab-mode option[value="nemesis"] { --source-icon: "!"; --source-color: #ffafb9; }
+  #vocab-mode option[value="vip"] { --source-icon: "\2605"; --source-color: #ffd48f; }
+  #vocab-mode option[value="selected"] { --source-icon: "\2713"; --source-color: #9bd1ff; }
+}
 .shake { animation: shake .45s; }
 @keyframes shake {
   20% { transform: translate(-6px, 2px); }
@@ -314,9 +450,10 @@ button:focus-visible, select:focus-visible { outline: 2px solid var(--mint); out
 
 @media (max-width: 700px) {
   .home { grid-template-columns: 1fr 1fr; width: min(100%, 430px); gap: 8px; }
-  .hm { grid-column: 1 / -1; grid-row: 1; gap: 9px; border-radius: 16px; }
-  .logo h1 { font-size: clamp(27px, 8vw, 40px); }
-  .logo h1 span { display: inline; }
+  .hm { grid-column: 1 / -1; grid-row: 1; gap: 13px; border-radius: 17px; }
+  .logo h1 { font-size: clamp(38px, 11vw, 54px); }
+  .logo h1 span { font-size: clamp(21px, 6.4vw, 28px); }
+  .start-settings { padding: 9px; }
   .hc { border-radius: 12px; }
   .hc canvas { max-height: clamp(78px, 26dvh, 180px); object-fit: cover; object-position: center 60%; }
   .cap { padding: 18px 8px 7px; font-size: 11px; }
@@ -329,9 +466,14 @@ button:focus-visible, select:focus-visible { outline: 2px solid var(--mint); out
 }
 @media (max-height: 440px) {
   .hm { gap: 8px; padding: 12px; }
-  .logo h1 { font-size: 28px; margin-block: 5px; }
+  .logo h1 { font-size: 31px; margin-top: 6px; }
+  .logo h1 span { font-size: 19px; margin-top: 2px; }
+  .tag { margin-top: 4px; }
+  .start-settings { gap: 8px; padding: 8px; }
+  .mode-choice { min-height: 43px; padding: 5px 7px; }
   .start { min-height: 36px; padding-block: 6px; }
   .modeL select { min-height: 32px; padding-block: 4px; }
+  .modeL::after { bottom: 13px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
@@ -354,13 +496,30 @@ button:focus-visible, select:focus-visible { outline: 2px solid var(--mint); out
 
 <div class="ov" id="m-start"><div class="home" id="home">
 <div class="hc"><canvas id="hcL" width="640" height="800"></canvas><div class="cap">Alice</div></div>
-<div class="hm"><div class="logo"><small>Trò chơi từ vựng</small><h1>Zombie <span>Vocabulary</span> Survival</h1><p class="tag">Gõ đúng từ để vượt qua từng ải.</p></div>
-<button class="big start" id="bStart">▶ BẮT ĐẦU</button>
-<label class="modeL">Cách luyện <select id="mode2"><option value="en">Xem nghĩa tiếng Việt → gõ từ</option><option value="vi">Xem từ → gõ nghĩa tiếng Việt</option></select></label>
-<label class="modeL">Bộ từ vựng
-<select id="vocab-mode">
-<option value="all">Học toàn bộ từ</option><option value="unlearned">Chỉ từ chưa học</option><option value="nemesis">Kẻ Thù Ác (quên từ 3 lần)</option><option value="vip">Từ VIP (SRS cấp 8+)</option><option value="selected">Chỉ từ đã chọn</option>
-</select></label>
+<div class="hm">
+  <div class="logo"><small>Trò chơi từ vựng</small><h1>Zombie <span>Vocabulary Survival</span></h1><p class="tag">Gõ đúng từ để vượt qua từng ải.</p></div>
+  <div class="start-settings">
+    <fieldset id="mode2">
+      <legend>Cách luyện</legend>
+      <div class="mode-options">
+        <label class="mode-choice">
+          <input type="radio" name="start-mode" value="en" checked>
+          <span><strong>Xem nghĩa tiếng Việt</strong><span>Gõ từ vựng</span></span>
+        </label>
+        <label class="mode-choice">
+          <input type="radio" name="start-mode" value="vi">
+          <span><strong>Xem từ vựng</strong><span>Gõ nghĩa tiếng Việt</span></span>
+        </label>
+      </div>
+    </fieldset>
+    <div class="modeL">
+      <label for="vocab-mode">Bộ từ vựng</label>
+      <select id="vocab-mode">
+        <option value="all">Học toàn bộ từ</option><option value="unlearned">Chỉ từ chưa học</option><option value="nemesis">Kẻ Thù Ác (quên từ 3 lần)</option><option value="vip">Từ VIP (SRS cấp 8+)</option><option value="selected">Chỉ từ đã chọn</option>
+      </select>
+    </div>
+  </div>
+  <button type="button" class="big start" id="bStart"><i aria-hidden="true"></i>Bắt đầu</button>
 </div>
 <div class="hc"><canvas id="hcR" width="640" height="800"></canvas><div class="cap">Trùm Tận Thế</div></div>
 </div></div>
@@ -801,7 +960,15 @@ class UIManager{
   $('fire').addEventListener('pointerdown',e=>{e.preventDefault();g.audio.init();fireNow()});
   addEventListener('pointerdown',()=>g.audio.init());
   addEventListener('keydown',e=>{if(this.anyOpen())return;if(e.key==='Enter'){e.preventDefault();fireNow()}else if(/^[123]$/.test(e.key))g.useItem('bsh'[+e.key-1]);else if(e.key==='Backspace'){e.preventDefault();this.setInput(this.inp.slice(0,-1))}else if(e.key.length===1&&/^[\p{L} '-]$/u.test(e.key)&&!e.ctrlKey&&!e.metaKey){e.preventDefault();this.add(e.key.toLowerCase())}});
-  const setMode=v=>{g.mode=v;$('mode').value=v;$('mode2').value=v;this.setInput('')};$('mode').onchange=e=>setMode(e.target.value);$('mode2').onchange=e=>setMode(e.target.value);
+  const modes=$('mode2');
+  const setMode=value=>{
+   g.mode=value;
+   $('mode').value=value;
+   for(const input of modes.querySelectorAll('input')) input.checked=input.value===value;
+   this.setInput('');
+  };
+  $('mode').onchange=e=>setMode(e.target.value);
+  modes.onchange=e=>setMode(e.target.value);
   $('vocab-mode').onchange=e=>{g.vocab.mode=e.target.value;g.ui.hud()};
   const start=()=>{if(!g.vocab.activeList().length){g.say('Không có từ nào trong chế độ này. Hãy chọn chế độ khác hoặc chọn thêm từ trong PolyGlot.',3000);return}
    g.audio.init();this.close('m-start');this.close('m-over');const r=g.res;

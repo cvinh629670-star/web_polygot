@@ -11,6 +11,7 @@ const mime = {
   '.css': 'text/css; charset=utf-8', '.json': 'application/json; charset=utf-8',
   '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp',
   '.mp3': 'audio/mpeg', '.woff2': 'font/woff2',
+  '.webmanifest': 'application/manifest+json; charset=utf-8',
 };
 
 // Phục vụ bản build trên localhost với kiểu nội dung phù hợp cho từng tệp.
