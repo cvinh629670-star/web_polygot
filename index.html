@@ -87,7 +87,7 @@
               <i class="fa-solid fa-volume-low opacity-70" aria-hidden="true"></i>
               <input id="music-vol" type="range" min="0" max="100" value="40" aria-label="Âm lượng nhạc nền">
             </label>
-            <p class="text-[11px] opacity-60 mt-3 leading-snug">Chọn tệp âm thanh trên thiết bị để phát nhạc riêng; tệp không được tải lên.</p>
+            <p class="text-[11px] opacity-60 mt-3 leading-snug">Tệp nhạc được lưu trong trình duyệt này để dùng lại khi tải trang. Tệp không được tải lên.</p>
           </div>
         </div>
         <button type="button" onclick="toggleAudio()" id="audio-toggle-btn" aria-label="Âm thanh hiệu ứng" aria-pressed="true" title="Âm thanh hiệu ứng">
@@ -407,7 +407,7 @@
     </section>
 
     <!-- VIEW 2: FLASHCARD SRS REVIEW MODE -->
-    <section id="view-flashcards" class="tab-view hidden space-y-6">
+    <section id="view-flashcards" class="tab-view hidden space-y-4 sm:space-y-6">
       <div class="studio-room-hero studio-room-hero--flashcards">
         <div class="studio-room-copy">
           <span class="studio-room-icon" aria-hidden="true"><i class="fa-solid fa-layer-group"></i></span>
@@ -417,140 +417,142 @@
           </div>
         </div>
       </div>
-      <div class="studio-flashcards mx-auto space-y-5">
-        
-        <!-- Chọn chế độ ôn trước khi bắt đầu luyện. -->
-        <label for="flashcard-mode-select" class="studio-room-panel studio-review-mode">
-          <span>Chế độ ôn tập</span>
-          <select id="flashcard-mode-select" onchange="changeFlashcardMode()" class="w-full min-w-0 px-3 py-2 rounded-xl border text-xs font-bold focus-ring-theme">
-            <optgroup label="Có tính điểm SRS">
-              <option value="due">Ôn chuẩn SRS</option>
-              <option value="reverse">Ôn đảo ngược · Nghĩa → Từ</option>
-            </optgroup>
-            <optgroup label="Ôn luyện · Giữ nguyên điểm SRS">
-              <option value="all">Tất cả từ vựng</option>
-              <option value="unlearned">Chỉ từ chưa học</option>
-              <option value="nemesis">Chỉ Kẻ Thù Ác</option>
-            </optgroup>
-          </select>
-        </label>
+      <div class="studio-flashcards mx-auto">
+        <div class="studio-room-panel studio-review-setup">
+          <!-- Chọn chế độ ôn trước khi bắt đầu luyện. -->
+          <label for="flashcard-mode-select" class="studio-review-mode">
+            <span><i class="fa-solid fa-sliders" aria-hidden="true"></i> Chế độ ôn tập</span>
+            <select id="flashcard-mode-select" onchange="changeFlashcardMode()" class="w-full min-w-0 px-3 py-2 rounded-xl border text-xs font-bold focus-ring-theme">
+              <optgroup label="Có tính điểm SRS">
+                <option value="due">Ôn chuẩn SRS</option>
+                <option value="reverse">Ôn đảo ngược · Nghĩa → Từ</option>
+              </optgroup>
+              <optgroup label="Ôn luyện · Giữ nguyên điểm SRS">
+                <option value="all">Tất cả từ vựng</option>
+                <option value="unlearned">Chỉ từ chưa học</option>
+                <option value="nemesis">Chỉ Kẻ Thù Ác</option>
+              </optgroup>
+            </select>
+          </label>
 
-        <!-- Mode Indicator Banner -->
-        <div id="flashcard-mode-banner" class="p-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-between border bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 text-emerald-800 dark:text-emerald-200">
-          <span class="flex items-center gap-1.5">
-            <i class="fa-solid fa-bolt text-amber-500"></i>
-            <span id="flashcard-mode-status-text">Đang ở chế độ <b>Chính Thức SRS</b> (Kết quả sẽ được lưu vào điểm tiến độ SRS)</span>
-          </span>
-        </div>
-
-        <!-- Session Progress Bar & Count -->
-        <div class="space-y-1.5">
-          <div class="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400 px-1">
+          <!-- Mode Indicator Banner -->
+          <div id="flashcard-mode-banner" class="p-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-between border bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 text-emerald-800 dark:text-emerald-200">
             <span class="flex items-center gap-1.5">
-              <i class="fa-solid fa-chart-line text-theme-main"></i> Tiến trình phiên ôn
+              <i class="fa-solid fa-bolt text-amber-500" aria-hidden="true"></i>
+              <span id="flashcard-mode-status-text">Kết quả lượt ôn được lưu vào tiến độ SRS.</span>
             </span>
-            <span id="flashcard-counter" class="px-2.5 py-0.5 rounded-full bg-theme-subtle text-theme-main font-bold">0 / 0</span>
           </div>
-          <div class="w-full bg-slate-200 dark:bg-slate-700/80 h-2.5 rounded-full overflow-hidden p-0.5 shadow-inner">
-            <div id="flashcard-progress-bar" class="bg-theme h-full rounded-full transition-all duration-300 ease-out w-0"></div>
+
+          <!-- Session Progress Bar & Count -->
+          <div class="studio-review-progress space-y-1.5">
+            <div class="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400 px-1">
+              <span class="flex items-center gap-1.5">
+                <i class="fa-solid fa-chart-line text-theme-main" aria-hidden="true"></i> Tiến trình phiên ôn
+              </span>
+              <span id="flashcard-counter" class="px-2.5 py-0.5 rounded-full bg-theme-subtle text-theme-main font-bold">0 / 0</span>
+            </div>
+            <div class="studio-review-track w-full rounded-full overflow-hidden">
+              <div id="flashcard-progress-bar" class="bg-theme h-full rounded-full transition-all duration-300 ease-out w-0"></div>
+            </div>
           </div>
         </div>
 
-        <!-- Flashcard Viewport (Fixed Height h-96) -->
-        <div id="flashcard-container" class="perspective-1000 min-h-[380px] cursor-pointer" onclick="flipFlashcard()">
-          <div id="flashcard-inner" class="relative w-full h-96 rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-xl transition-transform duration-500 transform-style-3d flex items-center justify-center p-6 text-center">
-            
-            <!-- Front Face -->
-            <div id="card-front" class="absolute inset-0 backface-hidden flex flex-col items-center justify-between p-6 space-y-3">
-              <div class="w-full flex items-center justify-between">
-                <span id="card-srs-badge" class="px-3 py-1 rounded-full text-xs font-bold">Badge</span>
-                <button type="button" onclick="speakCurrentFlashcard(event)" class="w-9 h-9 rounded-full bg-theme-subtle text-theme-main hover:scale-110 transition flex items-center justify-center text-sm shadow-sm" title="Nghe phát âm">
-                  <i class="fa-solid fa-volume-high"></i>
-                </button>
-              </div>
+        <div class="studio-review-stage space-y-4">
+          <!-- Hai mặt thẻ và các nút đánh giá bên dưới. -->
+          <div id="flashcard-container" class="perspective-1000 cursor-pointer" onclick="flipFlashcard()">
+            <div id="flashcard-inner" class="relative w-full transition-transform transform-style-3d text-center">
 
-              <div class="space-y-2 my-auto">
-                <h3 id="card-front-word" class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">---</h3>
-                <p id="card-front-phonetic" class="text-sm sm:text-base text-slate-500 dark:text-slate-400 font-medium italic">---</p>
-              </div>
-              
-              <p class="flashcard-flip-hint">
-                <i class="fa-solid fa-rotate" aria-hidden="true"></i> Chạm hoặc nhấn <kbd>Space</kbd> để lật thẻ
-              </p>
-            </div>
-
-            <!-- Back Face -->
-            <div id="card-back" class="absolute inset-0 backface-hidden rotate-y-180 flex flex-col items-center justify-between p-6 bg-theme-subtle rounded-3xl border-2 border-theme">
-              <div class="w-full flex items-center justify-between">
-                <span id="card-back-title" class="text-[11px] font-extrabold uppercase tracking-wider text-theme-main">Nghĩa Tiếng Việt</span>
-                <button type="button" onclick="speakCurrentFlashcard(event)" class="w-9 h-9 rounded-full bg-white dark:bg-slate-800 text-theme-main hover:scale-110 transition flex items-center justify-center text-sm shadow-sm" title="Nghe lại">
-                  <i class="fa-solid fa-volume-high"></i>
-                </button>
-              </div>
-
-              <div class="space-y-2 my-auto w-full">
-                <h3 id="card-back-meaning" class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">---</h3>
-                <p id="card-back-phonetic-sub" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 italic">---</p>
-
-                <!-- Example Sentence Display -->
-                <div id="card-back-example-container" class="mt-3 p-3 rounded-2xl bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700/80 max-w-md mx-auto w-full text-left hidden relative group">
-                  <div class="flex items-center justify-between mb-0.5">
-                    <span class="text-[10px] font-bold uppercase text-slate-400"><i class="fa-solid fa-quote-left text-theme-main mr-1"></i> Ví dụ ngữ cảnh</span>
-                    <button type="button" onclick="speakCurrentExample(event)" class="text-xs text-theme-main hover:scale-110 transition" title="Nghe câu ví dụ">
-                      <i class="fa-solid fa-volume-low"></i>
-                    </button>
-                  </div>
-                  <p id="card-back-example-text" class="text-xs font-medium text-slate-700 dark:text-slate-200 italic">---</p>
+              <!-- Front Face -->
+              <div id="card-front" class="absolute inset-0 backface-hidden">
+                <div class="w-full flex items-center justify-between">
+                  <span id="card-srs-badge" class="px-3 py-1 rounded-full text-xs font-bold">Badge</span>
+                  <button type="button" onclick="speakCurrentFlashcard(event)" class="w-9 h-9 rounded-full bg-theme-subtle text-theme-main hover:scale-110 transition flex items-center justify-center text-sm shadow-sm" title="Nghe phát âm">
+                    <i class="fa-solid fa-volume-high"></i>
+                  </button>
                 </div>
+
+                <div class="studio-review-card-copy space-y-2">
+                  <h3 id="card-front-word" class="font-extrabold">---</h3>
+                  <p id="card-front-phonetic" class="text-sm sm:text-base font-medium italic">---</p>
+                </div>
+
+                <p class="flashcard-flip-hint">
+                  <i class="fa-solid fa-rotate" aria-hidden="true"></i> Chạm hoặc nhấn <kbd>Space</kbd> để lật thẻ
+                </p>
               </div>
 
-              <span class="text-[11px] text-slate-400 font-semibold">Đánh giá ghi nhớ bên dưới</span>
+              <!-- Back Face -->
+              <div id="card-back" class="absolute inset-0 backface-hidden rotate-y-180">
+                <div class="w-full flex items-center justify-between">
+                  <span id="card-back-title" class="text-[11px] font-extrabold uppercase tracking-wider text-theme-main">Nghĩa Tiếng Việt</span>
+                  <button type="button" onclick="speakCurrentFlashcard(event)" class="w-9 h-9 rounded-full bg-white dark:bg-slate-800 text-theme-main hover:scale-110 transition flex items-center justify-center text-sm shadow-sm" title="Nghe lại">
+                    <i class="fa-solid fa-volume-high"></i>
+                  </button>
+                </div>
+
+                <div class="studio-review-card-copy space-y-2">
+                  <h3 id="card-back-meaning" class="text-2xl sm:text-3xl font-bold">---</h3>
+                  <p id="card-back-phonetic-sub" class="text-xs sm:text-sm italic">---</p>
+
+                  <!-- Example Sentence Display -->
+                  <div id="card-back-example-container" class="mt-3 p-3 rounded-xl border max-w-md mx-auto w-full text-left hidden">
+                    <div class="flex items-center justify-between mb-0.5">
+                      <span class="text-[10px] font-bold uppercase text-slate-400"><i class="fa-solid fa-quote-left text-theme-main mr-1"></i> Ví dụ ngữ cảnh</span>
+                      <button type="button" onclick="speakCurrentExample(event)" class="text-xs text-theme-main hover:scale-110 transition" title="Nghe câu ví dụ">
+                        <i class="fa-solid fa-volume-low"></i>
+                      </button>
+                    </div>
+                    <p id="card-back-example-text" class="text-xs font-medium text-slate-700 dark:text-slate-200 italic">---</p>
+                  </div>
+                </div>
+
+                <span class="studio-review-card-footer">Đánh giá ghi nhớ bên dưới</span>
+              </div>
+
             </div>
+          </div>
 
+          <div id="flashcard-session-end" class="studio-room-panel hidden">
+            <div class="flashcard-end-emblem" aria-hidden="true">
+              <span><i id="flashcard-end-icon" class="fa-solid fa-check"></i></span>
+            </div>
+            <div role="status">
+              <h3 id="flashcard-end-title"></h3>
+              <p id="flashcard-end-message"></p>
+            </div>
+            <div class="flashcard-end-actions">
+              <button type="button" onclick="document.getElementById('flashcard-mode-select').focus()">
+                <i class="fa-solid fa-sliders" aria-hidden="true"></i> Đổi chế độ ôn
+              </button>
+              <button type="button" onclick="switchNavTab('vocab')">
+                <i class="fa-solid fa-book-open" aria-hidden="true"></i> Về kho từ
+              </button>
+            </div>
           </div>
-        </div>
 
-        <div id="flashcard-session-end" class="studio-room-panel hidden">
-          <div class="flashcard-end-emblem" aria-hidden="true">
-            <span><i id="flashcard-end-icon" class="fa-solid fa-check"></i></span>
-          </div>
-          <div role="status">
-            <h3 id="flashcard-end-title"></h3>
-            <p id="flashcard-end-message"></p>
-          </div>
-          <div class="flashcard-end-actions">
-            <button type="button" onclick="document.getElementById('flashcard-mode-select').focus()">
-              <i class="fa-solid fa-sliders" aria-hidden="true"></i> Đổi chế độ ôn
+          <!-- Review Evaluation Buttons -->
+          <div id="flashcard-controls" class="grid grid-cols-2 gap-3">
+            <button type="button" onclick="evaluateFlashcard(false)" class="py-3.5 px-2 sm:px-4 rounded-xl font-bold text-sm transition-colors flex flex-col items-center justify-center gap-0.5">
+              <span class="flex items-center gap-2"><i class="fa-solid fa-xmark flashcard-rating-icon" aria-hidden="true"></i> Chưa nhớ</span>
+              <span id="btn-prev-srs-text" class="text-[10px] font-normal opacity-85">(Reset Cấp 1)</span>
             </button>
-            <button type="button" onclick="switchNavTab('vocab')">
-              <i class="fa-solid fa-book-open" aria-hidden="true"></i> Về kho từ
+
+            <button type="button" onclick="evaluateFlashcard(true)" class="py-3.5 px-2 sm:px-4 rounded-xl font-bold text-sm transition-colors flex flex-col items-center justify-center gap-0.5">
+              <span class="flex items-center gap-2"><i class="fa-solid fa-check flashcard-rating-icon" aria-hidden="true"></i> Đã nhớ</span>
+              <span id="btn-next-srs-text" class="text-[10px] font-normal opacity-85">(+1 SRS)</span>
             </button>
           </div>
+
+          <div id="flashcard-shortcuts" class="studio-review-shortcuts">
+            <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1" role="group" aria-label="Phím tắt">
+              <span><kbd>←</kbd> Chưa nhớ</span>
+              <span><kbd>→</kbd> Đã nhớ</span>
+              <span><kbd>S</kbd> Nghe</span>
+            </div>
+            <p class="mt-2 sm:hidden">Vuốt trái nếu chưa nhớ hoặc vuốt phải nếu đã nhớ.</p>
+          </div>
+
         </div>
-
-        <!-- Review Evaluation Buttons -->
-        <div id="flashcard-controls" class="grid grid-cols-2 gap-4">
-          <button onclick="evaluateFlashcard(false)" class="py-3.5 px-4 rounded-2xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-sm shadow-md hover:shadow-lg transition flex flex-col items-center justify-center gap-0.5">
-            <span class="flex items-center gap-2"><i class="fa-solid fa-xmark flashcard-rating-icon" aria-hidden="true"></i> Chưa nhớ</span>
-            <span id="btn-prev-srs-text" class="text-[10px] font-normal opacity-85">(Reset Cấp 1)</span>
-          </button>
-
-          <button onclick="evaluateFlashcard(true)" class="py-3.5 px-4 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm shadow-md hover:shadow-lg transition flex flex-col items-center justify-center gap-0.5">
-            <span class="flex items-center gap-2"><i class="fa-solid fa-check flashcard-rating-icon" aria-hidden="true"></i> Đã nhớ</span>
-            <span id="btn-next-srs-text" class="text-[10px] font-normal opacity-85">(+1 SRS)</span>
-          </button>
-        </div>
-
-        <!-- Keyboard Shortcuts Hint Footer -->
-        <div id="flashcard-shortcuts" class="text-center text-[11px] text-slate-400 dark:text-slate-500 font-semibold pt-1">
-          <span class="text-slate-600 dark:text-slate-300">Phím tắt:</span> 
-          <kbd class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono">Space</kbd> Lật thẻ &nbsp;|&nbsp; 
-          <kbd class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono">←</kbd> Chưa nhớ &nbsp;|&nbsp; 
-          <kbd class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono">→</kbd> Đã nhớ &nbsp;|&nbsp; 
-          <kbd class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono">S</kbd> Nghe <br>
-          <span class="block mt-2 sm:hidden text-theme-main">👆 Vuốt thẻ sang trái (Chưa nhớ) / phải (Đã nhớ) trên di động</span>
-        </div>
-
       </div>
     </section>
 
@@ -560,7 +562,7 @@
     </section>
 
     <!-- VIEW: NEMESIS (KẺ THÙ ÁC) VOCABULARY -->
-    <section id="view-nemesis" class="tab-view hidden space-y-6">
+    <section id="view-nemesis" class="tab-view studio-word-collection hidden space-y-6">
       
       <div class="studio-room-hero studio-room-hero--nemesis">
         <div class="studio-room-copy">
@@ -572,16 +574,16 @@
         </div>
       </div>
 
-      <div id="nemesis-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div id="nemesis-grid-container" class="studio-word-grid">
         <!-- Dynamic Content -->
       </div>
 
-      <div id="nemesis-empty-state" class="hidden py-16 text-center space-y-3">
-        <div class="w-20 h-20 mx-auto rounded-3xl bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500 flex items-center justify-center text-3xl">
-          🛡️
+      <div id="nemesis-empty-state" class="studio-collection-empty hidden space-y-3">
+        <div class="studio-collection-empty-mark" aria-hidden="true">
+          <i class="fa-solid fa-shield-halved"></i>
         </div>
         <h3 class="text-lg font-bold">Chưa có từ dễ quên</h3>
-        <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+        <p>
           Các từ đã quên từ 3 lần trở lên sẽ xuất hiện ở đây.
         </p>
       </div>
@@ -589,7 +591,7 @@
     </section>
 
     <!-- VIEW 4: VIP MASTERED VOCABULARY -->
-    <section id="view-vip" class="tab-view hidden space-y-6">
+    <section id="view-vip" class="tab-view studio-word-collection hidden space-y-6">
       
       <div class="studio-room-hero studio-room-hero--vip">
         <div class="studio-room-copy">
@@ -601,16 +603,16 @@
         </div>
       </div>
 
-      <div id="vip-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div id="vip-grid-container" class="studio-word-grid">
         <!-- Dynamic Content -->
       </div>
 
-      <div id="vip-empty-state" class="hidden py-16 text-center space-y-3">
-        <div class="w-20 h-20 mx-auto rounded-3xl bg-amber-50 dark:bg-amber-900/20 text-amber-400 flex items-center justify-center text-3xl">
-          👑
+      <div id="vip-empty-state" class="studio-collection-empty hidden space-y-3">
+        <div class="studio-collection-empty-mark" aria-hidden="true">
+          <i class="fa-solid fa-crown"></i>
         </div>
         <h3 class="text-lg font-bold">Chưa có từ vựng VIP</h3>
-        <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+        <p>
           Các từ đạt cấp SRS 8 sẽ xuất hiện ở đây.
         </p>
       </div>
@@ -899,7 +901,8 @@
   <script src="./js/app.js"></script>
   <script src="./js/audio.js"></script>
   <script src="./js/ui-bridge.js"></script>
-  <script src="./assets/app-ui.js"></script>
+  <script defer src="./assets/studio-graphics.js"></script>
+  <script defer src="./assets/app-ui.js"></script>
   <script src="./js/offline.js"></script>
 </body>
 </html>

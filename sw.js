@@ -1,8 +1,8 @@
 // Cache nội dung học tĩnh. Không lưu yêu cầu API hay dữ liệu bên ngoài ứng dụng.
-const CACHE = 'polyglot-shell-v11';
+const CACHE = 'polyglot-shell-v12';
 const shell = [
  './index.html','./manifest.webmanifest','./css/app.css','./css/graphics.css','./css/grammar-lab.css',
- './assets/app-ui.js','./assets/app-ui.css','./assets/fontawesome.css','./assets/fa-solid-900.woff2',
+ './assets/app-ui.js','./assets/app-ui.css','./assets/studio-graphics.js','./assets/fontawesome.css','./assets/fa-solid-900.woff2',
  './assets/fa-regular-400.woff2','./assets/grammar-lab-tutor.webp',
  './assets/polyglot-icon-192.png','./assets/polyglot-icon-512.png','./js/local-data.js','./js/starter-vocabulary.js',
  './js/app.js','./js/audio.js','./js/ui-bridge.js','./js/offline.js','./js/language-practice.js',

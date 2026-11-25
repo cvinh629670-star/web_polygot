@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import {
+  ArrowUpRight,
   BookOpen,
   Brain,
   Check,
@@ -32,10 +33,10 @@ import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 const languages = [
-  { id: 'en', label: 'Tiếng Anh', flag: '🇬🇧' },
-  { id: 'ko', label: 'Tiếng Hàn', flag: '🇰🇷' },
-  { id: 'zh', label: 'Tiếng Trung', flag: '🇨🇳' },
-  { id: 'ja', label: 'Tiếng Nhật', flag: '🇯🇵' },
+  { id: 'en', label: 'Tiếng Anh', flag: '🇬🇧', glyph: 'Aa' },
+  { id: 'ko', label: 'Tiếng Hàn', flag: '🇰🇷', glyph: '한' },
+  { id: 'zh', label: 'Tiếng Trung', flag: '🇨🇳', glyph: '字' },
+  { id: 'ja', label: 'Tiếng Nhật', flag: '🇯🇵', glyph: 'あ' },
 ];
 
 const numberFormatter = new Intl.NumberFormat('vi-VN');
@@ -198,6 +199,47 @@ function QuickAccess({ snapshot, actions, showTrigger = true }) {
   );
 }
 
+function StudyDeck({ language }) {
+  const host = useRef(null);
+  const scene = useRef(null);
+  const currentLanguage = useRef(language.id);
+
+  useEffect(() => {
+    function mount() {
+      scene.current = window.polyglotGraphics.createDeck(host.current, currentLanguage.current);
+    }
+    if (window.polyglotGraphics) mount();
+    else window.addEventListener('polyglot:graphics-ready', mount, { once: true });
+
+    return () => {
+      window.removeEventListener('polyglot:graphics-ready', mount);
+      scene.current?.dispose();
+      scene.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    currentLanguage.current = language.id;
+    scene.current?.setLanguage(language.id);
+  }, [language.id]);
+
+  return (
+    <div className="pg-deck" ref={host} aria-hidden="true">
+      <div className="pg-deck-fallback">
+        <div className="pg-deck-orbit" />
+        <div className="pg-deck-cards">
+          <span className="pg-deck-card-back" />
+          <span className="pg-deck-card-middle" />
+          <span className="pg-deck-card-face" data-lang={language.id}>
+            <span>{language.id.toUpperCase()}</span>
+            <strong>{language.glyph}</strong>
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Hiển thị tiến độ học từ dữ liệu SRS của ngôn ngữ hiện tại.
 export function Dashboard({ snapshot, actions }) {
   const language = languages.find(item => item.id === snapshot.lang) || languages[0];
@@ -214,21 +256,25 @@ export function Dashboard({ snapshot, actions }) {
   if (snapshot.tab !== 'vocab') return <QuickAccess snapshot={snapshot} actions={actions} showTrigger={false} />;
 
   return (
-    <div className="pg-dashboard space-y-5 pb-7">
-      <div className="pg-dashboard-header flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <p className="pg-dashboard-language"><span aria-hidden="true">{language.flag}</span>{language.label}</p>
+    <div className="pg-dashboard">
+      <div className="pg-dashboard-header" data-language={language.id}>
+        <StudyDeck language={language} />
+        <div className="pg-dashboard-copy">
+          <p className="pg-dashboard-language"><span aria-hidden="true">{language.id.toUpperCase()}</span>{language.label}</p>
           <h2 className="pg-dashboard-title">Không gian học</h2>
+          <Badge variant="secondary" className="pg-due-count">
+            <span aria-hidden="true" />
+            {formatNumber(snapshot.due)} TỪ SẴN SÀNG ÔN
+          </Badge>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="secondary" className="pg-due-count">{formatNumber(snapshot.due)} TỪ SẴN SÀNG ÔN</Badge>
-          {total > 0 && <Button type="button" size="sm" onClick={actions.review}>Bắt đầu ôn tập</Button>}
-          <Button type="button" size="sm" variant="outline" onClick={actions.addWord}><Plus aria-hidden="true" />Thêm từ mới</Button>
+        <div className="pg-dashboard-actions">
+          {total > 0 && <Button type="button" className="pg-review-button" onClick={actions.review}>Bắt đầu ôn tập<ArrowUpRight aria-hidden="true" /></Button>}
+          <Button type="button" variant="outline" className="pg-dashboard-secondary" onClick={actions.addWord}><Plus aria-hidden="true" />Thêm từ mới</Button>
           <QuickAccess snapshot={snapshot} actions={actions} />
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 sm:gap-4" aria-label={`Thống kê từ vựng ${language.label.toLocaleLowerCase('vi')}`}>
+      <div className="pg-stat-grid" aria-label={`Thống kê từ vựng ${language.label.toLocaleLowerCase('vi')}`}>
         {stats.map(({ label, value, icon: Icon, tone }) => (
           <Card key={label} className={`pg-stat-card pg-stat-${tone} rounded-2xl`}>
             <CardContent className="pg-stat-content">

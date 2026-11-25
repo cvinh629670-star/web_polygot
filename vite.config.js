@@ -27,7 +27,8 @@ export default defineConfig(({ command, isPreview, mode }) => ({
           if (command !== 'serve' || isPreview) return html;
           return html
             .replace('<link rel="stylesheet" href="./assets/app-ui.css">', '')
-            .replace('<script defer src="./assets/app-ui.js"></script>', '<script type="module" src="/src/main.jsx"></script>');
+            .replace('<script defer src="./assets/app-ui.js"></script>', '<script type="module" src="/src/main.jsx"></script>')
+            .replace('<script defer src="./assets/studio-graphics.js"></script>', '<script type="module" src="/src/graphics/main.js"></script>');
         },
       },
     },
@@ -40,10 +41,10 @@ export default defineConfig(({ command, isPreview, mode }) => ({
     minify: true,
     target: 'es2020',
     lib: {
-      entry: fileURLToPath(new URL('./src/main.jsx', import.meta.url)),
-      name: 'PolyGlotModernUI',
+      entry: fileURLToPath(new URL(mode === 'graphics' ? './src/graphics/main.js' : './src/main.jsx', import.meta.url)),
+      name: mode === 'graphics' ? 'PolyGlotStudioGraphics' : 'PolyGlotModernUI',
       formats: ['iife'],
-      fileName: () => 'app-ui.js',
+      fileName: () => mode === 'graphics' ? 'studio-graphics.js' : 'app-ui.js',
       cssFileName: 'app-ui',
     },
   },

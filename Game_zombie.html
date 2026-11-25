@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Zombie Vocabulary Survival</title>
 <link rel="stylesheet" href="./assets/fontawesome.css">
+<script defer src="./assets/studio-graphics.js"></script>
 <style>
 /* Hệ màu dùng chung cho màn chọn ải, chiến trường và các hộp kết quả. */
 :root {
@@ -245,12 +246,42 @@ button:focus-visible, select:focus-visible { outline: 2px solid var(--mint); out
 #bPause[aria-expanded="false"] .fa-play,
 #bSnd[aria-pressed="true"] .fa-volume-xmark,
 #bSnd[aria-pressed="false"] .fa-volume-high { display: none; }
-#cv {
-  display: block;
+#arena-stage {
+  position: relative;
   flex: 1 1 0;
-  width: 100%;
-  height: 0;
   min-height: 0;
+  overflow: hidden;
+  background: radial-gradient(ellipse at center, #26374c, #080b14 76%);
+}
+#arena-stage:has(#arena-backdrop:not([hidden]))::before {
+  position: absolute;
+  inset: -24px;
+  content: "";
+  background: url("./assets/zombie-background.png") center / cover;
+  filter: blur(24px) brightness(.31);
+}
+#arena-backdrop {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  isolation: isolate;
+  transform: translate(-50%, -50%);
+  background: #101626 url("./assets/zombie-background.png") center / cover;
+  box-shadow: 0 0 0 1px #a6b9d32b, 0 12px 40px #04070cb3;
+  pointer-events: none;
+}
+#arena-backdrop canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  mix-blend-mode: screen;
+}
+#cv {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
   touch-action: none;
   box-shadow: inset 0 1px #383d61;
 }
@@ -338,9 +369,9 @@ button:focus-visible, select:focus-visible { outline: 2px solid var(--mint); out
 .hid { display: none; }
 #m-start {
   background:
-    radial-gradient(ellipse at 15% 28%, #234c575e, transparent 48%),
-    radial-gradient(ellipse at 85% 40%, #4e336773, transparent 50%),
-    linear-gradient(#080b16db, #080b16f5),
+    radial-gradient(ellipse at 13% 77%, #16534b77, transparent 42%),
+    radial-gradient(ellipse at 88% 35%, #5a385977, transparent 48%),
+    linear-gradient(#080b167f, #080b16e8),
     url("./assets/zombie-background.png") center / cover;
   overflow: auto;
   backdrop-filter: none;
@@ -368,11 +399,12 @@ body:has(#m-start:not(.hid)) #toast { z-index: 11; }
   position: relative;
   min-width: 0;
   overflow: hidden;
-  border: 1px solid #8491cb52;
+  border: 1px solid #84d7c36e;
   border-radius: 20px;
   background: #11172c;
-  box-shadow: 0 18px 50px #09091888;
+  box-shadow: 0 18px 50px #090918a8, 0 0 30px #72e8bb15;
 }
+.hc:last-child { border-color: #df9cbd70; box-shadow: 0 18px 50px #090918a8, 0 0 30px #ec81b516; }
 .hc canvas { display: block; width: 100%; height: auto; max-height: 73dvh; object-fit: cover; }
 .cap {
   position: absolute;
@@ -392,9 +424,9 @@ body:has(#m-start:not(.hid)) #toast { z-index: 11; }
   display: grid;
   gap: clamp(14px, 2vw, 22px);
   padding: clamp(18px, 2.6vw, 32px);
-  border: 1px solid #4b5875;
+  border: 1px solid #667b8d;
   border-radius: 24px;
-  background: radial-gradient(ellipse at 0 0, #5b6ba62b, transparent 67%), linear-gradient(145deg, #1a2238, #0e1425 74%);
+  background: radial-gradient(ellipse at 0 0, #6bb0aa2b, transparent 67%), linear-gradient(145deg, #192434, #0e1425 74%);
   box-shadow: 0 28px 68px #060818a8, inset 0 1px #d7deff21;
 }
 .hm::before {
@@ -756,7 +788,10 @@ body:has(#m-start:not(.hid)) #toast { z-index: 11; }
   </div>
 </div>
 <div id="game-notices"><div id="toast"></div></div>
-<canvas id="cv"></canvas>
+<div id="arena-stage">
+  <div id="arena-backdrop" aria-hidden="true" hidden></div>
+  <canvas id="cv"></canvas>
+</div>
 <div id="in">
   <div class="answer-field">
     <i class="fa-solid fa-keyboard" aria-hidden="true"></i>
@@ -1405,7 +1440,7 @@ class UIManager{
    g.res=null;g.state='play';g.manual=false;setTimeout(()=>g.audio.zombieSpawn(),1000)};
   $('bAgain').onclick=start;
   $('bStart').onclick=()=>{if(this.sb)return;this.sb=1;g.audio.init();this.hwp='A2';this.hpl.wp='A2';this.hpl.fire('A2');g.audio.sfx('A2');this.bh=.4;$('home').classList.add('shake');setTimeout(()=>{$('home').classList.remove('shake');this.sb=0;this.hwp='';start()},620)};
-  this.hrun=0;this.homeLoop=()=>{if(this.hrun||g.hostPaused)return;this.hrun=1;const frame=t=>{if($('m-start').classList.contains('hid')||g.hostPaused){this.hrun=0;return}this.drawHome(t/1000);requestAnimationFrame(frame)};requestAnimationFrame(frame)};this.homeLoop();
+  this.hrun=0;this.homeLoop=()=>{if(this.hrun||g.hostPaused)return;this.hrun=1;const frame=t=>{if($('m-start').classList.contains('hid')||g.hostPaused){this.hrun=0;return}this.drawHome(g.reducedMotion.matches ? 0 : t/1000);requestAnimationFrame(frame)};requestAnimationFrame(frame)};this.homeLoop();
   const setPause=paused=>{
    g.manual=paused;
    pause.setAttribute('aria-expanded',String(paused));
@@ -1428,15 +1463,46 @@ class UIManager{
 // Điều phối trạng thái phiên chơi, xử lý đáp án và vẽ canvas.
 class Game{
  constructor(){this.cv=$('cv');this.c=this.cv.getContext('2d');this.bg=buildBG();this.bgImage=new Image();this.bgImage.onload=()=>{this.bg=fitBG(this.bgImage)};this.bgImage.onerror=()=>console.error('Không tải được hình nền assets/zombie-background.png');this.bgImage.src='./assets/zombie-background.png';this.grain=this.c.createPattern(buildGrain(),'repeat');this.vocab=new VocabularyManager();this.audio=new AudioManager();this.ps=new ParticleSystem();this.player=new Player();this.synonymRequests=new Map();this.synonymCounter=0;this.synonymVersion=0;this.answerPending=false;this.ui=new UIManager(this);
+  this.reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  this.arena = null;
+  this.arenaAttempted = false;
   this.manual=false;this.hostPaused=false;this.mode='en';this.stage=1;this.res=null;this.items={b:0,s:0,h:0};this.state='menu';this.t=0;this.last=performance.now();this.sc=1;this.ox=0;this.oy=0;this.reset();
   addEventListener('resize',()=>this.resize());if(window.ResizeObserver)new ResizeObserver(()=>this.resize()).observe(this.cv);this.resize();
+  addEventListener('pagehide', event => {
+   if (!event.persisted) this.arena?.dispose();
+  });
   this.frameId = null;
   this.onFrame = now => this.loop(now);
   this.startLoop();
  }
  reset(keep){this.cfg=STAGES[this.stage-1];this.maxHp=100;this.slow=0;this.shield=0;this.bannerT='';this.bannerS='';this.kills=0;this.fq=[];this.rk=[];this.flashW=0;this.banner=2.5;this.z=[];this.tr=[];this.hp=this.maxHp;this.combo=0;if(!keep){this.score=0;this.maxCombo=0;this.done=new Map();this.items={b:0,s:0,h:0}}this.spawn=2.5;this.shk=0;this.hurt=0;this.el=0;this.ps.p=[];this.ps.dec=[];this.ui.setInput('');this.ui.hud()}
  get paused(){return this.manual||this.answerPending||this.hostPaused||document.hidden||this.ui.anyOpen()}
- resize(){const r=this.cv.getBoundingClientRect(),d=window.devicePixelRatio||1;this.cv.width=Math.max(1,r.width*d|0);this.cv.height=Math.max(1,r.height*d|0);this.sc=Math.min(this.cv.width/W,this.cv.height/H);this.ox=(this.cv.width-W*this.sc)/2;this.oy=(this.cv.height-H*this.sc)/2}
+ resize() {
+  const bounds = this.cv.getBoundingClientRect();
+  this.pixelRatio = window.devicePixelRatio || 1;
+  this.cv.width = Math.max(1, Math.floor(bounds.width * this.pixelRatio));
+  this.cv.height = Math.max(1, Math.floor(bounds.height * this.pixelRatio));
+  this.sc = Math.min(this.cv.width / W, this.cv.height / H);
+  this.ox = (this.cv.width - W * this.sc) / 2;
+  this.oy = (this.cv.height - H * this.sc) / 2;
+  this.resizeArena();
+ }
+ resizeArena() {
+  const cssScale = this.sc / this.pixelRatio;
+  this.arena?.resize(W * cssScale, H * cssScale);
+ }
+ drawArena(reducedMotion) {
+  if (this.state === 'menu') {
+   this.arena?.hide();
+   return false;
+  }
+  if (!this.arenaAttempted && window.polyglotGraphics?.createArena) {
+   this.arenaAttempted = true;
+   this.arena = window.polyglotGraphics.createArena($('arena-backdrop'));
+   this.resizeArena();
+  }
+  return this.arena?.render({ time: this.t, stage: this.stage, impact: this.flashW, reducedMotion }) ?? false;
+ }
  // Dừng lịch vẽ khi ẩn phòng Zombie và đặt lại mốc thời gian lúc mở lại.
  startLoop() {
   if (this.frameId !== null) return;
@@ -1448,6 +1514,7 @@ class Game{
   if (this.hostPaused) {
    if (this.frameId !== null) cancelAnimationFrame(this.frameId);
    this.frameId = null;
+   this.arena?.hide();
    this.ui.returnHome();
    return;
   }
@@ -1528,7 +1595,7 @@ class Game{
   this.ui.hud()}
  killZ(z){this.ps.blood(z.x,GY-50,z.burn?14:40,'#800',1.5);if(z.burn)for(let i=0;i<12;i++)this.ps.fire(z.x,GY-40,(Math.random()-.5)*120,-80,.5,7);this.z=this.z.filter(q=>q!==z);this.score+=25;this.shk=Math.max(this.shk,9);this.ps.dec.push({x:z.x,y:GY+10,s:14,a:.8});if(z.boss)this.win();else{this.kills++;if(this.kills>=this.cfg.target)this.spawnBoss()}}
  boom(x,y){this.audio.boom();this.shk=18;this.flashW=.4;for(let i=0;i<55;i++){const a=Math.random()*7,v=60+Math.random()*320;this.ps.fire(x,y,Math.cos(a)*v,Math.sin(a)*v-40,.45+Math.random()*.5,7+Math.random()*9)}for(let i=0;i<22;i++)this.ps.smoke(x+(Math.random()-.5)*30,y+(Math.random()-.5)*30,(Math.random()-.5)*80,-40-Math.random()*80);this.ps.dec.push({x,y:GY+10,s:22,a:.7,k:'0,0,0'})}
- fog(c,n,sp,al,yb){for(let i=0;i<n;i++){const x=((this.t*sp*(1+i*.4)+i*330)%1300)-250,y=yb+i*6,g=c.createRadialGradient(x,y,5,x,y,190);g.addColorStop(0,`rgba(150,160,195,${al})`);g.addColorStop(1,'rgba(150,160,195,0)');c.save();c.translate(0,y);c.scale(1,.22);c.translate(0,-y);c.fillStyle=g;c.fillRect(x-190,y-190,380,380);c.restore()}}
+ fog(c,n,sp,al,yb){const time=this.reducedMotion.matches?0:this.t;for(let i=0;i<n;i++){const x=((time*sp*(1+i*.4)+i*330)%1300)-250,y=yb+i*6,g=c.createRadialGradient(x,y,5,x,y,190);g.addColorStop(0,`rgba(150,160,195,${al})`);g.addColorStop(1,'rgba(150,160,195,0)');c.save();c.translate(0,y);c.scale(1,.22);c.translate(0,-y);c.fillStyle=g;c.fillRect(x-190,y-190,380,380);c.restore()}}
  drawZombieLabels(c){
   const labels=[],edge=5,gap=4;
   // Đặt nhãn rộng trước để nhãn ngắn có thể dịch lên khi đứng sát nhau.
@@ -1596,10 +1663,11 @@ class Game{
   for(const {art,x,y,width,height} of labels)c.drawImage(art,x,y,width,height);
   c.restore();
  }
- draw(){const c=this.c;c.setTransform(1,0,0,1,0,0);c.fillStyle='#05060b';c.fillRect(0,0,this.cv.width,this.cv.height);
-  const sx=(Math.random()-.5)*this.shk,sy=(Math.random()-.5)*this.shk;c.setTransform(this.sc,0,0,this.sc,this.ox+sx*this.sc,this.oy+sy*this.sc);
+ draw(){const c=this.c,reducedMotion=this.reducedMotion.matches,hasArena=this.drawArena(reducedMotion);c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,this.cv.width,this.cv.height);
+  const shake=reducedMotion?0:this.shk,sx=(Math.random()-.5)*shake,sy=(Math.random()-.5)*shake;c.setTransform(this.sc,0,0,this.sc,this.ox+sx*this.sc,this.oy+sy*this.sc);
   c.save();c.beginPath();c.rect(0,0,W,H);c.clip();
-  c.drawImage(this.bg,0,0,W,H);this.fog(c,3,9,.10,GY-18);this.ps.drawDec(c);
+  if(!hasArena){c.drawImage(this.bg,0,0,W,H);this.fog(c,3,9,.10,GY-18)}
+  this.ps.drawDec(c);
   c.fillStyle='rgba(150,165,215,.08)';c.fillRect(this.player.x+20,GY-4,ZONE-20,8);
   this.player.draw(c,this.t);if(this.shield>0){c.strokeStyle=`rgba(120,200,255,${.5+.2*Math.sin(this.t*6)})`;c.lineWidth=3;c.beginPath();c.arc(this.player.x,GY-55,52,0,7);c.stroke()}
   for(const z of this.z)z.draw(c);
@@ -1624,7 +1692,7 @@ class Game{
   if(this.flashW>0){c.fillStyle=`rgba(255,240,200,${this.flashW})`;c.fillRect(0,0,W,H)}
   const vg=c.createRadialGradient(W/2,H/2,H*.35,W/2,H/2,W*.62);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,8,.75)');c.fillStyle=vg;c.fillRect(0,0,W,H);
   c.fillStyle='rgba(20,40,80,.10)';c.fillRect(0,0,W,H);
-  c.save();c.globalAlpha=.05;c.translate(Math.random()*256|0,Math.random()*256|0);c.fillStyle=this.grain;c.fillRect(-256,-256,W+512,H+512);c.restore();
+  c.save();c.globalAlpha=.05;if(!reducedMotion)c.translate(Math.random()*256|0,Math.random()*256|0);c.fillStyle=this.grain;c.fillRect(-256,-256,W+512,H+512);c.restore();
   this.drawZombieLabels(c);
   if(this.state==='play'&&this.banner>0){c.globalAlpha=Math.min(1,this.banner);c.fillStyle='#fff';c.font='bold 40px sans-serif';c.textAlign='center';c.fillText(this.bannerT||`ẢI ${this.stage} — ${this.cfg.n}`,W/2,150);c.font='18px sans-serif';c.fillText(this.bannerS||`Hạ ${this.cfg.target} zombie để qua ải`,W/2,182);c.globalAlpha=1}
   if(this.manual||document.hidden){c.fillStyle='rgba(0,0,0,.6)';c.fillRect(0,0,W,H);c.fillStyle='#fff';c.font='bold 36px sans-serif';c.textAlign='center';c.fillText('TẠM DỪNG',W/2,H/2)}

@@ -1,6 +1,6 @@
 # PolyGlot SRS
 
-Ứng dụng học từ vựng Anh, Hàn, Trung, Nhật với lặp lại ngắt quãng. Giao diện được nâng cấp bằng **React 19 + Tailwind CSS 4 + shadcn/ui (Radix) + Motion**.
+Ứng dụng học từ vựng Anh, Hàn, Trung, Nhật với lặp lại ngắt quãng. Giao diện dùng **React 19, Tailwind CSS 4, shadcn/ui (Radix), Motion và Three.js**.
 
 ## Mở trang đã build
 
@@ -45,6 +45,7 @@ Các module dữ liệu luyện tập cũ nằm trong `js/grammar-lab/`. Đọc 
 - `src/App.jsx`: điều hướng React, bảng tổng quan với số liệu thật, tiến độ thành thạo và truy cập nhanh bằng Ctrl/Cmd+K.
 - `src/components/ui/`: các component shadcn/ui có thể chỉnh sửa trực tiếp: Button, Card, Badge, Progress, Dialog, Input, Tooltip.
 - `src/styles.css`: Tailwind CSS 4, token màu `ui-*`, giao diện responsive, sáng/tối và tùy chọn giảm chuyển động.
+- `src/graphics/`: cảnh thẻ học và hiệu ứng chiến trường. Three.js được đóng gói cục bộ trong `assets/studio-graphics.js`. Trình duyệt thiếu WebGL 2 hiển thị đồ họa dự phòng.
 - `js/app.js`, `js/audio.js`: logic SRS, bộ từ, nghe, giao tiếp, trò chơi và âm thanh hiện có.
 - `js/ui-bridge.js`: cầu nối trạng thái từ bộ xử lý học tập sang React. React sở hữu các root riêng để giữ nguyên DOM của các phòng học và trình phát nhạc.
 - `css/`: kiểu dáng cho các phần giao diện hiện có. `assets/app-ui.js` và `assets/app-ui.css`: bản build dùng trực tiếp trong trình duyệt, bao gồm các thư viện cần thiết.
