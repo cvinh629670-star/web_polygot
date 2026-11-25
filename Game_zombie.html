@@ -822,7 +822,6 @@ body:has(#m-start:not(.hid)) #toast { z-index: 11; }
 'use strict';
 // Tọa độ canvas, cấp CEFR và tham số của từng ải.
 const $=i=>document.getElementById(i),W=800,H=400,GY=280,ZONE=150,LV=['A1','A2','B1','B2','C1','C2'];
-const LVC={A1:'#2ee6a6',A2:'#34d84a',B1:'#e8d92e',B2:'#ff9a1f',C1:'#ff2d2d',C2:'#d02bff'};
 const WP={A1:{n:'Súng lục',d:.05,rec:.5},A2:{n:'Shotgun',d:.08,rec:1.4},B1:{n:'Súng bắn tỉa',d:.12,rec:1.6},B2:{n:'AK-47',d:.26,rec:.8},C1:{n:'Súng phun lửa',d:.6,rec:.3},C2:{n:'Bazooka',d:.3,rec:2}};
 const WG={A1:{mx:52,my:-68,fs:.7},A2:{mx:80,my:-69,fs:1.5},B1:{mx:95,my:-70,fs:1.6},B2:{mx:73,my:-70,fs:1},C1:{mx:75,my:-67,fs:1},C2:{mx:89,my:-81,fs:2}};
 const STAGES=[{n:'DỄ',mul:.6,target:10,gap:4.2,cap:4,mx:2,bl:'B2'},{n:'TRUNG BÌNH',mul:.85,target:15,gap:3.2,cap:5,mx:4,bl:'C1'},{n:'KHÓ',mul:1.1,target:20,gap:2.4,cap:6,mx:5,bl:'C2'}];
@@ -1188,9 +1187,9 @@ function drawZ(c,k,x,y,t,o={}){
  c.restore()}
 
 // Vẽ một lần cho mỗi từ và chế độ, sau đó dùng lại khi zombie di chuyển.
-function createZombieLabel(text, level, boss){
+function createZombieLabel(text, boss){
  const art=document.createElement('canvas'),c=art.getContext('2d');
- const font='700 21px system-ui, sans-serif',maxLine=362,padding=13,badgeW=level?34:0,gap=level?10:0;
+ const font='700 21px system-ui, sans-serif',maxLine=362,padding=13;
  c.font=font;
  const lines=[];
  let remaining=Array.from(text.trim().replace(/\s+/g,' '));
@@ -1213,7 +1212,7 @@ function createZombieLabel(text, level, boss){
   if(remaining[0]===' ')remaining.shift();
  }
  const wordW=Math.max(32,...lines.map(line=>Math.ceil(c.measureText(line).width)));
- const w=Math.max(102,padding*2+badgeW+gap+wordW),h=lines.length===2?60:42,mid=h/2;
+ const w=Math.max(102,padding*2+wordW),h=lines.length===2?60:42,mid=h/2;
  const margin=5,scale=2,width=w+margin*2,height=h+margin*2;
  art.width=width*scale;
  art.height=height*scale;
@@ -1282,23 +1281,9 @@ function createZombieLabel(text, level, boss){
 
  c.textAlign='center';
  c.textBaseline='middle';
- if(level){
-  const badgeH=22;
-  c.beginPath();
-  if(c.roundRect)c.roundRect(padding,mid-badgeH/2,badgeW,badgeH,6);
-  else c.rect(padding,mid-badgeH/2,badgeW,badgeH);
-  c.fillStyle='#221724';
-  c.fill();
-  c.strokeStyle=LVC[level]+'9c';
-  c.lineWidth=1;
-  c.stroke();
-  c.fillStyle='#fff2e9';
-  c.font='800 13px system-ui, sans-serif';
-  c.fillText(level,padding+badgeW/2,mid);
- }
  c.fillStyle='#fff5ed';
  c.font=font;
- const x=(w+badgeW+gap)/2;
+ const x=w/2;
  lines.forEach((line,index)=>c.fillText(line,x,mid+(index-(lines.length-1)/2)*22));
  return {art,width,height};
 }
@@ -1311,12 +1296,10 @@ class Zombie{
  update(dt,px,m){this.t+=dt;this.hurt=Math.max(0,this.hurt-dt);this.show=Math.max(0,this.show-dt);this.atk=Math.max(0,this.atk-dt*4);
   this.walking = this.x > px + ZONE;
   if(this.walking){this.x-=this.Z.sp*60*dt*m;return false}this.cd-=dt;if(this.cd<=0){this.cd=1.2;this.atk=1;return true}return false}
- getLabel(md,lang){
-  const level=md==='vi'&&(!lang||lang==='en')?this.l:null;
-  if(this.labelMode!==md||this.labelLevel!==level){
-   this.label=createZombieLabel(this.txt(md),level,this.boss);
+ getLabel(md){
+  if(this.labelMode!==md){
+   this.label=createZombieLabel(this.txt(md),this.boss);
    this.labelMode=md;
-   this.labelLevel=level;
   }
   return this.label;
  }
@@ -1550,7 +1533,7 @@ class Game{
   const labels=[],edge=5,gap=4;
   // Đặt nhãn rộng trước để nhãn ngắn có thể dịch lên khi đứng sát nhau.
   const visible=this.z.filter(z=>z.dying<=0&&z.x<=W+24)
-   .map(z=>({z,label:z.getLabel(this.mode,this.vocab.lang)}));
+   .map(z=>({z,label:z.getLabel(this.mode)}));
   visible.sort((a,b)=>b.label.width-a.label.width||a.z.x-b.z.x);
   for(const {z,label} of visible){
    const {art}=label;
